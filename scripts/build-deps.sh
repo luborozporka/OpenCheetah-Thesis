@@ -1,5 +1,7 @@
 . scripts/common.sh
 
+export CMAKE_POLICY_VERSION_MINIMUM=3.5
+
 check_tools
 
 if [ -d .git ]; then

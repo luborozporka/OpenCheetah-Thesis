@@ -1,5 +1,7 @@
 . scripts/common.sh
 
+export CMAKE_POLICY_VERSION_MINIMUM=3.5
+
 for deps in eigen3 emp-ot emp-tool hexl SEAL-3.7
 do
   if [ ! -d $BUILD_DIR/include/$deps ] 
@@ -19,7 +21,7 @@ do
 done
 
 cd $BUILD_DIR/
-cmake .. -DCMAKE_BUILD_TYPE=Release -DSCI_BUILD_NETWORKS=ON -DOPENSSL_ROOT_DIR=/usr/local/opt/openssl -DCMAKE_PREFIX_PATH=$BUILD_DIR -DUSE_APPROX_RESHARE=ON
+cmake .. -DCMAKE_BUILD_TYPE=Release -DSCI_BUILD_NETWORKS=ON -DSCI_BUILD_TESTS=ON -DOPENSSL_ROOT_DIR=/usr/local/opt/openssl -DCMAKE_PREFIX_PATH=$BUILD_DIR -DUSE_APPROX_RESHARE=ON
 # for net in resnet50 sqnet densenet121
 for net in resnet50 sqnet densenet121 short1 short2
 do
