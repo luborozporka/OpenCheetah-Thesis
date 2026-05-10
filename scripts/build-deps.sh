@@ -28,6 +28,7 @@ make install -j2
 target=emp-ot
 cd $DEPS_DIR/$target
 git checkout 7f3d4f0
+patch --quiet --no-backup-if-mismatch -N -p1 -i $WORK_DIR/patch/emp-ot.patch -d $DEPS_DIR/$target
 mkdir -p $BUILD_DIR/deps/$target
 cd $BUILD_DIR/deps/$target
 cmake $DEPS_DIR/$target -DCMAKE_INSTALL_PREFIX=$BUILD_DIR -DCMAKE_PREFIX_PATH=$BUILD_DIR
