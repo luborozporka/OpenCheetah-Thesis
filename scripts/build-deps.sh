@@ -36,6 +36,7 @@ make install -j2
 target=eigen
 cd $DEPS_DIR/$target
 git checkout 1f05f51 #v3.3.3
+patch --quiet --no-backup-if-mismatch -N -p1 -i $WORK_DIR/patch/eigen.patch -d $DEPS_DIR/$target
 mkdir -p $BUILD_DIR/deps/$target
 cd $BUILD_DIR/deps/$target
 cmake $DEPS_DIR/$target -DCMAKE_INSTALL_PREFIX=$BUILD_DIR
