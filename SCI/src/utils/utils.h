@@ -53,8 +53,8 @@ inline void parse_party_and_port(char **arg, int argc, int *party, int *port);
 std::string Party(int p);
 
 // Timing related
-//inline time_point<high_resolution_clock> clock_start();
-//inline double time_from(const time_point<high_resolution_clock> &s);
+inline time_point<high_resolution_clock> clock_start();
+inline double time_from(const time_point<high_resolution_clock> &s);
 
 // block128 conversions
 template <typename T = uint64_t> std::string m128i_to_string(const __m128i var);
