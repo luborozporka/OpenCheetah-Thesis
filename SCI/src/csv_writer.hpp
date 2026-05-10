@@ -13,6 +13,7 @@
 #ifndef CSV_WRITER_HPP
 #define CSV_WRITER_HPP
 
+#include <cstdint>
 #include <fstream>
 #include <string>
 #include <vector>

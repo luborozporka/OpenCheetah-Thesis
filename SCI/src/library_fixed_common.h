@@ -19,6 +19,8 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
+#include <cstdint>
+
 /************************ Standard Conv **************************/
 
 static void Conv2DReshapeFilter(int32_t FH, int32_t FW, int32_t CI, int32_t CO,

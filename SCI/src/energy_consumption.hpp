@@ -17,6 +17,7 @@
 #define _ENERGY_CONSUMPTION_HPP
 
 #include <condition_variable>
+#include <cstdint>
 #include <mutex>
 #include <string>
 #include <thread>

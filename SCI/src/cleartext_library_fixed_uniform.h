@@ -24,6 +24,7 @@ SOFTWARE.
 
 #include <Eigen/Dense>
 #include <cassert>
+#include <cstdint>
 #include <cstdlib>
 #include <fstream>
 #include <iostream>
