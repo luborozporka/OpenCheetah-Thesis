@@ -31,6 +31,9 @@ SOFTWARE.
 using namespace sci;
 using namespace std;
 
+static sci::NetIO *ioArr[MAX_THREADS];
+static sci::OTPack<sci::NetIO> *otpackArr[MAX_THREADS];
+
 int party = 0;
 int num_relu = 1 << 10, port = 32000;
 int num_relu_orig = 0;

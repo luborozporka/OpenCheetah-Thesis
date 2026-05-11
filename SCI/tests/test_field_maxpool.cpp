@@ -28,6 +28,9 @@ using namespace sci;
 
 #define MAX_THREADS 1
 
+static sci::NetIO *ioArr[MAX_THREADS];
+static sci::OTPack<sci::NetIO> *otpackArr[MAX_THREADS];
+
 int party = 0;
 int port = 32000;
 int num_rows = 1 << 10;

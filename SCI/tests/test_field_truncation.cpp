@@ -331,7 +331,7 @@ int main(int argc, char **argv) {
   if (party == SERVER) {
     // std::transform(inputArr, inputArr + dim, inputArr, [](uint64_t u) { return u >> (bitlength - 2 * shift); });
     prg.random_mod_p(inputArr, dim, prime_mod);
-    io->send_data(inputArr, sizeof(uint64_t) * dim);
+    g_session->io.primary->send_data(inputArr, sizeof(uint64_t) * dim);
 
 //    std::uniform_real_distribution<double> uniform(-1024., 1024.);
 //    std::random_device rdv;
@@ -350,25 +350,25 @@ int main(int argc, char **argv) {
       }
     }
   } else {
-    io->recv_data(inputArr, sizeof(uint64_t) * dim);
+    g_session->io.primary->recv_data(inputArr, sizeof(uint64_t) * dim);
   }
 
   std::copy_n(inputArr, dim, outputArr);
 
-  int64_t c0 = io->counter;
+  int64_t c0 = g_session->io.primary->counter;
   ScaleDown(dim, outputArr, shift);
-  int64_t c1 = io->counter;
+  int64_t c1 = g_session->io.primary->counter;
   printf("Truncate %dbit in %d prime filed sent %ld bits\n", shift, (int) std::ceil(std::log2(prime_mod)), (c1 - c0) * 8 / dim);
 
   uint64_t *input = new uint64_t[dim];
   uint64_t *output = new uint64_t[dim];
 
   if (party == SERVER) {
-    io->send_data(inputArr, sizeof(uint64_t) * dim);
-    io->send_data(outputArr, sizeof(uint64_t) * dim);
+    g_session->io.primary->send_data(inputArr, sizeof(uint64_t) * dim);
+    g_session->io.primary->send_data(outputArr, sizeof(uint64_t) * dim);
   } else {
-    io->recv_data(input, sizeof(uint64_t) * dim);
-    io->recv_data(output, sizeof(uint64_t) * dim);
+    g_session->io.primary->recv_data(input, sizeof(uint64_t) * dim);
+    g_session->io.primary->recv_data(output, sizeof(uint64_t) * dim);
 
     for (int i = 0; i < dim; ++i) {
       input[i] = (input[i] + inputArr[i]) % prime_mod;
