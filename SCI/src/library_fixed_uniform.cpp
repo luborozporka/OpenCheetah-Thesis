@@ -195,12 +195,12 @@ void MatMul2D(int32_t s1, int32_t s2, int32_t s3, const intType *A,
 
 #ifdef LOG_LAYERWISE
   auto temp = TIMER_TILL_NOW;
-  MatMulTimeInMilliSec += temp;
+  g_session->stats.MatMulTimeInMilliSec += temp;
   std::cout << "Time in sec for current matmul = " << (temp / 1000.0)
             << std::endl;
   uint64_t curComm;
   FIND_ALL_IO_TILL_NOW(curComm);
-  MatMulCommSent += curComm;
+  g_session->stats.MatMulCommSent += curComm;
 #endif
 
 #ifdef VERIFY_LAYERWISE
@@ -319,7 +319,7 @@ void Conv2DWrapper(signedIntType N, signedIntType H, signedIntType W,
   auto cur_start = CURRENT_TIME;
   std::cout << "Current time of start for current conv = " << cur_start
             << std::endl;
-  ConvStartTime = cur_start; // Added by Tanjina to calculate the duration/execution time
+  g_session->stats.ConvStartTime = cur_start; // Added by Tanjina to calculate the duration/execution time
 #endif
 
 // /** 
@@ -328,11 +328,11 @@ void Conv2DWrapper(signedIntType N, signedIntType H, signedIntType W,
 // **/
 // #ifdef LOG_LAYERWISE
 //   // conv layer counter
-//   Conv_layer_count++;
+//   g_session->stats.Conv_layer_count++;
 
 //   std::cout << "STARTING ENERGY MEASUREMENT" << std::endl;
 //   // Pass the the Power usage file path to the Energy measurement library 
-//   EnergyMeasurement measurement(power_usage_path);
+//   EnergyMeasurement measurement(g_session->stats.power_usage_path);
 
 // #endif
 
@@ -409,12 +409,12 @@ void Conv2DWrapper(signedIntType N, signedIntType H, signedIntType W,
 
 #ifdef LOG_LAYERWISE
   auto temp = TIMER_TILL_NOW;
-  ConvTimeInMilliSec += temp;
+  g_session->stats.ConvTimeInMilliSec += temp;
   std::cout << "Time in sec for current conv = " << (temp / 1000.0)
             << std::endl;
   uint64_t curComm;
   FIND_ALL_IO_TILL_NOW(curComm);
-  ConvCommSent += curComm;
+  g_session->stats.ConvCommSent += curComm;
 #endif
 
 #ifdef VERIFY_LAYERWISE
@@ -511,7 +511,7 @@ void Conv2DWrapper(signedIntType N, signedIntType H, signedIntType W,
   auto cur_end = CURRENT_TIME;
   std::cout << "Current time of end for current conv = " << cur_end
             << std::endl;
-  ConvEndTime = cur_end; // Added by Tanjina to calculate the duration/execution time
+  g_session->stats.ConvEndTime = cur_end; // Added by Tanjina to calculate the duration/execution time
 # endif
   
 // /** 
@@ -521,27 +521,27 @@ void Conv2DWrapper(signedIntType N, signedIntType H, signedIntType W,
 // #ifdef LOG_LAYERWISE
 //   std::cout << "STOPPING ENERGY MEASUREMENT" << std::endl;
 //   std::vector<std::pair<uint64_t, int64_t>> power_readings = measurement.stop();
-//   // ConvExecutionTime = (ConvEndTime - ConvStartTime) / 1000.0; // Added by Tanjina to calculate the duration/execution time (Convert from milliseconds to seconds)
-//   ConvExecutionTime = (ConvEndTime - ConvStartTime); // Note-Tanjina: Keep in milliseconds, need to do the conversion later
+//   // g_session->stats.ConvExecutionTime = (g_session->stats.ConvEndTime - g_session->stats.ConvStartTime) / 1000.0; // Added by Tanjina to calculate the duration/execution time (Convert from milliseconds to seconds)
+//   g_session->stats.ConvExecutionTime = (g_session->stats.ConvEndTime - g_session->stats.ConvStartTime); // Note-Tanjina: Keep in milliseconds, need to do the conversion later
  
 //   for(int i = 0; i < power_readings.size(); ++i){
 //     uint64_t avgPower = power_readings[i].first; // Note-Tanjina: Keep in microwatts, need to do the conversion later
 //     int64_t timestampPower = power_readings[i].second;
 //     // double avgPowerUsage = avgPower / 1000000.0;
 
-//     ConvTotalPowerConsumption += avgPower;
-//     std::cout << "Tanjina-Power usage values from the power_reading for HomConv #" << Conv_layer_count << " : " << avgPower << " microwatts " << "Timestamp of the current power reading: " << timestampPower << " Conv layer start Timestamp: " << ConvStartTime << " Conv layer end Timestamp: " << ConvEndTime <<  " Execution time: " << ConvExecutionTime << " milliseconds" << std::endl;
+//     g_session->stats.ConvTotalPowerConsumption += avgPower;
+//     std::cout << "Tanjina-Power usage values from the power_reading for HomConv #" << g_session->stats.Conv_layer_count << " : " << avgPower << " microwatts " << "Timestamp of the current power reading: " << timestampPower << " Conv layer start Timestamp: " << g_session->stats.ConvStartTime << " Conv layer end Timestamp: " << g_session->stats.ConvEndTime <<  " Execution time: " << g_session->stats.ConvExecutionTime << " milliseconds" << std::endl;
 //     // std::cout <<  "Tanjina-NN architecture info: " << "Conv_N = " << N << " Conv_H = " << H << " Conv_W = " << W << " Conv_CI = " << CI << " Conv_FH = " << FH << " Conv_FW = " << FW << " Conv_CO = " << CO << " Conv_ zPadHLeft = " << zPadHLeft << " Conv_zPadHRight = " << zPadHRight << " Conv_zPadWLeft = " << zPadWLeft  << " Conv_zPadWRight = " << zPadWRight << " Conv_strideH = " << strideH << " Conv_strideW = " << strideW << std::endl;
     
 //     std::vector<csv_column_type> conv_data;
 //     conv_data.push_back(i);
 //     conv_data.push_back("Conv");
-//     conv_data.push_back(Conv_layer_count);
+//     conv_data.push_back(g_session->stats.Conv_layer_count);
 //     conv_data.push_back(timestampPower);
 //     conv_data.push_back(avgPower);
-//     conv_data.push_back(ConvStartTime);
-//     conv_data.push_back(ConvEndTime);
-//     conv_data.push_back(ConvExecutionTime);
+//     conv_data.push_back(g_session->stats.ConvStartTime);
+//     conv_data.push_back(g_session->stats.ConvEndTime);
+//     conv_data.push_back(g_session->stats.ConvExecutionTime);
 //     conv_data.push_back(N);
 //     conv_data.push_back(H);
 //     conv_data.push_back(W);
@@ -610,12 +610,12 @@ void Conv2DGroupWrapper(signedIntType N, signedIntType H, signedIntType W,
 
 #ifdef LOG_LAYERWISE
   auto temp = TIMER_TILL_NOW;
-  ConvTimeInMilliSec += temp;
+  g_session->stats.ConvTimeInMilliSec += temp;
   std::cout << "Time in sec for current conv = " << (temp / 1000.0)
             << std::endl;
   uint64_t curComm;
   FIND_ALL_IO_TILL_NOW(curComm);
-  ConvCommSent += curComm;
+  g_session->stats.ConvCommSent += curComm;
 #endif
 }
 
@@ -704,10 +704,10 @@ void ElemWiseActModelVectorMult(int32_t size, intType *inArr,
 
 #ifdef LOG_LAYERWISE
   auto temp = TIMER_TILL_NOW;
-  BatchNormInMilliSec += temp;
+  g_session->stats.BatchNormInMilliSec += temp;
   uint64_t curComm;
   FIND_ALL_IO_TILL_NOW(curComm);
-  BatchNormCommSent += curComm;
+  g_session->stats.BatchNormCommSent += curComm;
   std::cout << "Time in sec for current BN = [" << (temp / 1000.0)
             << "] sent [" << (curComm / 1024. / 1024.) << "] MB"
             << std::endl;
@@ -773,7 +773,7 @@ void ArgMax(int32_t s1, int32_t s2, intType *inArr, intType *outArr) {
   auto cur_start = CURRENT_TIME;
   std::cout << "Current time of start for current ArgMax = " << cur_start
             << std::endl;
-  ArgMaxStartTime = cur_start; // Added by Tanjina to calculate the duration/execution time
+  g_session->stats.ArgMaxStartTime = cur_start; // Added by Tanjina to calculate the duration/execution time
 #endif
 
 /** 
@@ -782,11 +782,11 @@ void ArgMax(int32_t s1, int32_t s2, intType *inArr, intType *outArr) {
 **/
 #ifdef LOG_LAYERWISE
   // ArgMax layer counter
-  ArgMax_layer_count++;
+  g_session->stats.ArgMax_layer_count++;
 
   // std::cout << "STARTING ENERGY MEASUREMENT" << std::endl;
   // // Pass the the Power usage file path to the Energy measurement library 
-  // EnergyMeasurement measurement(power_usage_path);         
+  // EnergyMeasurement measurement(g_session->stats.power_usage_path);
 
 #endif
 
@@ -807,10 +807,10 @@ void ArgMax(int32_t s1, int32_t s2, intType *inArr, intType *outArr) {
 
 #ifdef LOG_LAYERWISE
   auto temp = TIMER_TILL_NOW;
-  ArgMaxTimeInMilliSec += temp;
+  g_session->stats.ArgMaxTimeInMilliSec += temp;
   uint64_t curComm;
   FIND_ALL_IO_TILL_NOW(curComm);
-  ArgMaxCommSent += curComm;
+  g_session->stats.ArgMaxCommSent += curComm;
 #endif
 
 #ifdef VERIFY_LAYERWISE
@@ -860,7 +860,7 @@ void ArgMax(int32_t s1, int32_t s2, intType *inArr, intType *outArr) {
   auto cur_end = CURRENT_TIME;
   std::cout << "Current time of end for current ArgMax = " << cur_end
           << std::endl;
-  ArgMaxEndTime = cur_end; // Added by Tanjina to calculate the duration/execution time
+  g_session->stats.ArgMaxEndTime = cur_end; // Added by Tanjina to calculate the duration/execution time
 #endif
 
 /** 
@@ -869,16 +869,16 @@ void ArgMax(int32_t s1, int32_t s2, intType *inArr, intType *outArr) {
 **/
 // #ifdef LOG_LAYERWISE
 //   std::vector<std::pair<uint64_t, int64_t>> power_readings = measurement.stop();
-//   // ArgMaxExecutionTime = (ArgMaxEndTime - ArgMaxStartTime) / 1000.0; // Added by Tanjina to calculate the duration/execution time (Convert from milliseconds to seconds)
-//   ArgMaxExecutionTime = (ArgMaxEndTime - ArgMaxStartTime); // Note-Tanjina: Keep in milliseconds, need to do the conversion later
+//   // g_session->stats.ArgMaxExecutionTime = (g_session->stats.ArgMaxEndTime - g_session->stats.ArgMaxStartTime) / 1000.0; // Added by Tanjina to calculate the duration/execution time (Convert from milliseconds to seconds)
+//   g_session->stats.ArgMaxExecutionTime = (g_session->stats.ArgMaxEndTime - g_session->stats.ArgMaxStartTime); // Note-Tanjina: Keep in milliseconds, need to do the conversion later
   
 //   for(int i = 0; i < power_readings.size(); ++i){
 //     uint64_t avgPower = power_readings[i].first;
 //     int64_t timestampPower = power_readings[i].second;
 //     double avgPowerUsage = avgPower / 1000000.0;
 
-//     ArgMaxTotalPowerConsumption += avgPower;
-//     std::cout << "Tanjina-Power usage values from the power_reading for ArgMax #" << ArgMax_layer_count << " : " << avgPowerUsage << " watts " << "Timestamp of the current power reading: " << timestampPower << " Execution time: " << ArgMaxExecutionTime << " seconds" << std::endl; 
+//     g_session->stats.ArgMaxTotalPowerConsumption += avgPower;
+//     std::cout << "Tanjina-Power usage values from the power_reading for ArgMax #" << g_session->stats.ArgMax_layer_count << " : " << avgPowerUsage << " watts " << "Timestamp of the current power reading: " << timestampPower << " Execution time: " << g_session->stats.ArgMaxExecutionTime << " seconds" << std::endl;
 //   }
         
 // #endif
@@ -895,7 +895,7 @@ void Relu(int32_t size, intType *inArr, intType *outArr, int sf, bool doTruncati
   auto cur_start = CURRENT_TIME;
   std::cout << "Current time of start for current relu = " << cur_start
             << std::endl;
-  ReluStartTime = cur_start; // Added by Tanjina to calculate the duration/execution time
+  g_session->stats.ReluStartTime = cur_start; // Added by Tanjina to calculate the duration/execution time
 #endif
 
 /** 
@@ -904,11 +904,11 @@ void Relu(int32_t size, intType *inArr, intType *outArr, int sf, bool doTruncati
 **/
 #ifdef LOG_LAYERWISE
   // Relu layer counter
-  Relu_layer_count++;
+  g_session->stats.Relu_layer_count++;
 
   // std::cout << "STARTING ENERGY MEASUREMENT" << std::endl;
   // // Pass the the Power usage file path to the Energy measurement library 
-  // EnergyMeasurement measurement(power_usage_path);         
+  // EnergyMeasurement measurement(g_session->stats.power_usage_path);
 
 #endif
 
@@ -945,11 +945,11 @@ void Relu(int32_t size, intType *inArr, intType *outArr, int sf, bool doTruncati
 
 #ifdef LOG_LAYERWISE
   auto temp = TIMER_TILL_NOW;
-  ReluTimeInMilliSec += temp;
+  g_session->stats.ReluTimeInMilliSec += temp;
   std::cout << "Time in sec for current relu = " << (temp / 1000.0) << std::endl;
   uint64_t curComm;
   FIND_ALL_IO_TILL_NOW(curComm);
-  ReluCommSent += curComm;
+  g_session->stats.ReluCommSent += curComm;
 
   // Add by Eloise
   // auto cur_end = CURRENT_TIME;
@@ -987,10 +987,10 @@ void Relu(int32_t size, intType *inArr, intType *outArr, int sf, bool doTruncati
 
 #ifdef LOG_LAYERWISE
     auto temp = TIMER_TILL_NOW;
-    TruncationTimeInMilliSec += temp;
+    g_session->stats.TruncationTimeInMilliSec += temp;
     uint64_t curComm;
     FIND_ALL_IO_TILL_NOW(curComm);
-    TruncationCommSent += curComm;
+    g_session->stats.TruncationCommSent += curComm;
 #endif
   } else {
     for (int i = 0; i < size; i++) {
@@ -1078,7 +1078,7 @@ void Relu(int32_t size, intType *inArr, intType *outArr, int sf, bool doTruncati
   auto cur_end = CURRENT_TIME;
   std::cout << "Current time of end for current relu = " << cur_end
             << std::endl;
-  ReluEndTime = cur_end; // Added by Tanjina to calculate the duration/execution time
+  g_session->stats.ReluEndTime = cur_end; // Added by Tanjina to calculate the duration/execution time
 #endif
 /** 
   * Code block for power measurement in Relu layer ends
@@ -1086,24 +1086,24 @@ void Relu(int32_t size, intType *inArr, intType *outArr, int sf, bool doTruncati
 **/
 // #ifdef LOG_LAYERWISE
 //   std::vector<std::pair<uint64_t, int64_t>> power_readings = measurement.stop();
-//   // ReluExecutionTime = (ReluEndTime - ReluStartTime) / 1000.0; // Added by Tanjina to calculate the duration/execution time (Convert from milliseconds to seconds)
-//   ReluExecutionTime = (ReluEndTime - ReluStartTime); // Note-Tanjina: Keep in milliseconds, need to do the conversion later
+//   // g_session->stats.ReluExecutionTime = (g_session->stats.ReluEndTime - g_session->stats.ReluStartTime) / 1000.0; // Added by Tanjina to calculate the duration/execution time (Convert from milliseconds to seconds)
+//   g_session->stats.ReluExecutionTime = (g_session->stats.ReluEndTime - g_session->stats.ReluStartTime); // Note-Tanjina: Keep in milliseconds, need to do the conversion later
 
 //   for(int i = 0; i < power_readings.size(); ++i){
 //     uint64_t avgPower = power_readings[i].first;
 //     int64_t timestampPower = power_readings[i].second;
 //     double avgPowerUsage = avgPower / 1000000.0;
 
-//     ReluTotalPowerConsumption += avgPower;
-//     std::cout << "Tanjina-Power usage values from the power_reading for Relu #" << Relu_layer_count << " : " << avgPowerUsage << " watts " << "Timestamp of the current power reading: " << timestampPower << " Execution time: " << ReluExecutionTime << " seconds" << " relu_coeff = " << size << std::endl; 
+//     g_session->stats.ReluTotalPowerConsumption += avgPower;
+//     std::cout << "Tanjina-Power usage values from the power_reading for Relu #" << g_session->stats.Relu_layer_count << " : " << avgPowerUsage << " watts " << "Timestamp of the current power reading: " << timestampPower << " Execution time: " << g_session->stats.ReluExecutionTime << " seconds" << " relu_coeff = " << size << std::endl;
 
 //     // std::vector<csv_column_type> relu_data;
 //     // relu_data.push_back(i);
 //     // relu_data.push_back("Relu");
-//     // relu_data.push_back(Relu_layer_count);
+//     // relu_data.push_back(g_session->stats.Relu_layer_count);
 //     // relu_data.push_back(timestampPower);
 //     // relu_data.push_back(avgPowerUsage);
-//     // relu_data.push_back(ReluExecutionTime);
+//     // relu_data.push_back(g_session->stats.ReluExecutionTime);
 //     // relu_data.push_back(size);
 
 //     // writeReluCSV.insertDataRow(relu_data);
@@ -1129,7 +1129,7 @@ void MaxPool(int32_t N, int32_t H, int32_t W, int32_t C, int32_t ksizeH,
   auto cur_start = CURRENT_TIME;
   std::cout << "Current time of start for current maxpool = " << cur_start
             << std::endl;
-  MaxPoolStartTime = cur_start; // Added by Tanjina to calculate the duration/execution time
+  g_session->stats.MaxPoolStartTime = cur_start; // Added by Tanjina to calculate the duration/execution time
 #endif
 /** 
   * Code block for power measurement in MaxPool layer starts
@@ -1137,11 +1137,11 @@ void MaxPool(int32_t N, int32_t H, int32_t W, int32_t C, int32_t ksizeH,
 **/
 #ifdef LOG_LAYERWISE
   // MaxPool layer counter
-  MaxPool_layer_count++;
+  g_session->stats.MaxPool_layer_count++;
 
   // std::cout << "STARTING ENERGY MEASUREMENT" << std::endl;
   // // Pass the the Power usage file path to the Energy measurement library 
-  // EnergyMeasurement measurement(power_usage_path);       
+  // EnergyMeasurement measurement(g_session->stats.power_usage_path);
 
 #endif
 
@@ -1247,12 +1247,12 @@ void MaxPool(int32_t N, int32_t H, int32_t W, int32_t C, int32_t ksizeH,
 
 #ifdef LOG_LAYERWISE
   auto temp = TIMER_TILL_NOW;
-  MaxpoolTimeInMilliSec += temp;
+  g_session->stats.MaxpoolTimeInMilliSec += temp;
   std::cout << "Time in sec for current maxpool = " << (temp / 1000.0)
             << std::endl;
   uint64_t curComm;
   FIND_ALL_IO_TILL_NOW(curComm);
-  MaxpoolCommSent += curComm;
+  g_session->stats.MaxpoolCommSent += curComm;
 #endif
 
 #ifdef VERIFY_LAYERWISE
@@ -1332,7 +1332,7 @@ void MaxPool(int32_t N, int32_t H, int32_t W, int32_t C, int32_t ksizeH,
   auto cur_end = CURRENT_TIME;
   std::cout << "Current time of end for current maxpool = " << cur_end
             << std::endl;
-  MaxPoolEndTime = cur_end; // Added by Tanjina to calculate the duration/execution time
+  g_session->stats.MaxPoolEndTime = cur_end; // Added by Tanjina to calculate the duration/execution time
 #endif
 /** 
    * Code block for power measurement in MaxPool layer ends
@@ -1340,25 +1340,25 @@ void MaxPool(int32_t N, int32_t H, int32_t W, int32_t C, int32_t ksizeH,
 **/
 // #ifdef LOG_LAYERWISE
 //   std::vector<std::pair<uint64_t, int64_t>> power_readings = measurement.stop();
-//   // MaxPoolExecutionTime = (MaxPoolEndTime - MaxPoolStartTime) / 1000.0; // Added by Tanjina to calculate the duration/execution time (Convert from milliseconds to seconds)
-//   MaxPoolExecutionTime = (MaxPoolEndTime - MaxPoolStartTime); // Note-Tanjina: Keep in milliseconds, need to do the conversion later
+//   // g_session->stats.MaxPoolExecutionTime = (g_session->stats.MaxPoolEndTime - g_session->stats.MaxPoolStartTime) / 1000.0; // Added by Tanjina to calculate the duration/execution time (Convert from milliseconds to seconds)
+//   g_session->stats.MaxPoolExecutionTime = (g_session->stats.MaxPoolEndTime - g_session->stats.MaxPoolStartTime); // Note-Tanjina: Keep in milliseconds, need to do the conversion later
   
 //   for(int i = 0; i < power_readings.size(); ++i){
 //     uint64_t avgPower = power_readings[i].first;
 //     int64_t timestampPower = power_readings[i].second;
 //     double avgPowerUsage = avgPower / 1000000.0;
 
-//     MaxPoolTotalPowerConsumption += avgPower;
-//     std::cout << "Tanjina-Power usage values from the power_reading for MaxPool #" << MaxPool_layer_count << " : " << avgPowerUsage << " watts " << "Timestamp of the current power reading: " << timestampPower << " Execution time: " << MaxPoolExecutionTime << " seconds" << std::endl; 
+//     g_session->stats.MaxPoolTotalPowerConsumption += avgPower;
+//     std::cout << "Tanjina-Power usage values from the power_reading for MaxPool #" << g_session->stats.MaxPool_layer_count << " : " << avgPowerUsage << " watts " << "Timestamp of the current power reading: " << timestampPower << " Execution time: " << g_session->stats.MaxPoolExecutionTime << " seconds" << std::endl;
 //     // std::cout << "Tanjina-NN architecture info: " << "MaxPool_N = " << N << " MaxPool_H = " << H << " MaxPool_W = " << W << " MaxPool_C = " << C << " MaxPool_ksizeH = " << ksizeH << " MaxPool_ksizeW = " << ksizeW << " MaxPool_zPadHLeft = " << zPadHLeft << " MaxPool_zPadHRight = " << zPadHRight << " MaxPool_zPadWLeft = " << zPadWLeft  << " MaxPool_zPadWRight = " << zPadWRight << " MaxPool_strideH = " << strideH << " MaxPool_strideW = " << strideW << " MaxPool_N1 = " << N1 << " MaxPool_imgH = " << imgH << " MaxPool_imgW = " << imgW << " MaxPool_C1 = " << C1 << std::endl;
 
 //     // std::vector<csv_column_type> maxpool_data;
 //     // maxpool_data.push_back(i);
 //     // maxpool_data.push_back("MaxPool");
-//     // maxpool_data.push_back(MaxPool_layer_count);
+//     // maxpool_data.push_back(g_session->stats.MaxPool_layer_count);
 //     // maxpool_data.push_back(timestampPower);
 //     // maxpool_data.push_back(avgPowerUsage);
-//     // maxpool_data.push_back(MaxPoolExecutionTime);
+//     // maxpool_data.push_back(g_session->stats.MaxPoolExecutionTime);
 //     // maxpool_data.push_back(N);
 //     // maxpool_data.push_back(H);
 //     // maxpool_data.push_back(W);
@@ -1396,7 +1396,7 @@ void AvgPool(int32_t N, int32_t H, int32_t W, int32_t C, int32_t ksizeH,
   auto cur_start = CURRENT_TIME;
   std::cout << "Current time of start for current avgpool = " << cur_start
             << std::endl;
-  AvgPoolStartTime = cur_start; // Added by Tanjina to calculate the duration/execution time
+  g_session->stats.AvgPoolStartTime = cur_start; // Added by Tanjina to calculate the duration/execution time
 #endif
 /** 
   * Code block for power measurement in AvgPool layer starts
@@ -1404,11 +1404,11 @@ void AvgPool(int32_t N, int32_t H, int32_t W, int32_t C, int32_t ksizeH,
 **/
 #ifdef LOG_LAYERWISE
   // AvgPool layer counter
-  AvgPool_layer_count++;
+  g_session->stats.AvgPool_layer_count++;
 
   // std::cout << "STARTING ENERGY MEASUREMENT" << std::endl;
   // // Pass the the Power usage file path to the Energy measurement library 
-  // EnergyMeasurement measurement(power_usage_path);          
+  // EnergyMeasurement measurement(g_session->stats.power_usage_path);
 
 #endif
 
@@ -1508,12 +1508,12 @@ void AvgPool(int32_t N, int32_t H, int32_t W, int32_t C, int32_t ksizeH,
 
 #ifdef LOG_LAYERWISE
   auto temp = TIMER_TILL_NOW;
-  AvgpoolTimeInMilliSec += temp;
+  g_session->stats.AvgpoolTimeInMilliSec += temp;
   std::cout << "Time in sec for current avgpool = " << (temp / 1000.0)
             << std::endl;
   uint64_t curComm;
   FIND_ALL_IO_TILL_NOW(curComm);
-  AvgpoolCommSent += curComm;
+  g_session->stats.AvgpoolCommSent += curComm;
 #endif
 
 #ifdef VERIFY_LAYERWISE
@@ -1591,7 +1591,7 @@ void AvgPool(int32_t N, int32_t H, int32_t W, int32_t C, int32_t ksizeH,
   auto cur_end = CURRENT_TIME;
   std::cout << "Current time of end for current avgpool = " << cur_end
             << std::endl;
-  AvgPoolEndTime = cur_end; // Added by Tanjina to calculate the duration/execution time
+  g_session->stats.AvgPoolEndTime = cur_end; // Added by Tanjina to calculate the duration/execution time
 #endif
 /** 
    * Code block for power measurement in AvgPool layer ends
@@ -1599,16 +1599,16 @@ void AvgPool(int32_t N, int32_t H, int32_t W, int32_t C, int32_t ksizeH,
 **/
 // #ifdef LOG_LAYERWISE
 //   std::vector<std::pair<uint64_t, int64_t>> power_readings = measurement.stop();
-//   // AvgPoolExecutionTime = (AvgPoolEndTime - AvgPoolStartTime) / 1000.0; // Added by Tanjina to calculate the duration/execution time (Convert from milliseconds to seconds)
-//   AvgPoolExecutionTime = (AvgPoolEndTime - AvgPoolStartTime); // Note-Tanjina: Keep in milliseconds, need to do the conversion later
+//   // g_session->stats.AvgPoolExecutionTime = (g_session->stats.AvgPoolEndTime - g_session->stats.AvgPoolStartTime) / 1000.0; // Added by Tanjina to calculate the duration/execution time (Convert from milliseconds to seconds)
+//   g_session->stats.AvgPoolExecutionTime = (g_session->stats.AvgPoolEndTime - g_session->stats.AvgPoolStartTime); // Note-Tanjina: Keep in milliseconds, need to do the conversion later
   
 //   for(int i = 0; i < power_readings.size(); ++i){
 //     uint64_t avgPower = power_readings[i].first;
 //     int64_t timestampPower = power_readings[i].second;
 //     double avgPowerUsage = avgPower / 1000000.0;
 
-//     AvgPoolTotalPowerConsumption += avgPower;
-//     std::cout << "Tanjina-Power usage values from the power_reading for AvgPool #" << AvgPool_layer_count << " : " << avgPowerUsage << " watts " << "Timestamp of the current power reading: " << timestampPower << " Execution time: " << AvgPoolExecutionTime << " seconds" << std::endl;
+//     g_session->stats.AvgPoolTotalPowerConsumption += avgPower;
+//     std::cout << "Tanjina-Power usage values from the power_reading for AvgPool #" << g_session->stats.AvgPool_layer_count << " : " << avgPowerUsage << " watts " << "Timestamp of the current power reading: " << timestampPower << " Execution time: " << g_session->stats.AvgPoolExecutionTime << " seconds" << std::endl;
 //   }       
 // #endif
 
@@ -1648,10 +1648,10 @@ void ScaleDown(int32_t size, intType *inArr, int32_t sf) {
 
 #ifdef LOG_LAYERWISE
   auto temp = TIMER_TILL_NOW;
-  TruncationTimeInMilliSec += temp;
+  g_session->stats.TruncationTimeInMilliSec += temp;
   uint64_t curComm;
   FIND_ALL_IO_TILL_NOW(curComm);
-  TruncationCommSent += curComm;
+  g_session->stats.TruncationCommSent += curComm;
 #endif
 
 #ifdef VERIFY_LAYERWISE
@@ -1760,16 +1760,16 @@ void StartComputation() {
   g_session = new sci::Session(cfg);
 
   std::cout << "After one-time setup, communication" << std::endl;
-  start_time = std::chrono::high_resolution_clock::now();
+  g_session->stats.start_time = std::chrono::high_resolution_clock::now();
   for (int i = 0; i < num_threads; i++) {
     auto temp = g_session->io.ioArr[i]->counter;
-    comm_threads[i] = temp;
+    g_session->stats.comm_threads[i] = temp;
     std::cout << "Thread i = " << i << ", total data sent till now = " << temp
               << std::endl;
   }
   std::cout << "-----------Syncronizing-----------" << std::endl;
   g_session->io.primary->sync();
-  num_rounds = g_session->io.primary->num_rounds;
+  g_session->stats.num_rounds = g_session->io.primary->num_rounds;
   std::cout << "secret_share_mod: " << prime_mod << " bitlength: " << bitlength << std::endl;
   std::cout << "backend: " << backend << std::endl;
   std::cout << "-----------Syncronized - now starting execution-----------"
@@ -1780,14 +1780,14 @@ void EndComputation() {
   auto endTimer = std::chrono::high_resolution_clock::now();
   auto execTimeInMilliSec =
       std::chrono::duration_cast<std::chrono::milliseconds>(endTimer -
-                                                            start_time)
+                                                            g_session->stats.start_time)
           .count();
   uint64_t totalComm = 0;
   for (int i = 0; i < num_threads; i++) {
     auto temp = g_session->io.ioArr[i]->counter;
     std::cout << "Thread i = " << i << ", total data sent till now = " << temp
               << std::endl;
-    totalComm += (temp - comm_threads[i]);
+    totalComm += (temp - g_session->stats.comm_threads[i]);
   }
   uint64_t totalCommClient;
   std::cout << "------------------------------------------------------\n";
@@ -1797,7 +1797,7 @@ void EndComputation() {
             << " milliseconds.\n";
   std::cout << "Total data sent = " << (totalComm / (1.0 * (1ULL << 20)))
             << " MiB." << std::endl;
-  std::cout << "Number of rounds = " << g_session->io.ioArr[0]->num_rounds - num_rounds
+  std::cout << "Number of rounds = " << g_session->io.ioArr[0]->num_rounds - g_session->stats.num_rounds
             << std::endl;
   if (party == SERVER) {
     g_session->io.primary->recv_data(&totalCommClient, sizeof(uint64_t));
@@ -1812,112 +1812,112 @@ void EndComputation() {
   std::cout << "------------------------------------------------------\n";
 
 #ifdef LOG_LAYERWISE
-  std::cout << "Total time in Conv = " << (ConvTimeInMilliSec / 1000.0)
+  std::cout << "Total time in Conv = " << (g_session->stats.ConvTimeInMilliSec / 1000.0)
             << " seconds." << std::endl;
-  std::cout << "Total time in MatMul = " << (MatMulTimeInMilliSec / 1000.0)
+  std::cout << "Total time in MatMul = " << (g_session->stats.MatMulTimeInMilliSec / 1000.0)
             << " seconds." << std::endl;
-  std::cout << "Total time in BatchNorm = " << (BatchNormInMilliSec / 1000.0)
+  std::cout << "Total time in BatchNorm = " << (g_session->stats.BatchNormInMilliSec / 1000.0)
             << " seconds." << std::endl;
   std::cout << "Total time in Truncation = "
-            << (TruncationTimeInMilliSec / 1000.0) << " seconds." << std::endl;
-  std::cout << "Total time in Relu = " << (ReluTimeInMilliSec / 1000.0)
+            << (g_session->stats.TruncationTimeInMilliSec / 1000.0) << " seconds." << std::endl;
+  std::cout << "Total time in Relu = " << (g_session->stats.ReluTimeInMilliSec / 1000.0)
             << " seconds." << std::endl;
-  std::cout << "Total time in MaxPool = " << (MaxpoolTimeInMilliSec / 1000.0)
+  std::cout << "Total time in MaxPool = " << (g_session->stats.MaxpoolTimeInMilliSec / 1000.0)
             << " seconds." << std::endl;
-  std::cout << "Total time in AvgPool = " << (AvgpoolTimeInMilliSec / 1000.0)
+  std::cout << "Total time in AvgPool = " << (g_session->stats.AvgpoolTimeInMilliSec / 1000.0)
             << " seconds." << std::endl;
-  std::cout << "Total time in ArgMax = " << (ArgMaxTimeInMilliSec / 1000.0)
+  std::cout << "Total time in ArgMax = " << (g_session->stats.ArgMaxTimeInMilliSec / 1000.0)
             << " seconds." << std::endl;
-  std::cout << "Total time in MatAdd = " << (MatAddTimeInMilliSec / 1000.0)
+  std::cout << "Total time in MatAdd = " << (g_session->stats.MatAddTimeInMilliSec / 1000.0)
             << " seconds." << std::endl;
   std::cout << "Total time in MatAddBroadCast = "
-            << (MatAddBroadCastTimeInMilliSec / 1000.0) << " seconds."
+            << (g_session->stats.MatAddBroadCastTimeInMilliSec / 1000.0) << " seconds."
             << std::endl;
-  std::cout << "Total time in MulCir = " << (MulCirTimeInMilliSec / 1000.0)
+  std::cout << "Total time in MulCir = " << (g_session->stats.MulCirTimeInMilliSec / 1000.0)
             << " seconds." << std::endl;
   std::cout << "Total time in ScalarMul = "
-            << (ScalarMulTimeInMilliSec / 1000.0) << " seconds." << std::endl;
-  std::cout << "Total time in Sigmoid = " << (SigmoidTimeInMilliSec / 1000.0)
+            << (g_session->stats.ScalarMulTimeInMilliSec / 1000.0) << " seconds." << std::endl;
+  std::cout << "Total time in Sigmoid = " << (g_session->stats.SigmoidTimeInMilliSec / 1000.0)
             << " seconds." << std::endl;
-  std::cout << "Total time in Tanh = " << (TanhTimeInMilliSec / 1000.0)
+  std::cout << "Total time in Tanh = " << (g_session->stats.TanhTimeInMilliSec / 1000.0)
             << " seconds." << std::endl;
-  std::cout << "Total time in Sqrt = " << (SqrtTimeInMilliSec / 1000.0)
+  std::cout << "Total time in Sqrt = " << (g_session->stats.SqrtTimeInMilliSec / 1000.0)
             << " seconds." << std::endl;
   std::cout << "Total time in NormaliseL2 = "
-            << (NormaliseL2TimeInMilliSec / 1000.0) << " seconds." << std::endl;
+            << (g_session->stats.NormaliseL2TimeInMilliSec / 1000.0) << " seconds." << std::endl;
   std::cout << "------------------------------------------------------\n";
-  std::cout << "Conv data sent = " << ((ConvCommSent) / (1.0 * (1ULL << 20)))
+  std::cout << "Conv data sent = " << ((g_session->stats.ConvCommSent) / (1.0 * (1ULL << 20)))
             << " MiB." << std::endl;
   std::cout << "MatMul data sent = "
-            << ((MatMulCommSent) / (1.0 * (1ULL << 20))) << " MiB."
+            << ((g_session->stats.MatMulCommSent) / (1.0 * (1ULL << 20))) << " MiB."
             << std::endl;
   std::cout << "BatchNorm data sent = "
-            << ((BatchNormCommSent) / (1.0 * (1ULL << 20))) << " MiB."
+            << ((g_session->stats.BatchNormCommSent) / (1.0 * (1ULL << 20))) << " MiB."
             << std::endl;
   std::cout << "Truncation data sent = "
-            << ((TruncationCommSent) / (1.0 * (1ULL << 20))) << " MiB."
+            << ((g_session->stats.TruncationCommSent) / (1.0 * (1ULL << 20))) << " MiB."
             << std::endl;
-  std::cout << "Relu data sent = " << ((ReluCommSent) / (1.0 * (1ULL << 20)))
+  std::cout << "Relu data sent = " << ((g_session->stats.ReluCommSent) / (1.0 * (1ULL << 20)))
             << " MiB." << std::endl;
   std::cout << "Maxpool data sent = "
-            << ((MaxpoolCommSent) / (1.0 * (1ULL << 20))) << " MiB."
+            << ((g_session->stats.MaxpoolCommSent) / (1.0 * (1ULL << 20))) << " MiB."
             << std::endl;
   std::cout << "Avgpool data sent = "
-            << ((AvgpoolCommSent) / (1.0 * (1ULL << 20))) << " MiB."
+            << ((g_session->stats.AvgpoolCommSent) / (1.0 * (1ULL << 20))) << " MiB."
             << std::endl;
   std::cout << "ArgMax data sent = "
-            << ((ArgMaxCommSent) / (1.0 * (1ULL << 20))) << " MiB."
+            << ((g_session->stats.ArgMaxCommSent) / (1.0 * (1ULL << 20))) << " MiB."
             << std::endl;
   std::cout << "MatAdd data sent = "
-            << ((MatAddCommSent) / (1.0 * (1ULL << 20))) << " MiB."
+            << ((g_session->stats.MatAddCommSent) / (1.0 * (1ULL << 20))) << " MiB."
             << std::endl;
   std::cout << "MatAddBroadCast data sent = "
-            << ((MatAddBroadCastCommSent) / (1.0 * (1ULL << 20))) << " MiB."
+            << ((g_session->stats.MatAddBroadCastCommSent) / (1.0 * (1ULL << 20))) << " MiB."
             << std::endl;
   std::cout << "MulCir data sent = "
-            << ((MulCirCommSent) / (1.0 * (1ULL << 20))) << " MiB."
+            << ((g_session->stats.MulCirCommSent) / (1.0 * (1ULL << 20))) << " MiB."
             << std::endl;
   std::cout << "Sigmoid data sent = "
-            << ((SigmoidCommSent) / (1.0 * (1ULL << 20))) << " MiB."
+            << ((g_session->stats.SigmoidCommSent) / (1.0 * (1ULL << 20))) << " MiB."
             << std::endl;
-  std::cout << "Tanh data sent = " << ((TanhCommSent) / (1.0 * (1ULL << 20)))
+  std::cout << "Tanh data sent = " << ((g_session->stats.TanhCommSent) / (1.0 * (1ULL << 20)))
             << " MiB." << std::endl;
-  std::cout << "Sqrt data sent = " << ((SqrtCommSent) / (1.0 * (1ULL << 20)))
+  std::cout << "Sqrt data sent = " << ((g_session->stats.SqrtCommSent) / (1.0 * (1ULL << 20)))
             << " MiB." << std::endl;
   std::cout << "NormaliseL2 data sent = "
-            << ((NormaliseL2CommSent) / (1.0 * (1ULL << 20))) << " MiB."
+            << ((g_session->stats.NormaliseL2CommSent) / (1.0 * (1ULL << 20))) << " MiB."
             << std::endl;
   std::cout << "------------------------------------------------------\n";
   // Added by Tanjina - for power readings (total)
-  // std::cout << "Total power consumption in Conv layer = " << (ConvTotalPowerConsumption / 1000000.0) // Convert from micro watts to watts
+  // std::cout << "Total power consumption in Conv layer = " << (g_session->stats.ConvTotalPowerConsumption / 1000000.0) // Convert from micro watts to watts
   //           << " watts." << std::endl;
-  // std::cout << "Total power consumption in Relu layer = " << (ReluTotalPowerConsumption / 1000000.0) // Convert from micro watts to watts
+  // std::cout << "Total power consumption in Relu layer = " << (g_session->stats.ReluTotalPowerConsumption / 1000000.0) // Convert from micro watts to watts
   //           << " watts." << std::endl;
-  // std::cout << "Total power consumption in MaxPool layer = " << (MaxPoolTotalPowerConsumption / 1000000.0) // Convert from micro watts to watts
+  // std::cout << "Total power consumption in MaxPool layer = " << (g_session->stats.MaxPoolTotalPowerConsumption / 1000000.0) // Convert from micro watts to watts
   //           << " watts." << std::endl;
-  // std::cout << "Total power consumption in BatchNorm layer = " << (BatchNormTotalPowerConsumption / 1000000.0) // Convert from micro watts to watts
+  // std::cout << "Total power consumption in BatchNorm layer = " << (g_session->stats.BatchNormTotalPowerConsumption / 1000000.0) // Convert from micro watts to watts
   //           << " watts." << std::endl;
-  // std::cout << "Total power consumption in MatMul layer = " << (MatMulTotalPowerConsumption / 1000000.0) // Convert from micro watts to watts
+  // std::cout << "Total power consumption in MatMul layer = " << (g_session->stats.MatMulTotalPowerConsumption / 1000000.0) // Convert from micro watts to watts
   //           << " watts." << std::endl;
-  // std::cout << "Total power consumption in AvgPool layer = " << (AvgPoolTotalPowerConsumption / 1000000.0) // Convert from micro watts to watts
+  // std::cout << "Total power consumption in AvgPool layer = " << (g_session->stats.AvgPoolTotalPowerConsumption / 1000000.0) // Convert from micro watts to watts
   //           << " watts." << std::endl;
-  // std::cout << "Total power consumption in ArgMax layer = " << (ArgMaxTotalPowerConsumption / 1000000.0) // Convert from micro watts to watts
+  // std::cout << "Total power consumption in ArgMax layer = " << (g_session->stats.ArgMaxTotalPowerConsumption / 1000000.0) // Convert from micro watts to watts
   //           << " watts." << std::endl;
   // std::cout << "------------------------------------------------------\n";
   // Added by Tanjina - for layer counts
-  std::cout << "Total number of Conv layer = " << Conv_layer_count
+  std::cout << "Total number of Conv layer = " << g_session->stats.Conv_layer_count
             << " layers" << std::endl;
-  std::cout << "Total number of Relu layer = " << Relu_layer_count
+  std::cout << "Total number of Relu layer = " << g_session->stats.Relu_layer_count
             << " layers" << std::endl;
-  std::cout << "Total number of MaxPool layer = " << MaxPool_layer_count
+  std::cout << "Total number of MaxPool layer = " << g_session->stats.MaxPool_layer_count
             << " layers" << std::endl;
-  std::cout << "Total number of BatchNorm layer = " << BatchNorm_layer_count
+  std::cout << "Total number of BatchNorm layer = " << g_session->stats.BatchNorm_layer_count
             << " layers" << std::endl;
-  std::cout << "Total number of MatMul layer = " << MatMul_layer_count
+  std::cout << "Total number of MatMul layer = " << g_session->stats.MatMul_layer_count
             << " layers" << std::endl;
-  std::cout << "Total number of AvgPool layer = " << AvgPool_layer_count
+  std::cout << "Total number of AvgPool layer = " << g_session->stats.AvgPool_layer_count
             << " layers" << std::endl;
-  std::cout << "Total number of ArgMax layer = " << ArgMax_layer_count
+  std::cout << "Total number of ArgMax layer = " << g_session->stats.ArgMax_layer_count
             << " layers" << std::endl;
   std::cout << "------------------------------------------------------\n";
 
@@ -1957,63 +1957,63 @@ void EndComputation() {
     g_session->io.primary->recv_data(&NormaliseL2CommSentClient, sizeof(uint64_t));
 
     std::cout << "Conv data (sent+received) = "
-              << ((ConvCommSent + ConvCommSentClient) / (1.0 * (1ULL << 20)))
+              << ((g_session->stats.ConvCommSent + ConvCommSentClient) / (1.0 * (1ULL << 20)))
               << " MiB." << std::endl;
     std::cout << "MatMul data (sent+received) = "
-              << ((MatMulCommSent + MatMulCommSentClient) /
+              << ((g_session->stats.MatMulCommSent + MatMulCommSentClient) /
                   (1.0 * (1ULL << 20)))
               << " MiB." << std::endl;
     std::cout << "BatchNorm data (sent+received) = "
-              << ((BatchNormCommSent + BatchNormCommSentClient) /
+              << ((g_session->stats.BatchNormCommSent + BatchNormCommSentClient) /
                   (1.0 * (1ULL << 20)))
               << " MiB." << std::endl;
     std::cout << "Truncation data (sent+received) = "
-              << ((TruncationCommSent + TruncationCommSentClient) /
+              << ((g_session->stats.TruncationCommSent + TruncationCommSentClient) /
                   (1.0 * (1ULL << 20)))
               << " MiB." << std::endl;
     std::cout << "Relu data (sent+received) = "
-              << ((ReluCommSent + ReluCommSentClient) / (1.0 * (1ULL << 20)))
+              << ((g_session->stats.ReluCommSent + ReluCommSentClient) / (1.0 * (1ULL << 20)))
               << " MiB." << std::endl;
     std::cout << "Maxpool data (sent+received) = "
-              << ((MaxpoolCommSent + MaxpoolCommSentClient) /
+              << ((g_session->stats.MaxpoolCommSent + MaxpoolCommSentClient) /
                   (1.0 * (1ULL << 20)))
               << " MiB." << std::endl;
     std::cout << "Avgpool data (sent+received) = "
-              << ((AvgpoolCommSent + AvgpoolCommSentClient) /
+              << ((g_session->stats.AvgpoolCommSent + AvgpoolCommSentClient) /
                   (1.0 * (1ULL << 20)))
               << " MiB." << std::endl;
     std::cout << "ArgMax data (sent+received) = "
-              << ((ArgMaxCommSent + ArgMaxCommSentClient) /
+              << ((g_session->stats.ArgMaxCommSent + ArgMaxCommSentClient) /
                   (1.0 * (1ULL << 20)))
               << " MiB." << std::endl;
     std::cout << "MatAdd data (sent+received) = "
-              << ((MatAddCommSent + MatAddCommSentClient) /
+              << ((g_session->stats.MatAddCommSent + MatAddCommSentClient) /
                   (1.0 * (1ULL << 20)))
               << " MiB." << std::endl;
     std::cout << "MatAddBroadCast data (sent+received) = "
-              << ((MatAddBroadCastCommSent + MatAddBroadCastCommSentClient) /
+              << ((g_session->stats.MatAddBroadCastCommSent + MatAddBroadCastCommSentClient) /
                   (1.0 * (1ULL << 20)))
               << " MiB." << std::endl;
     std::cout << "MulCir data (sent+received) = "
-              << ((MulCirCommSent + MulCirCommSentClient) /
+              << ((g_session->stats.MulCirCommSent + MulCirCommSentClient) /
                   (1.0 * (1ULL << 20)))
               << " MiB." << std::endl;
     std::cout << "ScalarMul data (sent+received) = "
-              << ((ScalarMulCommSent + ScalarMulCommSentClient) /
+              << ((g_session->stats.ScalarMulCommSent + ScalarMulCommSentClient) /
                   (1.0 * (1ULL << 20)))
               << " MiB." << std::endl;
     std::cout << "Sigmoid data (sent+received) = "
-              << ((SigmoidCommSent + SigmoidCommSentClient) /
+              << ((g_session->stats.SigmoidCommSent + SigmoidCommSentClient) /
                   (1.0 * (1ULL << 20)))
               << " MiB." << std::endl;
     std::cout << "Tanh data (sent+received) = "
-              << ((TanhCommSent + TanhCommSentClient) / (1.0 * (1ULL << 20)))
+              << ((g_session->stats.TanhCommSent + TanhCommSentClient) / (1.0 * (1ULL << 20)))
               << " MiB." << std::endl;
     std::cout << "Sqrt data (sent+received) = "
-              << ((SqrtCommSent + SqrtCommSentClient) / (1.0 * (1ULL << 20)))
+              << ((g_session->stats.SqrtCommSent + SqrtCommSentClient) / (1.0 * (1ULL << 20)))
               << " MiB." << std::endl;
     std::cout << "NormaliseL2 data (sent+received) = "
-              << ((NormaliseL2CommSent + NormaliseL2CommSentClient) /
+              << ((g_session->stats.NormaliseL2CommSent + NormaliseL2CommSentClient) /
                   (1.0 * (1ULL << 20)))
               << " MiB." << std::endl;
 
@@ -2039,44 +2039,44 @@ void EndComputation() {
            << MILL_PARAM << "," << num_threads << ","
            << execTimeInMilliSec / 1000.0 << ","
            << (totalComm + totalCommClient) / (1.0 * (1ULL << 20)) << ","
-           << ConvTimeInMilliSec / 1000.0 << ","
-           << (ConvCommSent + ConvCommSentClient) / (1.0 * (1ULL << 20)) << ","
-           << MatMulTimeInMilliSec / 1000.0 << ","
-           << (MatMulCommSent + MatMulCommSentClient) / (1.0 * (1ULL << 20))
-           << "," << BatchNormInMilliSec / 1000.0 << ","
-           << (BatchNormCommSent + BatchNormCommSentClient) /
+           << g_session->stats.ConvTimeInMilliSec / 1000.0 << ","
+           << (g_session->stats.ConvCommSent + ConvCommSentClient) / (1.0 * (1ULL << 20)) << ","
+           << g_session->stats.MatMulTimeInMilliSec / 1000.0 << ","
+           << (g_session->stats.MatMulCommSent + MatMulCommSentClient) / (1.0 * (1ULL << 20))
+           << "," << g_session->stats.BatchNormInMilliSec / 1000.0 << ","
+           << (g_session->stats.BatchNormCommSent + BatchNormCommSentClient) /
                   (1.0 * (1ULL << 20))
-           << "," << TruncationTimeInMilliSec / 1000.0 << ","
-           << (TruncationCommSent + TruncationCommSentClient) /
+           << "," << g_session->stats.TruncationTimeInMilliSec / 1000.0 << ","
+           << (g_session->stats.TruncationCommSent + TruncationCommSentClient) /
                   (1.0 * (1ULL << 20))
-           << "," << ReluTimeInMilliSec / 1000.0 << ","
-           << (ReluCommSent + ReluCommSentClient) / (1.0 * (1ULL << 20)) << ","
-           << MaxpoolTimeInMilliSec / 1000.0 << ","
-           << (MaxpoolCommSent + MaxpoolCommSentClient) / (1.0 * (1ULL << 20))
-           << "," << AvgpoolTimeInMilliSec / 1000.0 << ","
-           << (AvgpoolCommSent + AvgpoolCommSentClient) / (1.0 * (1ULL << 20))
-           << "," << ArgMaxTimeInMilliSec / 1000.0 << ","
-           << (ArgMaxCommSent + ArgMaxCommSentClient) / (1.0 * (1ULL << 20))
+           << "," << g_session->stats.ReluTimeInMilliSec / 1000.0 << ","
+           << (g_session->stats.ReluCommSent + ReluCommSentClient) / (1.0 * (1ULL << 20)) << ","
+           << g_session->stats.MaxpoolTimeInMilliSec / 1000.0 << ","
+           << (g_session->stats.MaxpoolCommSent + MaxpoolCommSentClient) / (1.0 * (1ULL << 20))
+           << "," << g_session->stats.AvgpoolTimeInMilliSec / 1000.0 << ","
+           << (g_session->stats.AvgpoolCommSent + AvgpoolCommSentClient) / (1.0 * (1ULL << 20))
+           << "," << g_session->stats.ArgMaxTimeInMilliSec / 1000.0 << ","
+           << (g_session->stats.ArgMaxCommSent + ArgMaxCommSentClient) / (1.0 * (1ULL << 20))
            << std::endl;
     result.close();
 #endif
   } else if (party == CLIENT) {
-    g_session->io.primary->send_data(&ConvCommSent, sizeof(uint64_t));
-    g_session->io.primary->send_data(&MatMulCommSent, sizeof(uint64_t));
-    g_session->io.primary->send_data(&BatchNormCommSent, sizeof(uint64_t));
-    g_session->io.primary->send_data(&TruncationCommSent, sizeof(uint64_t));
-    g_session->io.primary->send_data(&ReluCommSent, sizeof(uint64_t));
-    g_session->io.primary->send_data(&MaxpoolCommSent, sizeof(uint64_t));
-    g_session->io.primary->send_data(&AvgpoolCommSent, sizeof(uint64_t));
-    g_session->io.primary->send_data(&ArgMaxCommSent, sizeof(uint64_t));
-    g_session->io.primary->send_data(&MatAddCommSent, sizeof(uint64_t));
-    g_session->io.primary->send_data(&MatAddBroadCastCommSent, sizeof(uint64_t));
-    g_session->io.primary->send_data(&MulCirCommSent, sizeof(uint64_t));
-    g_session->io.primary->send_data(&ScalarMulCommSent, sizeof(uint64_t));
-    g_session->io.primary->send_data(&SigmoidCommSent, sizeof(uint64_t));
-    g_session->io.primary->send_data(&TanhCommSent, sizeof(uint64_t));
-    g_session->io.primary->send_data(&SqrtCommSent, sizeof(uint64_t));
-    g_session->io.primary->send_data(&NormaliseL2CommSent, sizeof(uint64_t));
+    g_session->io.primary->send_data(&g_session->stats.ConvCommSent, sizeof(uint64_t));
+    g_session->io.primary->send_data(&g_session->stats.MatMulCommSent, sizeof(uint64_t));
+    g_session->io.primary->send_data(&g_session->stats.BatchNormCommSent, sizeof(uint64_t));
+    g_session->io.primary->send_data(&g_session->stats.TruncationCommSent, sizeof(uint64_t));
+    g_session->io.primary->send_data(&g_session->stats.ReluCommSent, sizeof(uint64_t));
+    g_session->io.primary->send_data(&g_session->stats.MaxpoolCommSent, sizeof(uint64_t));
+    g_session->io.primary->send_data(&g_session->stats.AvgpoolCommSent, sizeof(uint64_t));
+    g_session->io.primary->send_data(&g_session->stats.ArgMaxCommSent, sizeof(uint64_t));
+    g_session->io.primary->send_data(&g_session->stats.MatAddCommSent, sizeof(uint64_t));
+    g_session->io.primary->send_data(&g_session->stats.MatAddBroadCastCommSent, sizeof(uint64_t));
+    g_session->io.primary->send_data(&g_session->stats.MulCirCommSent, sizeof(uint64_t));
+    g_session->io.primary->send_data(&g_session->stats.ScalarMulCommSent, sizeof(uint64_t));
+    g_session->io.primary->send_data(&g_session->stats.SigmoidCommSent, sizeof(uint64_t));
+    g_session->io.primary->send_data(&g_session->stats.TanhCommSent, sizeof(uint64_t));
+    g_session->io.primary->send_data(&g_session->stats.SqrtCommSent, sizeof(uint64_t));
+    g_session->io.primary->send_data(&g_session->stats.NormaliseL2CommSent, sizeof(uint64_t));
   }
 #endif
 }
@@ -2177,10 +2177,10 @@ void ElemWiseSecretSharedVectorMult(int32_t size, intType *inArr,
 
 #ifdef LOG_LAYERWISE
   auto temp = TIMER_TILL_NOW;
-  BatchNormInMilliSec += temp;
+  g_session->stats.BatchNormInMilliSec += temp;
   uint64_t curComm;
   FIND_ALL_IO_TILL_NOW(curComm);
-  BatchNormCommSent += curComm;
+  g_session->stats.BatchNormCommSent += curComm;
 #endif
 
 #ifdef VERIFY_LAYERWISE

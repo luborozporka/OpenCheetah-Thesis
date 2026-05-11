@@ -1,8 +1,19 @@
 #include "session.h"
 
+#include <iostream>
 #include <utility>
 
 namespace sci {
+
+double computeAveragePower(uint64_t totalPower, int layerCount, const std::string& layerName) {
+  if (layerCount != 0) {
+    // Convert from micro watts to watts
+    return (static_cast<double>(totalPower) / 1000000.0) / layerCount;
+  } else {
+    std::cerr << "Error: " << layerName << " layer count is 0, can not divide by zero!" << std::endl;
+    return 0.0;
+  }
+}
 
 Session::Session(const Config &cfg_) : cfg(cfg_) {
   for (int i = 0; i < cfg.num_threads; i++) {

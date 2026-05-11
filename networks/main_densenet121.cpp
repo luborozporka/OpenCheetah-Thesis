@@ -2185,12 +2185,28 @@ int main(int argc, char **argv) {
   assert(party == SERVER || party == CLIENT);
 
   // Add by Eloise
-#ifdef LOG_LAYERWISE
   std::cout << "*******************" << std::endl;
   auto cur_start = CURRENT_TIME;
+  std::cout << "Current time of before StartComputation = " << cur_start
+            << std::endl;
+  std::cout << "*******************" << std::endl;
+
+  StartComputation();
+
+  // Add by Eloise
+  std::cout << "*******************" << std::endl;
+  cur_start = CURRENT_TIME;
+  std::cout << "Current time of after StartComputation = " << cur_start
+            << std::endl;
+  std::cout << "*******************" << std::endl;
+
+  // Add by Eloise
+#ifdef LOG_LAYERWISE
+  std::cout << "*******************" << std::endl;
+  cur_start = CURRENT_TIME;
   std::cout << "Current time of start protocol = " << cur_start
             << std::endl;
-  ProtocolStartTime = cur_start; // Added by Tanjina to calculate the duration/execution time
+  g_session->stats.ProtocolStartTime = cur_start; // Added by Tanjina to calculate the duration/execution time
   std::cout << "*******************" << std::endl;
 #endif
 
@@ -2202,7 +2218,7 @@ int main(int argc, char **argv) {
 
   std::cout << "STARTING ENERGY MEASUREMENT" << std::endl;
   // Pass the the Power usage file path to the Energy measurement library 
-  EnergyMeasurement measurement(power_usage_path);
+  EnergyMeasurement measurement(g_session->stats.power_usage_path);
 
 #endif
 
@@ -9737,22 +9753,6 @@ int main(int argc, char **argv) {
     Arr1DIdxRowM(tmp606, 1000, i0) = (party == SERVER) ? __tmp_in_tmp606 : 0;
   }
 
-  // Add by Eloise
-  std::cout << "*******************" << std::endl;
-  cur_start = CURRENT_TIME;
-  std::cout << "Current time of before StartComputation = " << cur_start
-            << std::endl;
-  std::cout << "*******************" << std::endl;
-
-  StartComputation();
-
-  // Add by Eloise
-  std::cout << "*******************" << std::endl;
-  cur_start = CURRENT_TIME;
-  std::cout << "Current time of after StartComputation = " << cur_start
-            << std::endl;
-  std::cout << "*******************" << std::endl;
-
   kIsSharedInput = false;
 
   uint64_t *tmp610 = make_array<uint64_t>(1, 112, 112, 64);
@@ -11968,7 +11968,7 @@ int main(int argc, char **argv) {
   auto cur_end = CURRENT_TIME;
   std::cout << "Current time of end protocol = " << cur_end
             << std::endl;
-  ProtocolEndTime = cur_end; // Added by Tanjina to calculate the duration/execution time
+  g_session->stats.ProtocolEndTime = cur_end; // Added by Tanjina to calculate the duration/execution time
   std::cout << "*******************" << std::endl;
 
 /** 
@@ -11979,24 +11979,24 @@ int main(int argc, char **argv) {
   std::cout << "STOPPING ENERGY MEASUREMENT" << std::endl;
   std::vector<std::pair<uint64_t, int64_t>> power_readings = measurement.stop();
   
-  ProtocolExecutionTime = (ProtocolEndTime - ProtocolStartTime); // Note-Tanjina: Keep in milliseconds, need to do the conversion later
+  g_session->stats.ProtocolExecutionTime = (g_session->stats.ProtocolEndTime - g_session->stats.ProtocolStartTime); // Note-Tanjina: Keep in milliseconds, need to do the conversion later
  
   for(int i = 0; i < power_readings.size(); ++i){
     uint64_t avgPower = power_readings[i].first; // Note-Tanjina: Keep in microwatts, need to do the conversion later
     int64_t timestampPower = power_readings[i].second;
 
-    std::cout << "SNNI Protcol Average Power: " << avgPower << " microwatts " << "Timestamp of the current power reading: " << timestampPower << " Protocol start Timestamp: " << ProtocolStartTime << " Protocol end Timestamp: " << ProtocolEndTime <<  " Protocol Execution time: " << ProtocolExecutionTime << " milliseconds" << std::endl;
+    std::cout << "SNNI Protcol Average Power: " << avgPower << " microwatts " << "Timestamp of the current power reading: " << timestampPower << " Protocol start Timestamp: " << g_session->stats.ProtocolStartTime << " Protocol end Timestamp: " << g_session->stats.ProtocolEndTime <<  " Protocol Execution time: " << g_session->stats.ProtocolExecutionTime << " milliseconds" << std::endl;
     
     std::vector<csv_column_type> protocol_output;
     protocol_output.push_back(i);
     protocol_output.push_back("DenseNet121");
     protocol_output.push_back(timestampPower);
     protocol_output.push_back(avgPower);
-    protocol_output.push_back(ProtocolStartTime);
-    protocol_output.push_back(ProtocolEndTime);
-    protocol_output.push_back(ProtocolExecutionTime);
+    protocol_output.push_back(g_session->stats.ProtocolStartTime);
+    protocol_output.push_back(g_session->stats.ProtocolEndTime);
+    protocol_output.push_back(g_session->stats.ProtocolExecutionTime);
 
-    writeProtocolCSV.insertDataRow(protocol_output);
+    g_session->stats.writeProtocolCSV.insertDataRow(protocol_output);
   }
 #endif
 

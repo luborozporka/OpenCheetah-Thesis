@@ -38,11 +38,11 @@ void initialize() {
   g_session = new sci::Session(cfg);
 
   g_session->io.primary->sync();
-  num_rounds = g_session->io.primary->num_rounds;
-  start_time = std::chrono::high_resolution_clock::now();
+  g_session->stats.num_rounds = g_session->io.primary->num_rounds;
+  g_session->stats.start_time = std::chrono::high_resolution_clock::now();
   for (int i = 0; i < num_threads; i++) {
     auto temp = g_session->io.ioArr[i]->counter;
-    comm_threads[i] = temp;
+    g_session->stats.comm_threads[i] = temp;
   }
 }
 
@@ -123,10 +123,10 @@ void AdjustScaleShr(uint64_t *A, uint64_t *B, int32_t I, int32_t J, int32_t bwA,
   auto temp = TIMER_TILL_NOW;
   uint64_t curComm;
   FIND_ALL_IO_TILL_NOW(curComm);
-  MatAddTimeInMilliSec += temp;
+  g_session->stats.MatAddTimeInMilliSec += temp;
   std::cout << "Time in sec for current AdjustScaleShr = " << (temp / 1000.0)
             << std::endl;
-  MatAddCommSent += curComm;
+  g_session->stats.MatAddCommSent += curComm;
 #endif
 }
 
@@ -180,10 +180,10 @@ void MatAdd(uint64_t *A, uint64_t *B, uint64_t *C, int32_t I, int32_t J,
   uint64_t curComm;
   FIND_ALL_IO_TILL_NOW(curComm);
   if (!subroutine) {
-    MatAddTimeInMilliSec += temp;
+    g_session->stats.MatAddTimeInMilliSec += temp;
     std::cout << "Time in sec for current MatAdd = " << (temp / 1000.0)
               << std::endl;
-    MatAddCommSent += curComm;
+    g_session->stats.MatAddCommSent += curComm;
   }
 #endif
 }
@@ -233,12 +233,12 @@ void MatAddBroadCast(uint64_t *A, uint64_t *B, uint64_t *C, int32_t I,
 
 #ifdef LOG_LAYERWISE
   auto temp = TIMER_TILL_NOW;
-  MatAddBroadCastTimeInMilliSec += temp;
+  g_session->stats.MatAddBroadCastTimeInMilliSec += temp;
   std::cout << "Time in sec for current MatAddBroadCast = " << (temp / 1000.0)
             << std::endl;
   uint64_t curComm;
   FIND_ALL_IO_TILL_NOW(curComm);
-  MatAddBroadCastCommSent += curComm;
+  g_session->stats.MatAddBroadCastCommSent += curComm;
 #endif
 }
 
@@ -276,12 +276,12 @@ void AddOrSubCir(uint64_t *A, uint64_t *B, uint64_t *C, int32_t I, int32_t J,
 
 #ifdef LOG_LAYERWISE
   auto temp = TIMER_TILL_NOW;
-  MatAddTimeInMilliSec += temp;
+  g_session->stats.MatAddTimeInMilliSec += temp;
   std::cout << "Time in sec for current AddOrSubCir = " << (temp / 1000.0)
             << std::endl;
   uint64_t curComm;
   FIND_ALL_IO_TILL_NOW(curComm);
-  MatAddCommSent += curComm;
+  g_session->stats.MatAddCommSent += curComm;
 #endif
 }
 
@@ -320,10 +320,10 @@ void ScalarMul(uint64_t *A, uint64_t *B, uint64_t *C, int32_t I, int32_t J,
   auto temp = TIMER_TILL_NOW;
   uint64_t curComm;
   FIND_ALL_IO_TILL_NOW(curComm);
-  ScalarMulTimeInMilliSec += temp;
+  g_session->stats.ScalarMulTimeInMilliSec += temp;
   std::cout << "Time in sec for current ScalarMul = " << (temp / 1000.0)
             << std::endl;
-  ScalarMulCommSent += curComm;
+  g_session->stats.ScalarMulCommSent += curComm;
 #endif
 }
 
@@ -385,10 +385,10 @@ void MulCir(int64_t I, int64_t J, int64_t shrA, int64_t shrB, int64_t demote,
   auto temp = TIMER_TILL_NOW;
   uint64_t curComm;
   FIND_ALL_IO_TILL_NOW(curComm);
-  MulCirTimeInMilliSec += temp;
+  g_session->stats.MulCirTimeInMilliSec += temp;
   std::cout << "Time in sec for current MulCir = " << (temp / 1000.0)
             << std::endl;
-  MulCirCommSent += curComm;
+  g_session->stats.MulCirCommSent += curComm;
 #endif
 
 #ifdef VERIFY_LAYERWISE
@@ -514,8 +514,8 @@ void MatMul(int64_t I, int64_t K, int64_t J, int64_t shrA, int64_t shrB,
   auto temp = TIMER_TILL_NOW;
   uint64_t curComm;
   FIND_ALL_IO_TILL_NOW(curComm);
-  MatMulCommSent += curComm;
-  MatMulTimeInMilliSec += temp;
+  g_session->stats.MatMulCommSent += curComm;
+  g_session->stats.MatMulTimeInMilliSec += temp;
   std::cout << "Time in sec for current MatMul = " << (temp / 1000.0)
             << std::endl;
 #endif
@@ -632,12 +632,12 @@ void Sigmoid(int64_t I, int64_t J, int64_t scale_in, int64_t scale_out,
 
 #ifdef LOG_LAYERWISE
   auto temp = TIMER_TILL_NOW;
-  SigmoidTimeInMilliSec += temp;
+  g_session->stats.SigmoidTimeInMilliSec += temp;
   std::cout << "Time in sec for current Sigmoid = " << (temp / 1000.0)
             << std::endl;
   uint64_t curComm;
   FIND_ALL_IO_TILL_NOW(curComm);
-  SigmoidCommSent += curComm;
+  g_session->stats.SigmoidCommSent += curComm;
 #endif
 
 #ifdef VERIFY_LAYERWISE
@@ -705,12 +705,12 @@ void TanH(int64_t I, int64_t J, int64_t scale_in, int64_t scale_out,
   }
 #ifdef LOG_LAYERWISE
   auto temp = TIMER_TILL_NOW;
-  TanhTimeInMilliSec += temp;
+  g_session->stats.TanhTimeInMilliSec += temp;
   std::cout << "Time in sec for current TanH = " << (temp / 1000.0)
             << std::endl;
   uint64_t curComm;
   FIND_ALL_IO_TILL_NOW(curComm);
-  TanhCommSent += curComm;
+  g_session->stats.TanhCommSent += curComm;
 #endif
 
 #ifdef VERIFY_LAYERWISE
@@ -776,12 +776,12 @@ void Sqrt(int64_t I, int64_t J, int64_t scale_in, int64_t scale_out,
   }
 #ifdef LOG_LAYERWISE
   auto temp = TIMER_TILL_NOW;
-  SqrtTimeInMilliSec += temp;
+  g_session->stats.SqrtTimeInMilliSec += temp;
   std::cout << "Time in sec for current Sqrt = " << (temp / 1000.0)
             << std::endl;
   uint64_t curComm;
   FIND_ALL_IO_TILL_NOW(curComm);
-  SqrtCommSent += curComm;
+  g_session->stats.SqrtCommSent += curComm;
 #endif
 
 #ifdef VERIFY_LAYERWISE
@@ -841,12 +841,12 @@ void ArgMax(uint64_t *A, int32_t I, int32_t J, int32_t bwA, int32_t bw_index,
 
 #ifdef LOG_LAYERWISE
   auto temp = TIMER_TILL_NOW;
-  ArgMaxTimeInMilliSec += temp;
+  g_session->stats.ArgMaxTimeInMilliSec += temp;
   std::cout << "Time in sec for current ArgMax = " << (temp / 1000.0)
             << std::endl;
   uint64_t curComm;
   FIND_ALL_IO_TILL_NOW(curComm);
-  ArgMaxCommSent += curComm;
+  g_session->stats.ArgMaxCommSent += curComm;
 #endif
 }
 
@@ -872,12 +872,12 @@ void MaxPool2D(uint64_t *A, int32_t I, int32_t J, int32_t bwA, int32_t bwB,
 
 #ifdef LOG_LAYERWISE
   auto temp = TIMER_TILL_NOW;
-  MaxpoolTimeInMilliSec += temp;
+  g_session->stats.MaxpoolTimeInMilliSec += temp;
   std::cout << "Time in sec for current MaxPool = " << (temp / 1000.0)
             << std::endl;
   uint64_t curComm;
   FIND_ALL_IO_TILL_NOW(curComm);
-  MaxpoolCommSent += curComm;
+  g_session->stats.MaxpoolCommSent += curComm;
 #endif
 }
 
@@ -1036,8 +1036,8 @@ void Convolution(int32_t N, int32_t H, int32_t W, int32_t CIN, int32_t HF,
   auto temp = TIMER_TILL_NOW;
   uint64_t curComm;
   FIND_ALL_IO_TILL_NOW(curComm);
-  ConvCommSent += curComm;
-  ConvTimeInMilliSec += temp;
+  g_session->stats.ConvCommSent += curComm;
+  g_session->stats.ConvTimeInMilliSec += temp;
   std::cout << "Time in sec for current Conv = " << (temp / 1000.0)
             << std::endl;
 #endif
@@ -1111,12 +1111,12 @@ void ReLU(uint64_t *A, uint64_t *B, int32_t I, int32_t J, int32_t bwA,
 
 #ifdef LOG_LAYERWISE
   auto temp = TIMER_TILL_NOW;
-  ReluTimeInMilliSec += temp;
+  g_session->stats.ReluTimeInMilliSec += temp;
   std::cout << "Time in sec for current ReLU = " << (temp / 1000.0)
             << std::endl;
   uint64_t curComm;
   FIND_ALL_IO_TILL_NOW(curComm);
-  ReluCommSent += curComm;
+  g_session->stats.ReluCommSent += curComm;
 #endif
 }
 
@@ -1189,12 +1189,12 @@ void BNorm(uint64_t *A, uint64_t *BNW, uint64_t *BNB, uint64_t *B, int32_t I,
 
 #ifdef LOG_LAYERWISE
   auto temp = TIMER_TILL_NOW;
-  BatchNormInMilliSec += temp;
+  g_session->stats.BatchNormInMilliSec += temp;
   std::cout << "Time in sec for current BatchNorm = " << (temp / 1000.0)
             << std::endl;
   uint64_t curComm;
   FIND_ALL_IO_TILL_NOW(curComm);
-  BatchNormCommSent += curComm;
+  g_session->stats.BatchNormCommSent += curComm;
 #endif
 }
 
@@ -1250,12 +1250,12 @@ void NormaliseL2(uint64_t *A, uint64_t *B, int32_t I, int32_t J, int32_t bwA,
 
 #ifdef LOG_LAYERWISE
   auto temp = TIMER_TILL_NOW;
-  NormaliseL2TimeInMilliSec += temp;
+  g_session->stats.NormaliseL2TimeInMilliSec += temp;
   std::cout << "Time in sec for current NormaliseL2 = " << (temp / 1000.0)
             << std::endl;
   uint64_t curComm;
   FIND_ALL_IO_TILL_NOW(curComm);
-  NormaliseL2CommSent += curComm;
+  g_session->stats.NormaliseL2CommSent += curComm;
 #endif
 }
 

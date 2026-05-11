@@ -2271,6 +2271,7 @@ int main(int argc, char **argv) {
   amap.parse(argc, argv);
 
   assert(party == SERVER || party == CLIENT);
+  StartComputation();
 
 // Add by Tanjina
 #ifdef LOG_LAYERWISE
@@ -2278,7 +2279,7 @@ int main(int argc, char **argv) {
   auto cur_start = CURRENT_TIME;
   std::cout << "Current time of start protocol = " << cur_start
             << std::endl;
-  ProtocolStartTime = cur_start; // Added by Tanjina to calculate the duration/execution time
+  g_session->stats.ProtocolStartTime = cur_start; // Added by Tanjina to calculate the duration/execution time
   std::cout << "*******************" << std::endl;
 #endif
 
@@ -2290,7 +2291,7 @@ int main(int argc, char **argv) {
 
   std::cout << "STARTING ENERGY MEASUREMENT" << std::endl;
   // Pass the the Power usage file path to the Energy measurement library 
-  EnergyMeasurement measurement(power_usage_path);
+  EnergyMeasurement measurement(g_session->stats.power_usage_path);
 
 #endif
 
@@ -5733,7 +5734,6 @@ int main(int argc, char **argv) {
     Arr1DIdxRowM(tmp251, (int32_t)1001, i0) =
         (party == SERVER) ? __tmp_in_tmp251 : 0;
   }
-  StartComputation();
 
   int64_t *tmp252 = make_array<int64_t>((int32_t)4, (int32_t)2);
   Arr2DIdxRowM(tmp252, (int32_t)4, (int32_t)2, (int64_t)0, (int64_t)0) =
@@ -7289,7 +7289,7 @@ int main(int argc, char **argv) {
   auto cur_end = CURRENT_TIME;
   std::cout << "Current time of end protocol = " << cur_end
             << std::endl;
-  ProtocolEndTime = cur_end; // Added by Tanjina to calculate the duration/execution time
+  g_session->stats.ProtocolEndTime = cur_end; // Added by Tanjina to calculate the duration/execution time
   std::cout << "*******************" << std::endl;
 
 /** 
@@ -7300,24 +7300,24 @@ int main(int argc, char **argv) {
   std::cout << "STOPPING ENERGY MEASUREMENT" << std::endl;
   std::vector<std::pair<uint64_t, int64_t>> power_readings = measurement.stop();
   
-  ProtocolExecutionTime = (ProtocolEndTime - ProtocolStartTime); // Note-Tanjina: Keep in milliseconds, need to do the conversion later
+  g_session->stats.ProtocolExecutionTime = (g_session->stats.ProtocolEndTime - g_session->stats.ProtocolStartTime); // Note-Tanjina: Keep in milliseconds, need to do the conversion later
  
   for(int i = 0; i < power_readings.size(); ++i){
     uint64_t avgPower = power_readings[i].first; // Note-Tanjina: Keep in microwatts, need to do the conversion later
     int64_t timestampPower = power_readings[i].second;
 
-    std::cout << "SNNI Protcol Average Power: " << avgPower << " microwatts " << "Timestamp of the current power reading: " << timestampPower << " Protocol start Timestamp: " << ProtocolStartTime << " Protocol end Timestamp: " << ProtocolEndTime <<  " Protocol Execution time: " << ProtocolExecutionTime << " milliseconds" << std::endl;
+    std::cout << "SNNI Protcol Average Power: " << avgPower << " microwatts " << "Timestamp of the current power reading: " << timestampPower << " Protocol start Timestamp: " << g_session->stats.ProtocolStartTime << " Protocol end Timestamp: " << g_session->stats.ProtocolEndTime <<  " Protocol Execution time: " << g_session->stats.ProtocolExecutionTime << " milliseconds" << std::endl;
     
     std::vector<csv_column_type> protocol_output;
     protocol_output.push_back(i);
     protocol_output.push_back("ResNet50");
     protocol_output.push_back(timestampPower);
     protocol_output.push_back(avgPower);
-    protocol_output.push_back(ProtocolStartTime);
-    protocol_output.push_back(ProtocolEndTime);
-    protocol_output.push_back(ProtocolExecutionTime);
+    protocol_output.push_back(g_session->stats.ProtocolStartTime);
+    protocol_output.push_back(g_session->stats.ProtocolEndTime);
+    protocol_output.push_back(g_session->stats.ProtocolExecutionTime);
 
-    writeProtocolCSV.insertDataRow(protocol_output);
+    g_session->stats.writeProtocolCSV.insertDataRow(protocol_output);
   }
 #endif
 
