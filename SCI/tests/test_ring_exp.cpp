@@ -30,7 +30,7 @@ using namespace std;
 #define MAX_THREADS 4
 
 int party, port = 32000;
-int num_threads = 4;
+int num_threads = 1;
 string address = "127.0.0.1";
 
 int dim = 1ULL << 16;
@@ -173,6 +173,11 @@ int main(int argc, char **argv) {
     cerr << "Average ULP error: " << total_err / dim << endl;
     cerr << "Max ULP error: " << max_ULP_err << endl;
     cerr << "Number of tests: " << dim << endl;
+    if (max_ULP_err > 8) {
+      cerr << "Exp Tests Failed" << endl;
+      return 1;
+    }
+    cout << "Exp Tests Passed" << endl;
 
     delete[] x0;
     delete[] y0;

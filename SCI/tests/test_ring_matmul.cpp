@@ -21,6 +21,7 @@ SOFTWARE.
 
 #include "LinearOT/linear-ot.h"
 #include "utils/emp-tool.h"
+#include <cstdlib>
 #include <iostream>
 
 using namespace sci;
@@ -128,14 +129,23 @@ void test_matrix_multiplication(uint64_t *inA, uint64_t *inB,
     }
     prod->matmul_cleartext(dim1, dim2, dim3, inA0, inB0, res, ::accumulate);
 
+    bool pass = true;
     for (int i = 0; i < dim; i++) {
       if (signed_arithmetic) {
-        assert(signed_val(res[i] >> extra_bits, bwC) ==
-               signed_val(outC[i] + outC0[i], bwC));
+        if (signed_val(res[i] >> extra_bits, bwC) !=
+            signed_val(outC[i] + outC0[i], bwC)) {
+          pass = false;
+        }
       } else {
-        assert(unsigned_val(res[i] >> extra_bits, bwC) ==
-               unsigned_val(outC[i] + outC0[i], bwC));
+        if (unsigned_val(res[i] >> extra_bits, bwC) !=
+            unsigned_val(outC[i] + outC0[i], bwC)) {
+          pass = false;
+        }
       }
+    }
+    if (!pass) {
+      cerr << (signed_arithmetic ? "SMult" : "UMult") << " Tests Failed" << endl;
+      std::exit(1);
     }
     if (signed_arithmetic)
       cout << "SMult Tests Passed" << endl;
@@ -154,11 +164,14 @@ int main(int argc, char **argv) {
   ArgMapping amap;
   amap.arg("r", party, "Role of party: ALICE = 1; BOB = 2");
   amap.arg("p", port, "Port Number");
+  amap.arg("d1", dim1, "Matrix A rows");
+  amap.arg("d2", dim2, "Matrix A columns / Matrix B rows");
+  amap.arg("d3", dim3, "Matrix B columns");
   amap.arg("ip", address, "IP Address of server (ALICE)");
 
   amap.parse(argc, argv);
 
-  io = new NetIO(party == 1 ? nullptr : "127.0.0.1", port);
+  io = new NetIO(party == 1 ? nullptr : address.c_str(), port);
   otpack = new OTPack<NetIO>(io, party);
 
   prod = new LinearOT(party, io, otpack);

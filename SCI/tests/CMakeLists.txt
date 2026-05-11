@@ -21,10 +21,13 @@ add_test_OT(sqrt)
 add_test_OT(aux_protocols)
 add_test_OT(maxpool)
 
+# conv-HE and elemwise_prod-HE were commented out,
+# since they use (gemini::HomConv2DSSField / gemini::HomLinear)
+# that are no longer available in this repository
 add_test_HE(relu)
 add_test_HE(maxpool)
 add_test_HE(argmax)
-add_test_HE(conv)
+# add_test_HE(conv)
 add_test_HE(fc)
-add_test_HE(elemwise_prod)
+# add_test_HE(elemwise_prod)
 add_test_HE(truncation)

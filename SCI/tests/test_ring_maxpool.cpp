@@ -145,7 +145,7 @@ int main(int argc, char **argv) {
   }
   long long t = time_from(start);
   int64_t c1 = ioArr[0]->counter;
-  printf("max pool on size %d over 2^%d send %lld bits\n", num_cols, l, (c1 - c0) * 8 / num_rows);
+  printf("max pool on size %d over 2^%d send %ld bits\n", num_cols, l, (c1 - c0) * 8 / num_rows);
 
   /************** Verification ****************/
   /********************************************/
@@ -175,7 +175,8 @@ int main(int argc, char **argv) {
       }
 
       if (zi[i] != maxpool_output) {
-        assert(0 && "MaxPool output is incorrect");
+        cerr << "MaxPool output is incorrect" << endl;
+        return 1;
       }
     }
     delete[] xi;

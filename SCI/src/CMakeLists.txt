@@ -36,6 +36,10 @@ add_library(SCI-HE library_fixed_uniform.cpp session.cpp globals.cpp energy_cons
 target_link_libraries(SCI-HE PUBLIC SCI-common SCI-LinearHE SCI-BuildingBlocks SCI-Math Eigen3::Eigen)
 target_compile_definitions(SCI-HE PUBLIC SCI_HE=1 SCI_CHEETAH=0)
 
+add_library(SCI-OT session.cpp globals.cpp energy_consumption.cpp csv_writer.cpp)
+target_link_libraries(SCI-OT PUBLIC SCI-common SCI-LinearOT SCI-BuildingBlocks SCI-Math Eigen3::Eigen)
+target_compile_definitions(SCI-OT PUBLIC SCI_OT=1 USE_CHEETAH=0)
+
 # Cheetah releated
 add_subdirectory(cheetah)
 add_library(SCI-Cheetah library_fixed_uniform_cheetah.cpp library_fixed_uniform.cpp library_fixed.cpp session.cpp globals.cpp cleartext_library_fixed.cpp energy_consumption.cpp csv_writer.cpp)
@@ -44,5 +48,6 @@ target_compile_definitions(SCI-Cheetah PUBLIC SCI_OT=1 USE_CHEETAH=1)
 
 if (OPENMP_FOUND)
     target_link_libraries(SCI-HE PUBLIC OpenMP::OpenMP_CXX)
+    target_link_libraries(SCI-OT PUBLIC OpenMP::OpenMP_CXX)
     target_link_libraries(SCI-Cheetah PUBLIC OpenMP::OpenMP_CXX)
 endif()

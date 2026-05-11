@@ -1,1 +1,6 @@
-/usr/local/Cellar/libomp/15.0.6/include/omp.h
+#ifndef OPENCHEETAH_OMP_WRAPPER_H_
+#define OPENCHEETAH_OMP_WRAPPER_H_
+
+#include_next <omp.h>
+
+#endif  // OPENCHEETAH_OMP_WRAPPER_H_

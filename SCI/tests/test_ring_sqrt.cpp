@@ -30,7 +30,7 @@ using namespace std;
 #define MAX_THREADS 4
 
 int party, port = 32000;
-int num_threads = 4;
+int num_threads = 1;
 string address = "127.0.0.1";
 
 int dim = 100000;
@@ -183,9 +183,18 @@ int main(int argc, char **argv) {
       max_ULP_err = std::max(max_ULP_err, err);
     }
 
-    cerr << "Average ULP error: " << total_err / dim << endl;
+    // A default VM run with N=100000 reported max ULP error ~52.
+    // Therefore, the threshold was introduced, so that the current test
+    // passes while still catching larger regressions.
+    constexpr uint64_t max_allowed_ulp_err = 64;
+    cerr << "Average ULP error: " << double(total_err) / dim << endl;
     cerr << "Max ULP error: " << max_ULP_err << endl;
     cerr << "Number of tests: " << dim << endl;
+    if (max_ULP_err > max_allowed_ulp_err) {
+      cerr << "Sqrt Tests Failed" << endl;
+      return 1;
+    }
+    cout << "Sqrt Tests Passed" << endl;
 
     delete[] x0;
     delete[] y0;

@@ -34,6 +34,7 @@ uint64_t maskB = (bwB == 64 ? -1 : ((1ULL << bwB) - 1));
 
 // vars
 int party, port = 32000;
+string address = "127.0.0.1";
 NetIO *io;
 OTPack<NetIO> *otpack;
 XTProtocol *ext;
@@ -110,9 +111,19 @@ void s_ext() {
 }
 
 int main(int argc, char **argv) {
-  party = atoi(argv[1]);
+  ArgMapping amap;
+  amap.arg("r", party, "Role of party: ALICE = 1; BOB = 2");
+  amap.arg("p", port, "Port Number");
+  amap.arg("N", dim, "Number of extension operations");
+  amap.arg("l", bwA, "Input bitlength");
+  amap.arg("L", bwB, "Output bitlength");
+  amap.arg("ip", address, "IP Address of server (ALICE)");
+  amap.parse(argc, argv);
 
-  io = new NetIO(party == 1 ? nullptr : "127.0.0.1", port);
+  maskA = (bwA == 64 ? -1 : ((1ULL << bwA) - 1));
+  maskB = (bwB == 64 ? -1 : ((1ULL << bwB) - 1));
+
+  io = new NetIO(party == 1 ? nullptr : address.c_str(), port);
   otpack = new OTPack<NetIO>(io, party);
   ext = new XTProtocol(party, io, otpack);
 
@@ -120,4 +131,8 @@ int main(int argc, char **argv) {
   z_ext();
   cout << "<><><><> Signed Extension <><><><>" << endl;
   s_ext();
+
+  delete ext;
+  delete otpack;
+  delete io;
 }

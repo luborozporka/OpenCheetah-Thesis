@@ -41,7 +41,7 @@ int main(int argc, char **argv) {
 
   amap.parse(argc, argv);
 
-  NetIO *io = new NetIO(party == ALICE ? nullptr : "127.0.0.1", port);
+  NetIO *io = new NetIO(party == ALICE ? nullptr : address.c_str(), port);
   uint64_t magnitude_bound = (1 << (bitlength - 3));
   uint64_t mask_l = -1ULL;
   if (bitlength != 64) {
@@ -120,8 +120,10 @@ int main(int argc, char **argv) {
     std::cout << "ArgMax Protocol: " << argmax_output_protocol_arg[0]
               << std::endl;
 
-    assert(argmax_output_actual[0] == argmax_output_protocol[0] &&
-           "ArgMax output is incorrect");
+    if (argmax_output_actual[0] != argmax_output_protocol[0]) {
+      cerr << "ArgMax output is incorrect" << endl;
+      return 1;
+    }
 
     cout << "ArgMax answer is: " << GREEN << "CORRECT!" << RESET << endl;
     break;

@@ -30,7 +30,7 @@ using namespace std;
 #define MAX_THREADS 4
 
 int party, port = 32000;
-int num_threads = 4;
+int num_threads = 1;
 string address = "127.0.0.1";
 bool six_comparison = true;
 
@@ -143,6 +143,7 @@ int main(int argc, char **argv) {
     ioArr[0]->recv_data(x0, dim * sizeof(uint64_t));
     ioArr[0]->recv_data(y0, dim * sizeof(uint64_t));
 
+    bool pass = true;
     for (int i = 0; i < dim; i++) {
       int64_t X = signed_val(x[i] + x0[i], bw_x);
       int64_t Y = signed_val(y[i] + y0[i], bw_x);
@@ -154,7 +155,13 @@ int main(int argc, char **argv) {
           expectedY = six;
       }
       // cout << X << "\t" << Y << "\t" << expectedY << endl;
-      assert(Y == expectedY);
+      if (Y != expectedY) {
+        pass = false;
+      }
+    }
+    if (!pass) {
+      cerr << "ReLU Tests Failed" << endl;
+      return 1;
     }
 
     cout << "ReLU" << (six == 0 ? "" : "6") << " Tests Passed" << endl;

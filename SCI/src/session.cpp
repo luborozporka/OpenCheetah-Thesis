@@ -34,7 +34,8 @@ Session::Session(const Config &cfg_) : cfg(cfg_) {
   io.prg128 = new sci::PRG128();
 
 #ifdef SCI_OT
-  lin.mult = new LinearOT(cfg.party, io.primary, io.otpack);
+  lin.multArr[0] = new LinearOT(cfg.party, io.primary, io.otpack);
+  lin.mult = lin.multArr[0];
   lin.truncation = new Truncation(cfg.party, io.primary, io.otpack);
   lin.multUniform =
       new MatMulUniform<sci::NetIO, intType, sci::IKNP<sci::NetIO>>(
@@ -82,8 +83,9 @@ Session::Session(const Config &cfg_) : cfg(cfg_) {
       nl.maxpoolArr[i] = new MaxPoolProtocol<sci::NetIO, intType>(
           3 - cfg.party, RING, io.ioArr[i], cfg.bitlength, MILL_PARAM, 0,
           io.otpackArr[i], nl.reluArr[i]);
-      lin.multArr[i] =
-          new LinearOT(3 - cfg.party, io.ioArr[i], io.otpackArr[i]);
+      if (lin.multArr[i] == nullptr) {
+        lin.multArr[i] = new LinearOT(3 - cfg.party, io.ioArr[i], io.otpackArr[i]);
+      }
       lin.truncationArr[i] =
           new Truncation(3 - cfg.party, io.ioArr[i], io.otpackArr[i]);
     } else {
@@ -93,7 +95,9 @@ Session::Session(const Config &cfg_) : cfg(cfg_) {
       nl.maxpoolArr[i] = new MaxPoolProtocol<sci::NetIO, intType>(
           cfg.party, RING, io.ioArr[i], cfg.bitlength, MILL_PARAM, 0,
           io.otpackArr[i], nl.reluArr[i]);
-      lin.multArr[i] = new LinearOT(cfg.party, io.ioArr[i], io.otpackArr[i]);
+      if (lin.multArr[i] == nullptr) {
+        lin.multArr[i] = new LinearOT(cfg.party, io.ioArr[i], io.otpackArr[i]);
+      }
       lin.truncationArr[i] =
           new Truncation(cfg.party, io.ioArr[i], io.otpackArr[i]);
     }
@@ -131,6 +135,9 @@ Session::Session(const Config &cfg_) : cfg(cfg_) {
                                     io.otpackArr[i], lin.auxArr[i]);
       lin.mathArr[i] =
           new MathFunctions(3 - cfg.party, io.ioArr[i], io.otpackArr[i]);
+      if (lin.multArr[i] == nullptr) {
+        lin.multArr[i] = new LinearOT(3 - cfg.party, io.ioArr[i], io.otpackArr[i]);
+      }
     } else {
       lin.auxArr[i] =
           new AuxProtocols(cfg.party, io.ioArr[i], io.otpackArr[i]);
@@ -140,6 +147,9 @@ Session::Session(const Config &cfg_) : cfg(cfg_) {
                                     lin.auxArr[i]);
       lin.mathArr[i] =
           new MathFunctions(cfg.party, io.ioArr[i], io.otpackArr[i]);
+      if (lin.multArr[i] == nullptr) {
+        lin.multArr[i] = new LinearOT(cfg.party, io.ioArr[i], io.otpackArr[i]);
+      }
     }
   }
   lin.aux = lin.auxArr[0];
