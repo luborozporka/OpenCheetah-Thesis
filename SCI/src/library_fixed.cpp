@@ -27,72 +27,28 @@ SOFTWARE.
 using namespace sci;
 
 void initialize() {
-  assert(num_threads <= MAX_THREADS);
+  if (g_session != nullptr) return;
+  sci::Config cfg;
+  cfg.party = party;
+  cfg.address = address;
+  cfg.port = port;
+  cfg.num_threads = num_threads;
+  cfg.bitlength = bitlength;
+  cfg.prime_mod = prime_mod;
+  g_session = new sci::Session(cfg);
 
-  for (int i = 0; i < num_threads; i++) {
-    ioArr[i] =
-        new sci::NetIO(party == sci::ALICE ? nullptr : address.c_str(), port + i);
-    if (i & 1) {
-      otpackArr[i] = new OTPack<sci::NetIO>(ioArr[i], 3 - party);
-    } else {
-      otpackArr[i] = new OTPack<sci::NetIO>(ioArr[i], party);
-    }
-  }
-  io = ioArr[0];
-  otpack = otpackArr[0];
-
-  for (int i = 0; i < num_threads; i++) {
-    if (i & 1) {
-      auxArr[i] = new AuxProtocols(3 - party, ioArr[i], otpackArr[i]);
-      truncationArr[i] =
-          new Truncation(3 - party, ioArr[i], otpackArr[i], auxArr[i]);
-      xtArr[i] = new XTProtocol(3 - party, ioArr[i], otpackArr[i], auxArr[i]);
-      multArr[i] = new LinearOT(3 - party, ioArr[i], otpackArr[i]);
-      mathArr[i] = new MathFunctions(3 - party, ioArr[i], otpackArr[i]);
-    } else {
-      auxArr[i] = new AuxProtocols(party, ioArr[i], otpackArr[i]);
-      truncationArr[i] =
-          new Truncation(party, ioArr[i], otpackArr[i], auxArr[i]);
-      xtArr[i] = new XTProtocol(party, ioArr[i], otpackArr[i], auxArr[i]);
-      multArr[i] = new LinearOT(party, ioArr[i], otpackArr[i]);
-      mathArr[i] = new MathFunctions(party, ioArr[i], otpackArr[i]);
-    }
-  }
-  aux = auxArr[0];
-  truncation = truncationArr[0];
-  xt = xtArr[0];
-  mult = multArr[0];
-  math = mathArr[0];
-
-  io->sync();
-  num_rounds = io->num_rounds;
+  g_session->io.primary->sync();
+  num_rounds = g_session->io.primary->num_rounds;
   start_time = std::chrono::high_resolution_clock::now();
   for (int i = 0; i < num_threads; i++) {
-    auto temp = ioArr[i]->counter;
+    auto temp = g_session->io.ioArr[i]->counter;
     comm_threads[i] = temp;
   }
 }
 
 void finalize() {
-  for (int i = 0; i < num_threads; i++) {
-    delete ioArr[i];
-#if !USE_CHEETAH
-    delete otpackArr[i];
-#endif
-    delete auxArr[i];
-    delete xtArr[i];
-    delete truncationArr[i];
-    delete multArr[i];
-    delete mathArr[i];
-  }
-#if USE_CHEETAH
-  // TODO(juhou): fix pre_ot_file
-  delete otpackArr[0];
-#endif
-
-#if USE_CHEETAH
-  delete cheetah_linear;
-#endif
+  delete g_session;
+  g_session = nullptr;
 }
 
 void reconstruct(int64_t *A, int64_t *B, int32_t I, int32_t J, int bwA) {
@@ -105,12 +61,12 @@ void reconstruct(int64_t *A, int64_t *B, int32_t I, int32_t J, int bwA) {
 void reconstruct(int dim, uint64_t *x, uint64_t *y, int bw_x) {
   uint64_t mask = (bw_x == 64 ? -1 : ((1ULL << bw_x) - 1));
   if (party == sci::ALICE) {
-    io->send_data(x, dim * sizeof(uint64_t));
+    g_session->io.primary->send_data(x, dim * sizeof(uint64_t));
     for (int i = 0; i < dim; i++) {
       y[i] = 0;
     }
   } else {
-    io->recv_data(y, dim * sizeof(uint64_t));
+    g_session->io.primary->recv_data(y, dim * sizeof(uint64_t));
     for (int i = 0; i < dim; i++) {
       y[i] = (y[i] + x[i]) & mask;
     }
@@ -158,9 +114,9 @@ void AdjustScaleShr(uint64_t *A, uint64_t *B, int32_t I, int32_t J, int32_t bwA,
 
   int32_t dim = I * J;
 #ifdef DIV_RESCALING
-  truncation->div_pow2(dim, A, B, scale, bwA, true);
+  g_session->lin.truncation->div_pow2(dim, A, B, scale, bwA, true);
 #else
-  truncation->truncate(dim, A, B, scale, bwA, true);
+  g_session->lin.truncation->truncate(dim, A, B, scale, bwA, true);
 #endif
 
 #ifdef LOG_LAYERWISE
@@ -193,15 +149,15 @@ void MatAdd(uint64_t *A, uint64_t *B, uint64_t *C, int32_t I, int32_t J,
   uint64_t *tmpB = new uint64_t[dim];
   uint64_t *tmpC = new uint64_t[dim];
 
-  xt->s_extend(dim, A, tmpA, bwA, bwTemp);
-  xt->s_extend(dim, B, tmpB, bwB, bwTemp);
+  g_session->lin.xt->s_extend(dim, A, tmpA, bwA, bwTemp);
+  g_session->lin.xt->s_extend(dim, B, tmpB, bwB, bwTemp);
 
 #ifdef DIV_RESCALING
-  truncation->div_pow2(dim, tmpA, A, shrA + shrC, bwTemp, true);
-  truncation->div_pow2(dim, tmpB, B, shrB + shrC, bwTemp, true);
+  g_session->lin.truncation->div_pow2(dim, tmpA, A, shrA + shrC, bwTemp, true);
+  g_session->lin.truncation->div_pow2(dim, tmpB, B, shrB + shrC, bwTemp, true);
 #else
-  truncation->truncate(dim, tmpA, A, shrA + shrC, bwTemp, true);
-  truncation->truncate(dim, tmpB, B, shrB + shrC, bwTemp, true);
+  g_session->lin.truncation->truncate(dim, tmpA, A, shrA + shrC, bwTemp, true);
+  g_session->lin.truncation->truncate(dim, tmpB, B, shrB + shrC, bwTemp, true);
 #endif
 
   for (int i = 0; i < dim; i++) {
@@ -209,11 +165,11 @@ void MatAdd(uint64_t *A, uint64_t *B, uint64_t *C, int32_t I, int32_t J,
   }
 
 #ifdef DIV_RESCALING
-  truncation->div_pow2(dim, tmpC, C, demote, bwTemp, true);
+  g_session->lin.truncation->div_pow2(dim, tmpC, C, demote, bwTemp, true);
 #else
-  truncation->truncate(dim, tmpC, C, demote, bwTemp, true);
+  g_session->lin.truncation->truncate(dim, tmpC, C, demote, bwTemp, true);
 #endif
-  aux->reduce(dim, C, C, bwTemp, bwC);
+  g_session->lin.aux->reduce(dim, C, C, bwTemp, bwC);
 
   delete[] tmpA;
   delete[] tmpB;
@@ -298,11 +254,11 @@ void AddOrSubCir(uint64_t *A, uint64_t *B, uint64_t *C, int32_t I, int32_t J,
 
   uint64_t *tmpB = new uint64_t[dim];
 
-  xt->s_extend(J, B, tmpB, bwB, bwTemp);
+  g_session->lin.xt->s_extend(J, B, tmpB, bwB, bwTemp);
 #ifdef DIV_RESCALING
-  truncation->div_pow2(J, tmpB, B, shrB + shrC, bwTemp, true);
+  g_session->lin.truncation->div_pow2(J, tmpB, B, shrB + shrC, bwTemp, true);
 #else
-  truncation->truncate(J, tmpB, B, shrB + shrC, bwTemp, true);
+  g_session->lin.truncation->truncate(J, tmpB, B, shrB + shrC, bwTemp, true);
 #endif
   for (int i = 0; i < I; i++) {
     for (int j = 0; j < J; j++) {
@@ -341,20 +297,20 @@ void ScalarMul(uint64_t *A, uint64_t *B, uint64_t *C, int32_t I, int32_t J,
   uint64_t maskTemp = (bwTemp == 64 ? -1 : ((1ULL << bwTemp) - 1));
   uint64_t *tmpC = new uint64_t[I * J];
 
-  xt->s_extend(I * J, B, tmpC, bwB, bwTemp);
+  g_session->lin.xt->s_extend(I * J, B, tmpC, bwB, bwTemp);
   for (int i = 0; i < I * J; i++) {
     C[i] = (tmpC[i] * A[0]) & maskTemp;
   }
 #ifdef DIV_RESCALING
-  truncation->div_pow2(I * J, C, tmpC, shift, bwTemp, true);
-  aux->reduce(I * J, tmpC, C, bwTemp, bwC);
+  g_session->lin.truncation->div_pow2(I * J, C, tmpC, shift, bwTemp, true);
+  g_session->lin.aux->reduce(I * J, tmpC, C, bwTemp, bwC);
 #else
   if ((bwTemp - bwC) >= shift) {
-    truncation->truncate_and_reduce(I * J, C, tmpC, shift, bwTemp);
-    aux->reduce(I * J, tmpC, C, bwTemp - shift, bwC);
+    g_session->lin.truncation->truncate_and_reduce(I * J, C, tmpC, shift, bwTemp);
+    g_session->lin.aux->reduce(I * J, tmpC, C, bwTemp - shift, bwC);
   } else {
-    truncation->truncate(I * J, C, tmpC, shift, bwTemp, true);
-    aux->reduce(I * J, tmpC, C, bwTemp, bwC);
+    g_session->lin.truncation->truncate(I * J, C, tmpC, shift, bwTemp, true);
+    g_session->lin.aux->reduce(I * J, tmpC, C, bwTemp, bwC);
   }
 #endif
 
@@ -378,18 +334,18 @@ void MulCir_thread(int32_t tid, uint64_t *A, uint64_t *B, uint64_t *C,
 
   uint64_t *tmpC = new uint64_t[dim];
 
-  multArr[tid]->hadamard_product(dim, A, B, C, bwA, bwB, bwA + bwB, true, true,
+  g_session->lin.multArr[tid]->hadamard_product(dim, A, B, C, bwA, bwB, bwA + bwB, true, true,
                                  MultMode::None);
 #ifdef DIV_RESCALING
-  truncationArr[tid]->div_pow2(dim, C, tmpC, shift, bwA + bwB, true);
-  auxArr[tid]->reduce(dim, tmpC, C, bwA + bwB, bwC);
+  g_session->lin.truncationArr[tid]->div_pow2(dim, C, tmpC, shift, bwA + bwB, true);
+  g_session->lin.auxArr[tid]->reduce(dim, tmpC, C, bwA + bwB, bwC);
 #else
   if ((bwA + bwB - bwC) >= shift) {
-    truncationArr[tid]->truncate_and_reduce(dim, C, tmpC, shift, bwA + bwB);
-    auxArr[tid]->reduce(dim, tmpC, C, bwA + bwB - shift, bwC);
+    g_session->lin.truncationArr[tid]->truncate_and_reduce(dim, C, tmpC, shift, bwA + bwB);
+    g_session->lin.auxArr[tid]->reduce(dim, tmpC, C, bwA + bwB - shift, bwC);
   } else {
-    truncationArr[tid]->truncate(dim, C, tmpC, shift, bwA + bwB, true);
-    auxArr[tid]->reduce(dim, tmpC, C, bwA + bwB, bwC);
+    g_session->lin.truncationArr[tid]->truncate(dim, C, tmpC, shift, bwA + bwB, true);
+    g_session->lin.auxArr[tid]->reduce(dim, tmpC, C, bwA + bwB, bwC);
   }
 #endif
   delete[] tmpC;
@@ -479,25 +435,25 @@ void MatMul_thread(int32_t tid, uint64_t *A, uint64_t *B, uint64_t *C,
   uint64_t maskC = (bwC == 64 ? -1 : ((1ULL << bwC) - 1));
   uint64_t *tmpC = new uint64_t[I * J];
 
-  multArr[tid]->matrix_multiplication(I, K, J, A, B, C, bwA, bwB, bwA + bwB,
+  g_session->lin.multArr[tid]->matrix_multiplication(I, K, J, A, B, C, bwA, bwB, bwA + bwB,
                                       true, true, true, mode);
   if (shift <= 0) {
     for (int i = 0; i < I * J; i++) {
       tmpC[i] = (C[i] << (-1 * shift)) & maskC;
     }
-    auxArr[tid]->reduce(I * J, tmpC, C, bwA + bwB, bwC);
+    g_session->lin.auxArr[tid]->reduce(I * J, tmpC, C, bwA + bwB, bwC);
 #ifdef DIV_RESCALING
   } else {
-    truncationArr[tid]->div_pow2(I * J, C, tmpC, shift, bwA + bwB, true);
-    auxArr[tid]->reduce(I * J, tmpC, C, bwA + bwB, bwC);
+    g_session->lin.truncationArr[tid]->div_pow2(I * J, C, tmpC, shift, bwA + bwB, true);
+    g_session->lin.auxArr[tid]->reduce(I * J, tmpC, C, bwA + bwB, bwC);
   }
 #else
   } else if ((bwA + bwB - bwC) >= shift) {
-    truncationArr[tid]->truncate_and_reduce(I * J, C, tmpC, shift, bwA + bwB);
-    auxArr[tid]->reduce(I * J, tmpC, C, bwA + bwB - shift, bwC);
+    g_session->lin.truncationArr[tid]->truncate_and_reduce(I * J, C, tmpC, shift, bwA + bwB);
+    g_session->lin.auxArr[tid]->reduce(I * J, tmpC, C, bwA + bwB - shift, bwC);
   } else {
-    truncationArr[tid]->truncate(I * J, C, tmpC, shift, bwA + bwB, true);
-    auxArr[tid]->reduce(I * J, tmpC, C, bwA + bwB, bwC);
+    g_session->lin.truncationArr[tid]->truncate(I * J, C, tmpC, shift, bwA + bwB, true);
+    g_session->lin.auxArr[tid]->reduce(I * J, tmpC, C, bwA + bwB, bwC);
   }
 #endif
 
@@ -645,7 +601,7 @@ void MatMul(int64_t I, int64_t K, int64_t J, int64_t shrA, int64_t shrB,
 
 void Sigmoid_thread(int32_t tid, uint64_t *A, uint64_t *B, int32_t dim,
                     int32_t bwA, int32_t bwB, int32_t sA, int32_t sB) {
-  mathArr[tid]->sigmoid(dim, A, B, bwA, bwB, sA, sB);
+  g_session->lin.mathArr[tid]->sigmoid(dim, A, B, bwA, bwB, sA, sB);
 }
 
 void Sigmoid(int64_t I, int64_t J, int64_t scale_in, int64_t scale_out,
@@ -718,7 +674,7 @@ void Sigmoid(int64_t I, int64_t J, int64_t scale_in, int64_t scale_out,
 
 void TanH_thread(int32_t tid, uint64_t *A, uint64_t *B, int32_t dim,
                  int32_t bwA, int32_t bwB, int32_t sA, int32_t sB) {
-  mathArr[tid]->tanh(dim, A, B, bwA, bwB, sA, sB);
+  g_session->lin.mathArr[tid]->tanh(dim, A, B, bwA, bwB, sA, sB);
 }
 
 void TanH(int64_t I, int64_t J, int64_t scale_in, int64_t scale_out,
@@ -789,7 +745,7 @@ void TanH(int64_t I, int64_t J, int64_t scale_in, int64_t scale_out,
 void Sqrt_thread(int32_t tid, uint64_t *A, uint64_t *B, int32_t dim,
                  int32_t bwA, int32_t bwB, int32_t sA, int32_t sB,
                  bool inverse) {
-  mathArr[tid]->sqrt(dim, A, B, bwA, bwB, sA, sB, inverse);
+  g_session->lin.mathArr[tid]->sqrt(dim, A, B, bwA, bwB, sA, sB, inverse);
 }
 
 void Sqrt(int64_t I, int64_t J, int64_t scale_in, int64_t scale_out,
@@ -857,13 +813,13 @@ void Sqrt(int64_t I, int64_t J, int64_t scale_in, int64_t scale_out,
 
 void Exp(uint64_t *A, uint64_t *B, int32_t I, int32_t J, int32_t bwA,
          int32_t bwB, int32_t sA, int32_t sB) {
-  math->lookup_table_exp(I * J, A, B, bwA, bwB, sA, sB);
+  g_session->lin.math->lookup_table_exp(I * J, A, B, bwA, bwB, sA, sB);
 }
 
 void Div(uint64_t *A, uint64_t *B, uint64_t *C, int32_t I, int32_t J,
          int32_t bwA, int32_t bwB, int32_t bwC, int32_t sA, int32_t sB,
          int32_t sC) {
-  math->div(I * J, A, B, C, bwA, bwB, bwC, sA, sB, sC, true, false);
+  g_session->lin.math->div(I * J, A, B, C, bwA, bwB, bwC, sA, sB, sC, true, false);
 }
 
 void ArgMax(uint64_t *A, int32_t I, int32_t J, int32_t bwA, int32_t bw_index,
@@ -872,15 +828,16 @@ void ArgMax(uint64_t *A, int32_t I, int32_t J, int32_t bwA, int32_t bw_index,
   INIT_TIMER;
   INIT_ALL_IO_DATA_SENT;
 #endif
-  argmax = new ArgMaxProtocol<sci::NetIO, uint64_t>(party, RING, io, bwA, MILL_PARAM,
-                                               0, otpack);
+  g_session->nl.argmax = new ArgMaxProtocol<sci::NetIO, uint64_t>(party, RING, g_session->io.primary, bwA, MILL_PARAM,
+                                               0, g_session->io.otpack);
 
-  argmax->ArgMaxMPC(I * J, A, index, false, nullptr);
+  g_session->nl.argmax->ArgMaxMPC(I * J, A, index, false, nullptr);
   if (bw_index > bwA) {
-    xt->z_extend(1, index, index, bwA, bw_index);
+    g_session->lin.xt->z_extend(1, index, index, bwA, bw_index);
   }
 
-  delete argmax;
+  delete g_session->nl.argmax;
+  g_session->nl.argmax = nullptr;
 
 #ifdef LOG_LAYERWISE
   auto temp = TIMER_TILL_NOW;
@@ -900,17 +857,18 @@ void MaxPool2D(uint64_t *A, int32_t I, int32_t J, int32_t bwA, int32_t bwB,
   INIT_ALL_IO_DATA_SENT;
 #endif
 
-  maxpool = new MaxPoolProtocol<sci::NetIO, uint64_t>(party, RING, io, bwA,
-                                                 MILL_PARAM, 0, otpack);
+  g_session->nl.maxpool = new MaxPoolProtocol<sci::NetIO, uint64_t>(party, RING, g_session->io.primary, bwA,
+                                                 MILL_PARAM, 0, g_session->io.otpack);
   uint64_t *B_temp = new uint64_t[I];
-  maxpool->funcMaxMPC(I, J, A, B_temp, nullptr);
+  g_session->nl.maxpool->funcMaxMPC(I, J, A, B_temp, nullptr);
   if (bwB > bwA) {
-    xt->z_extend(I, B_temp, B, bwA, bwB);
+    g_session->lin.xt->z_extend(I, B_temp, B, bwA, bwB);
   } else {
     memcpy(B, B_temp, sizeof(uint64_t) * I);
   }
   delete[] B_temp;
-  delete maxpool;
+  delete g_session->nl.maxpool;
+  g_session->nl.maxpool = nullptr;
 
 #ifdef LOG_LAYERWISE
   auto temp = TIMER_TILL_NOW;
@@ -935,7 +893,7 @@ void GroupedMatMul_thread(int32_t tid, uint64_t *A, uint64_t *B, uint64_t *C,
   int out_size = G * I * J;
 
   for (int32_t g = 0; g < G; g++) {
-    multArr[tid]->matrix_multiplication(I, K, J, A + (g * I * K),
+    g_session->lin.multArr[tid]->matrix_multiplication(I, K, J, A + (g * I * K),
                                         B + (g * K * J), C + (g * I * J), bwA,
                                         bwB, bwA + bwB, true, true, true, mode);
   }
@@ -945,37 +903,37 @@ void GroupedMatMul_thread(int32_t tid, uint64_t *A, uint64_t *B, uint64_t *C,
 
   if (shift <= 0) {
     if (bwA + bwB < bwC) {
-      xtArr[tid]->s_extend(out_size, C, tmpC, bwA + bwB, bwC);
+      g_session->lin.xtArr[tid]->s_extend(out_size, C, tmpC, bwA + bwB, bwC);
     } else {
-      auxArr[tid]->reduce(out_size, C, tmpC, bwA + bwB, bwC);
+      g_session->lin.auxArr[tid]->reduce(out_size, C, tmpC, bwA + bwB, bwC);
     }
     for (int i = 0; i < out_size; i++) {
       C[i] = (tmpC[i] * (1ULL << (-1 * shift))) & maskC;
     }
 #ifdef DIV_RESCALING
   } else {
-    truncationArr[tid]->div_pow2(out_size, C, tmpC, shift, bwA + bwB, true);
+    g_session->lin.truncationArr[tid]->div_pow2(out_size, C, tmpC, shift, bwA + bwB, true);
     if (bwA + bwB < bwC) {
-      xtArr[tid]->s_extend(out_size, tmpC, C, bwA + bwB, bwC);
+      g_session->lin.xtArr[tid]->s_extend(out_size, tmpC, C, bwA + bwB, bwC);
     } else {
-      auxArr[tid]->reduce(out_size, tmpC, C, bwA + bwB, bwC);
+      g_session->lin.auxArr[tid]->reduce(out_size, tmpC, C, bwA + bwB, bwC);
     }
   }
 #else
   } else if ((bwA + bwB - bwC) >= shift) {
-    truncationArr[tid]->truncate_and_reduce(out_size, C, tmpC, shift,
+    g_session->lin.truncationArr[tid]->truncate_and_reduce(out_size, C, tmpC, shift,
                                             bwA + bwB);
     if (bwA + bwB < bwC) {
-      xtArr[tid]->s_extend(out_size, tmpC, C, bwA + bwB - shift, bwC);
+      g_session->lin.xtArr[tid]->s_extend(out_size, tmpC, C, bwA + bwB - shift, bwC);
     } else {
-      auxArr[tid]->reduce(out_size, tmpC, C, bwA + bwB - shift, bwC);
+      g_session->lin.auxArr[tid]->reduce(out_size, tmpC, C, bwA + bwB - shift, bwC);
     }
   } else {
-    truncationArr[tid]->truncate(out_size, C, tmpC, shift, bwA + bwB, true);
+    g_session->lin.truncationArr[tid]->truncate(out_size, C, tmpC, shift, bwA + bwB, true);
     if (bwA + bwB < bwC) {
-      xtArr[tid]->s_extend(out_size, tmpC, C, bwA + bwB, bwC);
+      g_session->lin.xtArr[tid]->s_extend(out_size, tmpC, C, bwA + bwB, bwC);
     } else {
-      auxArr[tid]->reduce(out_size, tmpC, C, bwA + bwB, bwC);
+      g_session->lin.auxArr[tid]->reduce(out_size, tmpC, C, bwA + bwB, bwC);
     }
   }
 #endif
@@ -1134,18 +1092,18 @@ void ReLU(uint64_t *A, uint64_t *B, int32_t I, int32_t J, int32_t bwA,
 
   int32_t dim = I * J;
   uint64_t *tmpB = new uint64_t[dim];
-  math->ReLU(dim, A, tmpB, bwA, six);
+  g_session->lin.math->ReLU(dim, A, tmpB, bwA, six);
 
 #ifdef DIV_RESCALING
-  truncation->div_pow2(dim, tmpB, B, div, bwA, true);
-  aux->reduce(dim, B, B, bwA, bwB);
+  g_session->lin.truncation->div_pow2(dim, tmpB, B, div, bwA, true);
+  g_session->lin.aux->reduce(dim, B, B, bwA, bwB);
 #else
   if ((bwA - bwB) >= div) {
-    truncation->truncate_and_reduce(dim, tmpB, B, div, bwA);
-    aux->reduce(dim, B, B, bwA - div, bwB);
+    g_session->lin.truncation->truncate_and_reduce(dim, tmpB, B, div, bwA);
+    g_session->lin.aux->reduce(dim, B, B, bwA - div, bwB);
   } else {
-    truncation->truncate(dim, tmpB, B, div, bwA, true);
-    aux->reduce(dim, B, B, bwA, bwB);
+    g_session->lin.truncation->truncate(dim, tmpB, B, div, bwA, true);
+    g_session->lin.aux->reduce(dim, B, B, bwA, bwB);
   }
 #endif
 
@@ -1175,9 +1133,9 @@ void BNorm(uint64_t *A, uint64_t *BNW, uint64_t *BNB, uint64_t *B, int32_t I,
   uint64_t *tmpBNB = new uint64_t[J];
   uint64_t *tmpBNW = new uint64_t[J];
   uint64_t *tmpB = new uint64_t[I * J];
-  xt->s_extend(I * J, A, tmpA, bwA, bwTemp);
-  xt->s_extend(J, BNB, tmpBNB, bwBNB, bwTemp);
-  // xt->s_extend(J, BNW, tmpBNW, bwBNW, bwTemp);
+  g_session->lin.xt->s_extend(I * J, A, tmpA, bwA, bwTemp);
+  g_session->lin.xt->s_extend(J, BNB, tmpBNB, bwBNB, bwTemp);
+  // g_session->lin.xt->s_extend(J, BNW, tmpBNW, bwBNW, bwTemp);
   memcpy(tmpBNW, BNW, J * sizeof(uint64_t));
   if (shA <= 0) {
     for (int i = 0; i < I * J; i++) {
@@ -1185,9 +1143,9 @@ void BNorm(uint64_t *A, uint64_t *BNW, uint64_t *BNB, uint64_t *B, int32_t I,
     }
   } else {
 #ifdef DIV_RESCALING
-    truncation->div_pow2(I * J, tmpA, A, shA, bwTemp, true);
+    g_session->lin.truncation->div_pow2(I * J, tmpA, A, shA, bwTemp, true);
 #else
-    truncation->truncate(I * J, tmpA, A, shA, bwTemp, true);
+    g_session->lin.truncation->truncate(I * J, tmpA, A, shA, bwTemp, true);
 #endif
   }
   if (shBNB <= 0) {
@@ -1196,9 +1154,9 @@ void BNorm(uint64_t *A, uint64_t *BNW, uint64_t *BNB, uint64_t *B, int32_t I,
     }
   } else {
 #ifdef DIV_RESCALING
-    truncation->div_pow2(J, tmpBNB, BNB, shBNB, bwTemp, true);
+    g_session->lin.truncation->div_pow2(J, tmpBNB, BNB, shBNB, bwTemp, true);
 #else
-    truncation->truncate(J, tmpBNB, BNB, shBNB, bwTemp, true);
+    g_session->lin.truncation->truncate(J, tmpBNB, BNB, shBNB, bwTemp, true);
 #endif
   }
   for (int i = 0; i < I; i++) {
@@ -1208,7 +1166,7 @@ void BNorm(uint64_t *A, uint64_t *BNW, uint64_t *BNB, uint64_t *B, int32_t I,
   }
   // mult->hadamard_product(I*J, tmpA, tmpBNW, tmpB, bwTemp, bwTemp, bwTemp,
   // true, true);
-  mult->matrix_multiplication(I, J, 1, tmpA, tmpBNW, tmpB, bwTemp, bwBNW,
+  g_session->lin.mult->matrix_multiplication(I, J, 1, tmpA, tmpBNW, tmpB, bwTemp, bwBNW,
                               bwTemp, true, true, false, MultMode::Alice_has_B);
 
   if (shB <= 0) {
@@ -1217,12 +1175,12 @@ void BNorm(uint64_t *A, uint64_t *BNW, uint64_t *BNB, uint64_t *B, int32_t I,
     }
   } else {
 #ifdef DIV_RESCALING
-    truncation->div_pow2(I * J, tmpB, B, shB, bwTemp, true);
+    g_session->lin.truncation->div_pow2(I * J, tmpB, B, shB, bwTemp, true);
 #else
-    truncation->truncate(I * J, tmpB, B, shB, bwTemp, true);
+    g_session->lin.truncation->truncate(I * J, tmpB, B, shB, bwTemp, true);
 #endif
   }
-  aux->reduce(I * J, B, B, bwTemp, bwB);
+  g_session->lin.aux->reduce(I * J, B, B, bwTemp, bwB);
 
   delete[] tmpA;
   delete[] tmpBNB;
@@ -1255,10 +1213,10 @@ void NormaliseL2(uint64_t *A, uint64_t *B, int32_t I, int32_t J, int32_t bwA,
   uint64_t *tmpB = new uint64_t[I * J];
   uint64_t *sumSquare = new uint64_t[I];
   uint64_t *inverseNorm = new uint64_t[I];
-  mult->hadamard_product(I * J, A, A, tmpB, bwA, bwA, 2 * bwA, true, true,
+  g_session->lin.mult->hadamard_product(I * J, A, A, tmpB, bwA, bwA, 2 * bwA, true, true,
                          MultMode::None);
-  truncation->truncate(I * J, tmpB, B, 2 * shrA, 2 * bwA, true);
-  // truncation->truncate_and_reduce(I*J, tmpB, B, 2*shrA, 2*bwA);
+  g_session->lin.truncation->truncate(I * J, tmpB, B, 2 * shrA, 2 * bwA, true);
+  // g_session->lin.truncation->truncate_and_reduce(I*J, tmpB, B, 2*shrA, 2*bwA);
   for (int i = 0; i < I; i++) {
     sumSquare[i] = 0;
     for (int j = 0; j < J; j++) {
@@ -1267,17 +1225,17 @@ void NormaliseL2(uint64_t *A, uint64_t *B, int32_t I, int32_t J, int32_t bwA,
     sumSquare[i] &= mask_sumSquare;
   }
 
-  math->sqrt(I, sumSquare, inverseNorm, bw_sumSquare, bwA + shrA,
+  g_session->lin.math->sqrt(I, sumSquare, inverseNorm, bw_sumSquare, bwA + shrA,
              2 * (scale_in - shrA), scale_out - scale_in + shrA, true);
 
-  mult->matrix_multiplication(1, I, J, inverseNorm, A, B, bwA + shrA, bwA,
+  g_session->lin.mult->matrix_multiplication(1, I, J, inverseNorm, A, B, bwA + shrA, bwA,
                               bwA + shrA, true, true, false, MultMode::None);
 
 #ifdef DIV_RESCALING
-  truncation->div_pow2(I * J, B, tmpB, shrA, bwA + shrA, true);
-  aux->reduce(I * J, tmpB, tmpB, bwA + shrA, bwA);
+  g_session->lin.truncation->div_pow2(I * J, B, tmpB, shrA, bwA + shrA, true);
+  g_session->lin.aux->reduce(I * J, tmpB, tmpB, bwA + shrA, bwA);
 #else
-  truncation->truncate_and_reduce(I * J, B, tmpB, shrA, bwA + shrA);
+  g_session->lin.truncation->truncate_and_reduce(I * J, B, tmpB, shrA, bwA + shrA);
 #endif
 
   for (int i = 0; i < I; i++) {

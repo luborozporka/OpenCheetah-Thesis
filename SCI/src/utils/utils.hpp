@@ -260,21 +260,21 @@ inline uint64_t all1Mask(int x){
 // #define CURRENT_TIME std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now().time_since_epoch()).count();
 #define CURRENT_TIME std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
 
-#define INIT_IO_DATA_SENT uint64_t dataSentCtr__1 = io->counter;
-#define IO_TILL_NOW (io->counter - dataSentCtr__1);
-#define RESET_IO dataSentCtr__1 = io->counter;
+#define INIT_IO_DATA_SENT uint64_t dataSentCtr__1 = ::g_session->io.primary->counter;
+#define IO_TILL_NOW (::g_session->io.primary->counter - dataSentCtr__1);
+#define RESET_IO dataSentCtr__1 = ::g_session->io.primary->counter;
 
 #define INIT_ALL_IO_DATA_SENT uint64_t __ioStartTracker[::num_threads];\
         for(int __thrdCtr = 0; __thrdCtr < ::num_threads; __thrdCtr++){\
-            __ioStartTracker[__thrdCtr] = ::ioArr[__thrdCtr]->counter;\
+            __ioStartTracker[__thrdCtr] = ::g_session->io.ioArr[__thrdCtr]->counter;\
         }
 #define FIND_ALL_IO_TILL_NOW(var) uint64_t __curComm = 0;\
         for(int __thrdCtr = 0; __thrdCtr < ::num_threads; __thrdCtr++){\
-             __curComm += ((::ioArr[__thrdCtr]->counter) - __ioStartTracker[__thrdCtr]);\
+             __curComm += ((::g_session->io.ioArr[__thrdCtr]->counter) - __ioStartTracker[__thrdCtr]);\
         }\
         var = __curComm;
 #define RESET_ALL_IO for(int __thrdCtr = 0; __thrdCtr < ::num_threads; __thrdCtr++){\
-            __ioStartTracker[__thrdCtr] = ::ioArr[__thrdCtr]->counter;\
+            __ioStartTracker[__thrdCtr] = ::g_session->io.ioArr[__thrdCtr]->counter;\
         }
 
 inline void print128_num(__m128i var) 

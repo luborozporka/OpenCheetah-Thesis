@@ -115,7 +115,7 @@ void MatMul2D(int32_t d0, int32_t d1, int32_t d2, const intType *mat_A,
   auto input_mat = is_A_weight_matrix ? mat_B : mat_A;
 
   Tensor<intType> weight_matrix;
-  if (cheetah_linear->party() == SERVER) {
+  if (g_session->lin.cheetah_linear->party() == SERVER) {
     // Transpose the weight matrix and convert the uint64_t to ring element
     weight_matrix.Reshape(meta.weight_shape);
     const size_t nrows = weight_shape.dim_size(0);
@@ -144,13 +144,13 @@ void MatMul2D(int32_t d0, int32_t d1, int32_t d2, const intType *mat_A,
     }
 
     Tensor<uint64_t> out_vec;
-    cheetah_linear->fc(input_vector, weight_matrix, meta, out_vec);
+    g_session->lin.cheetah_linear->fc(input_vector, weight_matrix, meta, out_vec);
     std::copy_n(out_vec.data(), out_vec.shape().num_elements(),
                 mat_C + r * input_shape.cols());
   }
 
-  if (cheetah_linear->party() == SERVER) {
-    cheetah_linear->safe_erase(weight_matrix.data(),
+  if (g_session->lin.cheetah_linear->party() == SERVER) {
+    g_session->lin.cheetah_linear->safe_erase(weight_matrix.data(),
                                meta.weight_shape.num_elements());
   }
 #ifdef LOG_LAYERWISE
@@ -348,7 +348,7 @@ void Conv2DWrapper(signedIntType N, signedIntType H, signedIntType W,
       strideH, strideW);
 
 #ifdef LOG_LAYERWISE
-  const int64_t io_counter = cheetah_linear->io_counter();
+  const int64_t io_counter = g_session->lin.cheetah_linear->io_counter();
 #endif
 
   for (int i = 0; i < N; ++i) {
@@ -363,7 +363,7 @@ void Conv2DWrapper(signedIntType N, signedIntType H, signedIntType W,
     }
 
     gemini::Tensor<intType> out_tensor;
-    cheetah_linear->conv2d(image, filters, meta, out_tensor);
+    g_session->lin.cheetah_linear->conv2d(image, filters, meta, out_tensor);
 
     for (int j = 0; j < newH; j++) {
       for (int k = 0; k < newW; k++) {
@@ -378,7 +378,7 @@ void Conv2DWrapper(signedIntType N, signedIntType H, signedIntType W,
 #ifdef LOG_LAYERWISE
   auto temp = TIMER_TILL_NOW;
   ConvTimeInMilliSec += temp;
-  const int64_t nbytes_sent = cheetah_linear->io_counter() - io_counter;
+  const int64_t nbytes_sent = g_session->lin.cheetah_linear->io_counter() - io_counter;
   std::cout << "Time in sec for current conv = [" << (temp / 1000.0)
             << "] sent [" << (nbytes_sent / 1024. / 1024.) << "] MB"
             << std::endl;
@@ -599,7 +599,7 @@ void BatchNorm(int32_t B, int32_t H, int32_t W, int32_t C,
 
   gemini::Tensor<intType> scale_vec;
   scale_vec.Reshape(gemini::TensorShape({C}));
-  if (cheetah_linear->party() == SERVER) {
+  if (g_session->lin.cheetah_linear->party() == SERVER) {
     std::transform(scales, scales + C, scale_vec.data(), getRingElt);
   }
 
@@ -615,7 +615,7 @@ void BatchNorm(int32_t B, int32_t H, int32_t W, int32_t C,
       }
     }
 
-    cheetah_linear->bn_direct(in_tensor, scale_vec, meta, out_tensor);
+    g_session->lin.cheetah_linear->bn_direct(in_tensor, scale_vec, meta, out_tensor);
 
     for (int32_t h = 0; h < H; ++h) {
       for (int32_t w = 0; w < W; ++w) {
@@ -627,8 +627,8 @@ void BatchNorm(int32_t B, int32_t H, int32_t W, int32_t C,
     }
   }
 
-  if (cheetah_linear->party() == SERVER) {
-    cheetah_linear->safe_erase(scale_vec.data(), scale_vec.NumElements());
+  if (g_session->lin.cheetah_linear->party() == SERVER) {
+    g_session->lin.cheetah_linear->safe_erase(scale_vec.data(), scale_vec.NumElements());
   }
 
 #ifdef LOG_LAYERWISE
@@ -727,7 +727,7 @@ void ElemWiseActModelVectorMult(int32_t size, intType *inArr,
   gemini::Tensor<intType> in_vec;
   gemini::Tensor<intType> scale_vec;
   scale_vec.Reshape(meta.vec_shape);
-  if (cheetah_linear->party() == SERVER) {
+  if (g_session->lin.cheetah_linear->party() == SERVER) {
     std::transform(multArrVec, multArrVec + size, scale_vec.data(), getRingElt);
   }
 
@@ -738,11 +738,11 @@ void ElemWiseActModelVectorMult(int32_t size, intType *inArr,
     std::transform(inArr, inArr + size, in_vec.data(), getRingElt);
   }
   gemini::Tensor<intType> out_vec;
-  cheetah_linear->bn(in_vec, scale_vec, meta, out_vec);
+  g_session->lin.cheetah_linear->bn(in_vec, scale_vec, meta, out_vec);
   std::copy_n(out_vec.data(), out_vec.shape().num_elements(), outputArr);
 
-  if (cheetah_linear->party() == SERVER) {
-    cheetah_linear->safe_erase(scale_vec.data(), scale_vec.NumElements());
+  if (g_session->lin.cheetah_linear->party() == SERVER) {
+    g_session->lin.cheetah_linear->safe_erase(scale_vec.data(), scale_vec.NumElements());
   }
 
 #ifdef LOG_LAYERWISE

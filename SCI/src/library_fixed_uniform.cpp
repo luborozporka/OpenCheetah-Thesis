@@ -68,23 +68,23 @@ void MatMul2D(int32_t s1, int32_t s2, int32_t s3, const intType *A,
 #ifdef USE_LINEAR_UNIFORM
   if (partyWithAInAB_mul == sci::ALICE) {
     if (party == sci::ALICE) {
-      multUniform->funcOTSenderInputA(s1, s2, s3, A, C, iknpOT);
+      g_session->lin.multUniform->funcOTSenderInputA(s1, s2, s3, A, C, g_session->io.iknpOT);
     } else {
-      multUniform->funcOTReceiverInputB(s1, s2, s3, B, C, iknpOT);
+      g_session->lin.multUniform->funcOTReceiverInputB(s1, s2, s3, B, C, g_session->io.iknpOT);
     }
   } else {
     if (party == sci::BOB) {
-      multUniform->funcOTSenderInputA(s1, s2, s3, A, C, iknpOTRoleReversed);
+      g_session->lin.multUniform->funcOTSenderInputA(s1, s2, s3, A, C, g_session->io.iknpOTRoleReversed);
     } else {
-      multUniform->funcOTReceiverInputB(s1, s2, s3, B, C, iknpOTRoleReversed);
+      g_session->lin.multUniform->funcOTReceiverInputB(s1, s2, s3, B, C, g_session->io.iknpOTRoleReversed);
     }
   }
 #else  // USE_LINEAR_UNIFORM
   if (modelIsA) {
-    mult->matmul_cross_terms(s1, s2, s3, A, B, C, bitlength, bitlength,
+    g_session->lin.mult->matmul_cross_terms(s1, s2, s3, A, B, C, bitlength, bitlength,
                              bitlength, true, MultMode::Alice_has_A);
   } else {
-    mult->matmul_cross_terms(s1, s2, s3, A, B, C, bitlength, bitlength,
+    g_session->lin.mult->matmul_cross_terms(s1, s2, s3, A, B, C, bitlength, bitlength,
                              bitlength, true, MultMode::Alice_has_B);
   }
 #endif  // USE_LINEAR_UNIFORM
@@ -96,9 +96,9 @@ void MatMul2D(int32_t s1, int32_t s2, int32_t s3, const intType *A,
     // Add also A*own share of B
     intType *CTemp = new intType[s1 * s3];
 #ifdef USE_LINEAR_UNIFORM
-    multUniform->ideal_func(s1, s2, s3, A, B, CTemp);
+    g_session->lin.multUniform->ideal_func(s1, s2, s3, A, B, CTemp);
 #else  // USE_LINEAR_UNIFORM
-    mult->matmul_cleartext(s1, s2, s3, A, B, CTemp, true);
+    g_session->lin.mult->matmul_cleartext(s1, s2, s3, A, B, CTemp, true);
 #endif  // USE_LINEAR_UNIFORM
     sci::elemWiseAdd<intType>(s1 * s3, C, CTemp, C);
     delete[] CTemp;
@@ -142,9 +142,9 @@ void MatMul2D(int32_t s1, int32_t s2, int32_t s3, const intType *A,
   if (party == sci::ALICE) {
     intType *CTemp = new intType[s1 * s3];
 #ifdef USE_LINEAR_UNIFORM
-    multUniform->ideal_func(s1, s2, s3, A, B, CTemp);
+    g_session->lin.multUniform->ideal_func(s1, s2, s3, A, B, CTemp);
 #else  // USE_LINEAR_UNIFORM
-    mult->matmul_cleartext(s1, s2, s3, A, B, CTemp, true);
+    g_session->lin.mult->matmul_cleartext(s1, s2, s3, A, B, CTemp, true);
 #endif  // USE_LINEAR_UNIFORM
     sci::elemWiseAdd<intType>(s1 * s3, C, CTemp, C);
     delete[] CTemp;
@@ -185,7 +185,7 @@ void MatMul2D(int32_t s1, int32_t s2, int32_t s3, const intType *A,
       Bt[i][j] = getRingElt(Arr2DIdxRowM(B, s2, s3, j, i));
     }
   }
-  he_fc->matrix_multiplication(s3, s2, s1, Bt, At, Ct);
+  g_session->lin.he_fc->matrix_multiplication(s3, s2, s1, Bt, At, Ct);
   for (int i = 0; i < s1; i++) {
     for (int j = 0; j < s3; j++) {
       Arr2DIdxRowM(C, s1, s3, i, j) = getRingElt(Ct[j][i]);
@@ -390,7 +390,7 @@ void Conv2DWrapper(signedIntType N, signedIntType H, signedIntType W,
     }
   }
 
-  he_conv->convolution(N, H, W, CI, FH, FW, CO, zPadHLeft, zPadHRight,
+  g_session->lin.he_conv->convolution(N, H, W, CI, FH, FW, CO, zPadHLeft, zPadHRight,
                        zPadWLeft, zPadWRight, strideH, strideW, inputVec,
                        filterVec, outputVec);
 
@@ -695,7 +695,7 @@ void ElemWiseActModelVectorMult(int32_t size, intType *inArr,
     tempMultArr[i] = getRingElt(multArrVec[i]);
   }
 
-  he_prod->elemwise_product(size, tempInArr, tempMultArr, tempOutArr);
+  g_session->lin.he_prod->elemwise_product(size, tempInArr, tempMultArr, tempOutArr);
 
   for (int i = 0; i < size; i++) {
     outputArr[i] = getRingElt(tempOutArr[i]);
@@ -802,7 +802,7 @@ void ArgMax(int32_t s1, int32_t s2, intType *inArr, intType *outArr) {
   ctr++;
 
   assert(s1 == 1 && "ArgMax impl right now assumes s1==1");
-  argmax->ArgMaxMPC(s2, inArr, outArr);
+  g_session->nl.argmax->ArgMaxMPC(s2, inArr, outArr);
 
 
 #ifdef LOG_LAYERWISE
@@ -924,7 +924,7 @@ void Relu(int32_t size, intType *inArr, intType *outArr, int sf, bool doTruncati
   sci::copyElemWisePadded(size, inArr, eightDivElemts, tempInp, 0);
 
 #ifndef MULTITHREADED_NONLIN
-  relu->relu(tempOutp, tempInp, eightDivElemts, nullptr);
+  g_session->nl.relu->relu(tempOutp, tempInp, eightDivElemts, nullptr);
 #else
   std::thread relu_threads[num_threads];
   int chunk_size = (eightDivElemts / (8 * num_threads)) * 8;
@@ -1209,7 +1209,7 @@ void MaxPool(int32_t N, int32_t H, int32_t W, int32_t C, int32_t ksizeH,
   }
 
 #ifndef MULTITHREADED_NONLIN
-  maxpool->funcMaxMPC(rows, cols, reInpArr, maxi, maxiIdx);
+  g_session->nl.maxpool->funcMaxMPC(rows, cols, reInpArr, maxi, maxiIdx);
 #else
   std::thread maxpool_threads[num_threads];
   int chunk_size = (rows / (8 * num_threads)) * 8;
@@ -1740,155 +1740,36 @@ void StartComputation() {
 #endif
 
 #if USE_CHEETAH
-  backend += "-SilentOT";
-#else
-  backend += "-OT";
+  backend += "-SilentOT-Cheetah";
+#elif defined(SCI_HE)
+  backend += "-OT-SCI_HE";
+#elif defined(SCI_OT)
+  backend += "-OT-SCI_OT";
 #endif
 
   checkIfUsingEigen();
   printf("Doing BaseOT ...\n");
-  for (int i = 0; i < num_threads; i++) {
-    ioArr[i] = new sci::NetIO(party == sci::ALICE ? nullptr : address.c_str(), port + i, /*quit*/true);
-    otInstanceArr[i] = new sci::IKNP<sci::NetIO>(ioArr[i]);
-    prgInstanceArr[i] = new sci::PRG128();
-    kkotInstanceArr[i] = new sci::KKOT<sci::NetIO>(ioArr[i]);
-#ifdef SCI_OT
-    multUniformArr[i] =
-        new MatMulUniform<sci::NetIO, intType, sci::IKNP<sci::NetIO>>(
-            party, bitlength, ioArr[i], otInstanceArr[i], nullptr);
-#endif
-    if (i & 1) {
-      otpackArr[i] = new sci::OTPack<sci::NetIO>(ioArr[i], 3 - party);
-    } else {
-      otpackArr[i] = new sci::OTPack<sci::NetIO>(ioArr[i], party);
-    }
-  }
 
-  io = ioArr[0];
-  otpack = otpackArr[0];
-  iknpOT = new sci::IKNP<sci::NetIO>(io);
-  iknpOTRoleReversed = new sci::IKNP<sci::NetIO>(io);
-  kkot = new sci::KKOT<sci::NetIO>(io);
-  prg128Instance = new sci::PRG128();
-
-#ifdef SCI_OT
-  mult = new LinearOT(party, io, otpack);
-  truncation = new Truncation(party, io, otpack);
-  multUniform = new MatMulUniform<sci::NetIO, intType, sci::IKNP<sci::NetIO>>(
-      party, bitlength, io, iknpOT, iknpOTRoleReversed);
-  relu = new ReLURingProtocol<sci::NetIO, intType>(party, RING, io, bitlength,
-                                                   MILL_PARAM, otpack);
-  maxpool = new MaxPoolProtocol<sci::NetIO, intType>(
-      party, RING, io, bitlength, MILL_PARAM, 0, otpack, relu);
-  argmax = new ArgMaxProtocol<sci::NetIO, intType>(party, RING, io, bitlength,
-                                                   MILL_PARAM, 0, otpack, relu);
-  math = new MathFunctions(party, io, otpack);
-#endif
-
-#if USE_CHEETAH
-  backend += "-Cheetah";
-  cheetah_linear = new gemini::CheetahLinear(party, io, prime_mod, num_threads);
-#elif defined(SCI_HE)
-  backend += "-SCI_HE";
-  he_conv = new ConvField(party, io);
-#elif defined(SCI_OT)
-  backend += "-SCI_OT";
-#endif
-
-
-#ifdef SCI_HE
-  relu = new ReLUFieldProtocol<sci::NetIO, intType>(
-      party, FIELD, io, bitlength, MILL_PARAM, prime_mod, otpack);
-  maxpool = new MaxPoolProtocol<sci::NetIO, intType>(
-      party, FIELD, io, bitlength, MILL_PARAM, prime_mod, otpack, relu);
-  argmax = new ArgMaxProtocol<sci::NetIO, intType>(
-      party, FIELD, io, bitlength, MILL_PARAM, prime_mod, otpack, relu);
-  he_fc = new FCField(party, io);
-  he_prod = new ElemWiseProdField(party, io);
-  assertFieldRun();
-#endif
-
-#if defined MULTITHREADED_NONLIN && defined SCI_OT
-  for (int i = 0; i < num_threads; i++) {
-    if (i & 1) {
-      reluArr[i] = new ReLURingProtocol<sci::NetIO, intType>(
-          3 - party, RING, ioArr[i], bitlength, MILL_PARAM, otpackArr[i]);
-      maxpoolArr[i] = new MaxPoolProtocol<sci::NetIO, intType>(
-          3 - party, RING, ioArr[i], bitlength, MILL_PARAM, 0, otpackArr[i],
-          reluArr[i]);
-      multArr[i] = new LinearOT(3 - party, ioArr[i], otpackArr[i]);
-      truncationArr[i] = new Truncation(3 - party, ioArr[i], otpackArr[i]);
-    } else {
-      reluArr[i] = new ReLURingProtocol<sci::NetIO, intType>(
-          party, RING, ioArr[i], bitlength, MILL_PARAM, otpackArr[i]);
-      maxpoolArr[i] = new MaxPoolProtocol<sci::NetIO, intType>(
-          party, RING, ioArr[i], bitlength, MILL_PARAM, 0, otpackArr[i],
-          reluArr[i]);
-      multArr[i] = new LinearOT(party, ioArr[i], otpackArr[i]);
-      truncationArr[i] = new Truncation(party, ioArr[i], otpackArr[i]);
-    }
-  }
-#endif
-
-#ifdef SCI_HE
-  for (int i = 0; i < num_threads; i++) {
-    if (i & 1) {
-      reluArr[i] = new ReLUFieldProtocol<sci::NetIO, intType>(
-          3 - party, FIELD, ioArr[i], bitlength, MILL_PARAM, prime_mod, otpackArr[i]);
-      maxpoolArr[i] = new MaxPoolProtocol<sci::NetIO, intType>(
-          3 - party, FIELD, ioArr[i], bitlength, MILL_PARAM, prime_mod, otpackArr[i], reluArr[i]);
-    } else {
-      reluArr[i] = new ReLUFieldProtocol<sci::NetIO, intType>(
-          party, FIELD, ioArr[i], bitlength, MILL_PARAM, prime_mod, otpackArr[i]);
-      maxpoolArr[i] = new MaxPoolProtocol<sci::NetIO, intType>(
-          party, FIELD, ioArr[i], bitlength, MILL_PARAM, prime_mod, otpackArr[i], reluArr[i]);
-    }
-  }
-#endif
-
-// Math Protocols
-#ifdef SCI_OT
-  for (int i = 0; i < num_threads; i++) {
-    if (i & 1) {
-      auxArr[i] = new AuxProtocols(3 - party, ioArr[i], otpackArr[i]);
-      truncationArr[i] =
-          new Truncation(3 - party, ioArr[i], otpackArr[i], auxArr[i]);
-      xtArr[i] = new XTProtocol(3 - party, ioArr[i], otpackArr[i], auxArr[i]);
-      mathArr[i] = new MathFunctions(3 - party, ioArr[i], otpackArr[i]);
-    } else {
-      auxArr[i] = new AuxProtocols(party, ioArr[i], otpackArr[i]);
-      truncationArr[i] =
-          new Truncation(party, ioArr[i], otpackArr[i], auxArr[i]);
-      xtArr[i] = new XTProtocol(party, ioArr[i], otpackArr[i], auxArr[i]);
-      mathArr[i] = new MathFunctions(party, ioArr[i], otpackArr[i]);
-    }
-  }
-  aux = auxArr[0];
-  truncation = truncationArr[0];
-  xt = xtArr[0];
-  mult = multArr[0];
-  math = mathArr[0];
-#endif
-
-  if (party == sci::ALICE) {
-    iknpOT->setup_send();
-    iknpOTRoleReversed->setup_recv();
-  } else if (party == sci::BOB) {
-    iknpOT->setup_recv();
-    iknpOTRoleReversed->setup_send();
-  }
+  sci::Config cfg;
+  cfg.party = party;
+  cfg.address = address;
+  cfg.port = port;
+  cfg.num_threads = num_threads;
+  cfg.bitlength = bitlength;
+  cfg.prime_mod = prime_mod;
+  g_session = new sci::Session(cfg);
 
   std::cout << "After one-time setup, communication" << std::endl;
   start_time = std::chrono::high_resolution_clock::now();
   for (int i = 0; i < num_threads; i++) {
-    auto temp = ioArr[i]->counter;
+    auto temp = g_session->io.ioArr[i]->counter;
     comm_threads[i] = temp;
     std::cout << "Thread i = " << i << ", total data sent till now = " << temp
               << std::endl;
   }
   std::cout << "-----------Syncronizing-----------" << std::endl;
-  io->sync();
-  num_rounds = io->num_rounds;
+  g_session->io.primary->sync();
+  num_rounds = g_session->io.primary->num_rounds;
   std::cout << "secret_share_mod: " << prime_mod << " bitlength: " << bitlength << std::endl;
   std::cout << "backend: " << backend << std::endl;
   std::cout << "-----------Syncronized - now starting execution-----------"
@@ -1903,7 +1784,7 @@ void EndComputation() {
           .count();
   uint64_t totalComm = 0;
   for (int i = 0; i < num_threads; i++) {
-    auto temp = ioArr[i]->counter;
+    auto temp = g_session->io.ioArr[i]->counter;
     std::cout << "Thread i = " << i << ", total data sent till now = " << temp
               << std::endl;
     totalComm += (temp - comm_threads[i]);
@@ -1916,15 +1797,15 @@ void EndComputation() {
             << " milliseconds.\n";
   std::cout << "Total data sent = " << (totalComm / (1.0 * (1ULL << 20)))
             << " MiB." << std::endl;
-  std::cout << "Number of rounds = " << ioArr[0]->num_rounds - num_rounds
+  std::cout << "Number of rounds = " << g_session->io.ioArr[0]->num_rounds - num_rounds
             << std::endl;
   if (party == SERVER) {
-    io->recv_data(&totalCommClient, sizeof(uint64_t));
+    g_session->io.primary->recv_data(&totalCommClient, sizeof(uint64_t));
     std::cout << "Total comm (sent+received) = "
               << ((totalComm + totalCommClient) / (1.0 * (1ULL << 20)))
               << " MiB." << std::endl;
   } else if (party == CLIENT) {
-    io->send_data(&totalComm, sizeof(uint64_t));
+    g_session->io.primary->send_data(&totalComm, sizeof(uint64_t));
     std::cout << "Total comm (sent+received) = (see SERVER OUTPUT)"
               << std::endl;
   }
@@ -2058,22 +1939,22 @@ void EndComputation() {
     uint64_t SqrtCommSentClient = 0;
     uint64_t NormaliseL2CommSentClient = 0;
 
-    io->recv_data(&ConvCommSentClient, sizeof(uint64_t));
-    io->recv_data(&MatMulCommSentClient, sizeof(uint64_t));
-    io->recv_data(&BatchNormCommSentClient, sizeof(uint64_t));
-    io->recv_data(&TruncationCommSentClient, sizeof(uint64_t));
-    io->recv_data(&ReluCommSentClient, sizeof(uint64_t));
-    io->recv_data(&MaxpoolCommSentClient, sizeof(uint64_t));
-    io->recv_data(&AvgpoolCommSentClient, sizeof(uint64_t));
-    io->recv_data(&ArgMaxCommSentClient, sizeof(uint64_t));
-    io->recv_data(&MatAddCommSentClient, sizeof(uint64_t));
-    io->recv_data(&MatAddBroadCastCommSentClient, sizeof(uint64_t));
-    io->recv_data(&MulCirCommSentClient, sizeof(uint64_t));
-    io->recv_data(&ScalarMulCommSentClient, sizeof(uint64_t));
-    io->recv_data(&SigmoidCommSentClient, sizeof(uint64_t));
-    io->recv_data(&TanhCommSentClient, sizeof(uint64_t));
-    io->recv_data(&SqrtCommSentClient, sizeof(uint64_t));
-    io->recv_data(&NormaliseL2CommSentClient, sizeof(uint64_t));
+    g_session->io.primary->recv_data(&ConvCommSentClient, sizeof(uint64_t));
+    g_session->io.primary->recv_data(&MatMulCommSentClient, sizeof(uint64_t));
+    g_session->io.primary->recv_data(&BatchNormCommSentClient, sizeof(uint64_t));
+    g_session->io.primary->recv_data(&TruncationCommSentClient, sizeof(uint64_t));
+    g_session->io.primary->recv_data(&ReluCommSentClient, sizeof(uint64_t));
+    g_session->io.primary->recv_data(&MaxpoolCommSentClient, sizeof(uint64_t));
+    g_session->io.primary->recv_data(&AvgpoolCommSentClient, sizeof(uint64_t));
+    g_session->io.primary->recv_data(&ArgMaxCommSentClient, sizeof(uint64_t));
+    g_session->io.primary->recv_data(&MatAddCommSentClient, sizeof(uint64_t));
+    g_session->io.primary->recv_data(&MatAddBroadCastCommSentClient, sizeof(uint64_t));
+    g_session->io.primary->recv_data(&MulCirCommSentClient, sizeof(uint64_t));
+    g_session->io.primary->recv_data(&ScalarMulCommSentClient, sizeof(uint64_t));
+    g_session->io.primary->recv_data(&SigmoidCommSentClient, sizeof(uint64_t));
+    g_session->io.primary->recv_data(&TanhCommSentClient, sizeof(uint64_t));
+    g_session->io.primary->recv_data(&SqrtCommSentClient, sizeof(uint64_t));
+    g_session->io.primary->recv_data(&NormaliseL2CommSentClient, sizeof(uint64_t));
 
     std::cout << "Conv data (sent+received) = "
               << ((ConvCommSent + ConvCommSentClient) / (1.0 * (1ULL << 20)))
@@ -2180,22 +2061,22 @@ void EndComputation() {
     result.close();
 #endif
   } else if (party == CLIENT) {
-    io->send_data(&ConvCommSent, sizeof(uint64_t));
-    io->send_data(&MatMulCommSent, sizeof(uint64_t));
-    io->send_data(&BatchNormCommSent, sizeof(uint64_t));
-    io->send_data(&TruncationCommSent, sizeof(uint64_t));
-    io->send_data(&ReluCommSent, sizeof(uint64_t));
-    io->send_data(&MaxpoolCommSent, sizeof(uint64_t));
-    io->send_data(&AvgpoolCommSent, sizeof(uint64_t));
-    io->send_data(&ArgMaxCommSent, sizeof(uint64_t));
-    io->send_data(&MatAddCommSent, sizeof(uint64_t));
-    io->send_data(&MatAddBroadCastCommSent, sizeof(uint64_t));
-    io->send_data(&MulCirCommSent, sizeof(uint64_t));
-    io->send_data(&ScalarMulCommSent, sizeof(uint64_t));
-    io->send_data(&SigmoidCommSent, sizeof(uint64_t));
-    io->send_data(&TanhCommSent, sizeof(uint64_t));
-    io->send_data(&SqrtCommSent, sizeof(uint64_t));
-    io->send_data(&NormaliseL2CommSent, sizeof(uint64_t));
+    g_session->io.primary->send_data(&ConvCommSent, sizeof(uint64_t));
+    g_session->io.primary->send_data(&MatMulCommSent, sizeof(uint64_t));
+    g_session->io.primary->send_data(&BatchNormCommSent, sizeof(uint64_t));
+    g_session->io.primary->send_data(&TruncationCommSent, sizeof(uint64_t));
+    g_session->io.primary->send_data(&ReluCommSent, sizeof(uint64_t));
+    g_session->io.primary->send_data(&MaxpoolCommSent, sizeof(uint64_t));
+    g_session->io.primary->send_data(&AvgpoolCommSent, sizeof(uint64_t));
+    g_session->io.primary->send_data(&ArgMaxCommSent, sizeof(uint64_t));
+    g_session->io.primary->send_data(&MatAddCommSent, sizeof(uint64_t));
+    g_session->io.primary->send_data(&MatAddBroadCastCommSent, sizeof(uint64_t));
+    g_session->io.primary->send_data(&MulCirCommSent, sizeof(uint64_t));
+    g_session->io.primary->send_data(&ScalarMulCommSent, sizeof(uint64_t));
+    g_session->io.primary->send_data(&SigmoidCommSent, sizeof(uint64_t));
+    g_session->io.primary->send_data(&TanhCommSent, sizeof(uint64_t));
+    g_session->io.primary->send_data(&SqrtCommSent, sizeof(uint64_t));
+    g_session->io.primary->send_data(&NormaliseL2CommSent, sizeof(uint64_t));
   }
 #endif
 }

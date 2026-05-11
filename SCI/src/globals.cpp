@@ -22,63 +22,13 @@ SOFTWARE.
 #include "globals.h"
 #include "csv_writer.hpp"
 
-sci::NetIO *io;
-sci::OTPack<sci::NetIO> *otpack;
-
-#ifdef SCI_OT
-LinearOT *mult;
-AuxProtocols *aux;
-Truncation *truncation;
-XTProtocol *xt;
-MathFunctions *math;
-#endif
-ArgMaxProtocol<sci::NetIO, intType> *argmax;
-ReLUProtocol<sci::NetIO, intType> *relu;
-MaxPoolProtocol<sci::NetIO, intType> *maxpool;
-// Additional classes for Athos
-#ifdef SCI_OT
-MatMulUniform<sci::NetIO, intType, sci::IKNP<sci::NetIO>> *multUniform;
-#endif
-
-#ifdef SCI_HE
-FCField *he_fc;
-ElemWiseProdField *he_prod;
-#endif
-
-#if USE_CHEETAH
-gemini::CheetahLinear *cheetah_linear;
-bool kIsSharedInput;
-#elif defined(SCI_HE)
-ConvField *he_conv;
-#endif
-
-sci::IKNP<sci::NetIO> *iknpOT;
-sci::IKNP<sci::NetIO> *iknpOTRoleReversed;
-sci::KKOT<sci::NetIO> *kkot;
-sci::PRG128 *prg128Instance;
-
-sci::NetIO *ioArr[MAX_THREADS];
-sci::OTPack<sci::NetIO> *otpackArr[MAX_THREADS];
-#ifdef SCI_OT
-LinearOT *multArr[MAX_THREADS];
-AuxProtocols *auxArr[MAX_THREADS];
-Truncation *truncationArr[MAX_THREADS];
-XTProtocol *xtArr[MAX_THREADS];
-MathFunctions *mathArr[MAX_THREADS];
-#endif
-ReLUProtocol<sci::NetIO, intType> *reluArr[MAX_THREADS];
-MaxPoolProtocol<sci::NetIO, intType> *maxpoolArr[MAX_THREADS];
-// Additional classes for Athos
-#ifdef SCI_OT
-MatMulUniform<sci::NetIO, intType, sci::IKNP<sci::NetIO>> *multUniformArr[MAX_THREADS];
-#endif
-sci::IKNP<sci::NetIO> *otInstanceArr[MAX_THREADS];
-sci::KKOT<sci::NetIO> *kkotInstanceArr[MAX_THREADS];
-sci::PRG128 *prgInstanceArr[MAX_THREADS];
-
 std::chrono::time_point<std::chrono::high_resolution_clock> start_time;
 uint64_t comm_threads[MAX_THREADS];
 uint64_t num_rounds;
+
+#if USE_CHEETAH
+bool kIsSharedInput = false;
+#endif
 
 #ifdef LOG_LAYERWISE
 uint64_t ConvTimeInMilliSec = 0;
