@@ -327,25 +327,26 @@ void ScalarMul(uint64_t *A, uint64_t *B, uint64_t *C, int32_t I, int32_t J,
 #endif
 }
 
-void MulCir_thread(int32_t tid, uint64_t *A, uint64_t *B, uint64_t *C,
-                   int32_t dim, int32_t bwA, int32_t bwB, int32_t bwC,
-                   int32_t bwTemp, int32_t shrA, int32_t shrB, int32_t demote) {
+void MulCir_thread(Session *sess, int32_t tid, uint64_t *A, uint64_t *B,
+                   uint64_t *C, int32_t dim, int32_t bwA, int32_t bwB,
+                   int32_t bwC, int32_t bwTemp, int32_t shrA, int32_t shrB,
+                   int32_t demote) {
   int32_t shift = shrA + shrB + demote;
 
   uint64_t *tmpC = new uint64_t[dim];
 
-  g_session->lin.multArr[tid]->hadamard_product(dim, A, B, C, bwA, bwB, bwA + bwB, true, true,
+  sess->lin.multArr[tid]->hadamard_product(dim, A, B, C, bwA, bwB, bwA + bwB, true, true,
                                  MultMode::None);
 #ifdef DIV_RESCALING
-  g_session->lin.truncationArr[tid]->div_pow2(dim, C, tmpC, shift, bwA + bwB, true);
-  g_session->lin.auxArr[tid]->reduce(dim, tmpC, C, bwA + bwB, bwC);
+  sess->lin.truncationArr[tid]->div_pow2(dim, C, tmpC, shift, bwA + bwB, true);
+  sess->lin.auxArr[tid]->reduce(dim, tmpC, C, bwA + bwB, bwC);
 #else
   if ((bwA + bwB - bwC) >= shift) {
-    g_session->lin.truncationArr[tid]->truncate_and_reduce(dim, C, tmpC, shift, bwA + bwB);
-    g_session->lin.auxArr[tid]->reduce(dim, tmpC, C, bwA + bwB - shift, bwC);
+    sess->lin.truncationArr[tid]->truncate_and_reduce(dim, C, tmpC, shift, bwA + bwB);
+    sess->lin.auxArr[tid]->reduce(dim, tmpC, C, bwA + bwB - shift, bwC);
   } else {
-    g_session->lin.truncationArr[tid]->truncate(dim, C, tmpC, shift, bwA + bwB, true);
-    g_session->lin.auxArr[tid]->reduce(dim, tmpC, C, bwA + bwB, bwC);
+    sess->lin.truncationArr[tid]->truncate(dim, C, tmpC, shift, bwA + bwB, true);
+    sess->lin.auxArr[tid]->reduce(dim, tmpC, C, bwA + bwB, bwC);
   }
 #endif
   delete[] tmpC;
@@ -372,9 +373,9 @@ void MulCir(int64_t I, int64_t J, int64_t shrA, int64_t shrB, int64_t demote,
   int lnum_threads = chunks_per_thread.size();
   std::thread threads[lnum_threads];
   for (int i = 0; i < lnum_threads; i++) {
-    threads[i] = std::thread(MulCir_thread, i, A + offset, B + offset,
-                             C + offset, chunks_per_thread[i], bwA, bwB, bwC,
-                             bwTemp, shiftA, shiftB, shift_demote);
+    threads[i] = std::thread(MulCir_thread, g_session, i, A + offset,
+                             B + offset, C + offset, chunks_per_thread[i], bwA,
+                             bwB, bwC, bwTemp, shiftA, shiftB, shift_demote);
     offset += chunks_per_thread[i];
   }
   for (int i = 0; i < lnum_threads; ++i) {
@@ -423,10 +424,10 @@ void MulCir(int64_t I, int64_t J, int64_t shrA, int64_t shrB, int64_t demote,
 #endif
 }
 
-void MatMul_thread(int32_t tid, uint64_t *A, uint64_t *B, uint64_t *C,
-                   int32_t I, int32_t K, int32_t J, int32_t bwA, int32_t bwB,
-                   int32_t bwC, int32_t bwTemp, int32_t shrA, int32_t shrB,
-                   int32_t H1, int32_t demote,
+void MatMul_thread(Session *sess, int32_t tid, uint64_t *A, uint64_t *B,
+                   uint64_t *C, int32_t I, int32_t K, int32_t J, int32_t bwA,
+                   int32_t bwB, int32_t bwC, int32_t bwTemp, int32_t shrA,
+                   int32_t shrB, int32_t H1, int32_t demote,
                    MultMode mode = MultMode::Alice_has_B) {
   assert(bwA + bwB >= bwC);
   int32_t depth = ceil(log2(K));
@@ -435,25 +436,25 @@ void MatMul_thread(int32_t tid, uint64_t *A, uint64_t *B, uint64_t *C,
   uint64_t maskC = (bwC == 64 ? -1 : ((1ULL << bwC) - 1));
   uint64_t *tmpC = new uint64_t[I * J];
 
-  g_session->lin.multArr[tid]->matrix_multiplication(I, K, J, A, B, C, bwA, bwB, bwA + bwB,
+  sess->lin.multArr[tid]->matrix_multiplication(I, K, J, A, B, C, bwA, bwB, bwA + bwB,
                                       true, true, true, mode);
   if (shift <= 0) {
     for (int i = 0; i < I * J; i++) {
       tmpC[i] = (C[i] << (-1 * shift)) & maskC;
     }
-    g_session->lin.auxArr[tid]->reduce(I * J, tmpC, C, bwA + bwB, bwC);
+    sess->lin.auxArr[tid]->reduce(I * J, tmpC, C, bwA + bwB, bwC);
 #ifdef DIV_RESCALING
   } else {
-    g_session->lin.truncationArr[tid]->div_pow2(I * J, C, tmpC, shift, bwA + bwB, true);
-    g_session->lin.auxArr[tid]->reduce(I * J, tmpC, C, bwA + bwB, bwC);
+    sess->lin.truncationArr[tid]->div_pow2(I * J, C, tmpC, shift, bwA + bwB, true);
+    sess->lin.auxArr[tid]->reduce(I * J, tmpC, C, bwA + bwB, bwC);
   }
 #else
   } else if ((bwA + bwB - bwC) >= shift) {
-    g_session->lin.truncationArr[tid]->truncate_and_reduce(I * J, C, tmpC, shift, bwA + bwB);
-    g_session->lin.auxArr[tid]->reduce(I * J, tmpC, C, bwA + bwB - shift, bwC);
+    sess->lin.truncationArr[tid]->truncate_and_reduce(I * J, C, tmpC, shift, bwA + bwB);
+    sess->lin.auxArr[tid]->reduce(I * J, tmpC, C, bwA + bwB - shift, bwC);
   } else {
-    g_session->lin.truncationArr[tid]->truncate(I * J, C, tmpC, shift, bwA + bwB, true);
-    g_session->lin.auxArr[tid]->reduce(I * J, tmpC, C, bwA + bwB, bwC);
+    sess->lin.truncationArr[tid]->truncate(I * J, C, tmpC, shift, bwA + bwB, true);
+    sess->lin.auxArr[tid]->reduce(I * J, tmpC, C, bwA + bwB, bwC);
   }
 #endif
 
@@ -497,10 +498,10 @@ void MatMul(int64_t I, int64_t K, int64_t J, int64_t shrA, int64_t shrB,
   std::thread threads[lnum_threads];
   for (int i = 0; i < lnum_threads; i++) {
     MultMode mode = (i & 1 ? MultMode::Bob_has_B : MultMode::Alice_has_B);
-    threads[i] =
-        std::thread(MatMul_thread, i, A + (K * offset), B, C + (J * offset),
-                    chunks_per_thread[i], K, J, bwA, bwB, bwC, bwTemp, shiftA,
-                    shiftB, H1, shift_demote, mode);
+    threads[i] = std::thread(MatMul_thread, g_session, i, A + (K * offset), B,
+                             C + (J * offset), chunks_per_thread[i], K, J, bwA,
+                             bwB, bwC, bwTemp, shiftA, shiftB, H1,
+                             shift_demote, mode);
     offset += chunks_per_thread[i];
   }
   for (int i = 0; i < lnum_threads; ++i) {
@@ -599,9 +600,10 @@ void MatMul(int64_t I, int64_t K, int64_t J, int64_t shrA, int64_t shrB,
 #endif
 }
 
-void Sigmoid_thread(int32_t tid, uint64_t *A, uint64_t *B, int32_t dim,
-                    int32_t bwA, int32_t bwB, int32_t sA, int32_t sB) {
-  g_session->lin.mathArr[tid]->sigmoid(dim, A, B, bwA, bwB, sA, sB);
+void Sigmoid_thread(Session *sess, int32_t tid, uint64_t *A, uint64_t *B,
+                    int32_t dim, int32_t bwA, int32_t bwB, int32_t sA,
+                    int32_t sB) {
+  sess->lin.mathArr[tid]->sigmoid(dim, A, B, bwA, bwB, sA, sB);
 }
 
 void Sigmoid(int64_t I, int64_t J, int64_t scale_in, int64_t scale_out,
@@ -622,8 +624,9 @@ void Sigmoid(int64_t I, int64_t J, int64_t scale_in, int64_t scale_out,
   int lnum_threads = chunks_per_thread.size();
   std::thread threads[lnum_threads];
   for (int i = 0; i < lnum_threads; i++) {
-    threads[i] = std::thread(Sigmoid_thread, i, A + offset, B + offset,
-                             chunks_per_thread[i], bwA, bwB, s_A, s_B);
+    threads[i] = std::thread(Sigmoid_thread, g_session, i, A + offset,
+                             B + offset, chunks_per_thread[i], bwA, bwB, s_A,
+                             s_B);
     offset += chunks_per_thread[i];
   }
   for (int i = 0; i < lnum_threads; ++i) {
@@ -672,9 +675,10 @@ void Sigmoid(int64_t I, int64_t J, int64_t scale_in, int64_t scale_out,
 #endif
 }
 
-void TanH_thread(int32_t tid, uint64_t *A, uint64_t *B, int32_t dim,
-                 int32_t bwA, int32_t bwB, int32_t sA, int32_t sB) {
-  g_session->lin.mathArr[tid]->tanh(dim, A, B, bwA, bwB, sA, sB);
+void TanH_thread(Session *sess, int32_t tid, uint64_t *A, uint64_t *B,
+                 int32_t dim, int32_t bwA, int32_t bwB, int32_t sA,
+                 int32_t sB) {
+  sess->lin.mathArr[tid]->tanh(dim, A, B, bwA, bwB, sA, sB);
 }
 
 void TanH(int64_t I, int64_t J, int64_t scale_in, int64_t scale_out,
@@ -696,8 +700,9 @@ void TanH(int64_t I, int64_t J, int64_t scale_in, int64_t scale_out,
   int lnum_threads = chunks_per_thread.size();
   std::thread threads[lnum_threads];
   for (int i = 0; i < lnum_threads; i++) {
-    threads[i] = std::thread(TanH_thread, i, A + offset, B + offset,
-                             chunks_per_thread[i], bwA, bwB, s_A, s_B);
+    threads[i] = std::thread(TanH_thread, g_session, i, A + offset,
+                             B + offset, chunks_per_thread[i], bwA, bwB, s_A,
+                             s_B);
     offset += chunks_per_thread[i];
   }
   for (int i = 0; i < lnum_threads; ++i) {
@@ -742,10 +747,10 @@ void TanH(int64_t I, int64_t J, int64_t scale_in, int64_t scale_out,
 #endif
 }
 
-void Sqrt_thread(int32_t tid, uint64_t *A, uint64_t *B, int32_t dim,
-                 int32_t bwA, int32_t bwB, int32_t sA, int32_t sB,
+void Sqrt_thread(Session *sess, int32_t tid, uint64_t *A, uint64_t *B,
+                 int32_t dim, int32_t bwA, int32_t bwB, int32_t sA, int32_t sB,
                  bool inverse) {
-  g_session->lin.mathArr[tid]->sqrt(dim, A, B, bwA, bwB, sA, sB, inverse);
+  sess->lin.mathArr[tid]->sqrt(dim, A, B, bwA, bwB, sA, sB, inverse);
 }
 
 void Sqrt(int64_t I, int64_t J, int64_t scale_in, int64_t scale_out,
@@ -767,8 +772,9 @@ void Sqrt(int64_t I, int64_t J, int64_t scale_in, int64_t scale_out,
   int lnum_threads = chunks_per_thread.size();
   std::thread threads[lnum_threads];
   for (int i = 0; i < lnum_threads; i++) {
-    threads[i] = std::thread(Sqrt_thread, i, A + offset, B + offset,
-                             chunks_per_thread[i], bwA, bwB, s_A, s_B, inverse);
+    threads[i] = std::thread(Sqrt_thread, g_session, i, A + offset,
+                             B + offset, chunks_per_thread[i], bwA, bwB, s_A,
+                             s_B, inverse);
     offset += chunks_per_thread[i];
   }
   for (int i = 0; i < lnum_threads; ++i) {

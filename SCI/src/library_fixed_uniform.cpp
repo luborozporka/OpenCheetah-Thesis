@@ -122,8 +122,9 @@ void MatMul2D(int32_t s1, int32_t s2, int32_t s3, const intType *A,
   std::thread matmulThreads[required_num_threads];
   for (int i = 0; i < required_num_threads; i++) {
     C_ans_arr[i] = new intType[s1 * s3];
-    matmulThreads[i] = std::thread(funcMatmulThread, i, required_num_threads,
-                                   s1, s2, s3, (intType *)A, (intType *)B,
+    matmulThreads[i] = std::thread(funcMatmulThread, g_session, i,
+                                   required_num_threads, s1, s2, s3,
+                                   (intType *)A, (intType *)B,
                                    (intType *)C_ans_arr[i], partyWithAInAB_mul);
   }
   for (int i = 0; i < required_num_threads; i++) {
@@ -662,9 +663,9 @@ void ElemWiseActModelVectorMult(int32_t size, intType *inArr,
         curSize = chunk_size;
     }
     */
-    dotProdThreads[i] = std::thread(funcDotProdThread, i, num_threads, curSize,
-                                    multArrVec + offset, inArr + offset,
-                                    outputArr + offset, false);
+    dotProdThreads[i] = std::thread(funcDotProdThread, g_session, i,
+                                    num_threads, curSize, multArrVec + offset,
+                                    inArr + offset, outputArr + offset, false);
   }
   for (int i = 0; i < num_threads; ++i) {
     dotProdThreads[i].join();
@@ -936,7 +937,7 @@ void Relu(int32_t size, intType *inArr, intType *outArr, int sf, bool doTruncati
     } else {
       lnum_relu = chunk_size;
     }
-    relu_threads[i] = std::thread(funcReLUThread, i, tempOutp + offset, tempInp + offset, lnum_relu, nullptr, false);
+    relu_threads[i] = std::thread(funcReLUThread, g_session, i, tempOutp + offset, tempInp + offset, lnum_relu, nullptr, false);
   }
   for (int i = 0; i < num_threads; ++i) {
     relu_threads[i].join();
@@ -1222,7 +1223,7 @@ void MaxPool(int32_t N, int32_t H, int32_t W, int32_t C, int32_t ksizeH,
       lnum_rows = chunk_size;
     }
     maxpool_threads[i] =
-        std::thread(funcMaxpoolThread, i, lnum_rows, cols,
+        std::thread(funcMaxpoolThread, g_session, i, lnum_rows, cols,
                     reInpArr + offset * cols, maxi + offset, maxiIdx + offset);
   }
   for (int i = 0; i < num_threads; ++i) {
@@ -2158,9 +2159,9 @@ void ElemWiseSecretSharedVectorMult(int32_t size, intType *inArr,
     } else {
       curSize = chunk_size;
     }
-    dotProdThreads[i] = std::thread(funcDotProdThread, i, num_threads, curSize,
-                                    multArrVec + offset, inArr + offset,
-                                    outputArr + offset, true);
+    dotProdThreads[i] = std::thread(funcDotProdThread, g_session, i,
+                                    num_threads, curSize, multArrVec + offset,
+                                    inArr + offset, outputArr + offset, true);
   }
   for (int i = 0; i < num_threads; ++i) {
     dotProdThreads[i].join();
