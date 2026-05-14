@@ -231,4 +231,4 @@ Session::~Session() {
 
 } // namespace sci
 
-sci::Session *g_session = nullptr;
+thread_local sci::Session *g_session = nullptr;

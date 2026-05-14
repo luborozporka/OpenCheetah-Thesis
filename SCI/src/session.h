@@ -240,6 +240,6 @@ class Session {
 
 }  // namespace sci
 
-extern sci::Session *g_session;
+extern thread_local sci::Session *g_session;
 
 #endif  // SCI_SESSION_H___
