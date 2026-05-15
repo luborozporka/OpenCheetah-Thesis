@@ -2,6 +2,8 @@
 #ifndef CHEETAH_OT_PACK_H__
 #define CHEETAH_OT_PACK_H__
 
+#include <string>
+
 #include "OT/emp-ot.h"
 #include "OT/ferret/silent_ot.h"
 #include "OT/split-kkot.h"
@@ -13,7 +15,16 @@
 #define PRE_OT_DATA_REG_RECV_FILE_ALICE "./data/pre_ot_data_reg_recv_alice"
 #define PRE_OT_DATA_REG_RECV_FILE_BOB "./data/pre_ot_data_reg_recv_bob"
 
+extern thread_local std::string g_session_tag;
+
 namespace sci {
+
+// Each worker gets its own cache file, so concurrent setups do not mess with each other
+inline std::string PreOtCacheFile(const char *base) {
+  return ::g_session_tag.empty()
+    ? std::string(base)
+    : std::string(base) + "_" + ::g_session_tag;
+}
 
 template <typename T>
 class OTPack {
@@ -43,13 +54,13 @@ class OTPack {
 
     ios[0] = io;
     silent_ot = new cheetah::SilentOT<T>(party, 1, ios, false, true,
-                                         party == sci::ALICE
+                                         PreOtCacheFile(party == sci::ALICE
                                              ? PRE_OT_DATA_REG_SEND_FILE_ALICE
-                                             : PRE_OT_DATA_REG_RECV_FILE_BOB);
+                                             : PRE_OT_DATA_REG_RECV_FILE_BOB));
     silent_ot_reversed = new cheetah::SilentOT<T>(
         3 - party, 1, ios, false, true,
-        party == sci::ALICE ? PRE_OT_DATA_REG_RECV_FILE_ALICE
-                            : PRE_OT_DATA_REG_SEND_FILE_BOB);
+        PreOtCacheFile(party == sci::ALICE ? PRE_OT_DATA_REG_RECV_FILE_ALICE
+                                           : PRE_OT_DATA_REG_SEND_FILE_BOB));
 
     for (int i = 0; i < KKOT_TYPES; i++) {
       kkot[i] = new cheetah::SilentOTN<T>(silent_ot, 1 << (i + 1));

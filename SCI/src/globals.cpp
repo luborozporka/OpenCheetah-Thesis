@@ -24,3 +24,5 @@ SOFTWARE.
 #if USE_CHEETAH
 thread_local bool kIsSharedInput = false;
 #endif
+
+thread_local std::string g_session_tag;

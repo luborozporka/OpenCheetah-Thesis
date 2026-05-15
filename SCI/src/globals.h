@@ -23,10 +23,15 @@ SOFTWARE.
 #ifndef GLOBALS_H___
 #define GLOBALS_H___
 
+#include <string>
+
 #include "session.h"
 
 #if USE_CHEETAH
 extern thread_local bool kIsSharedInput;
 #endif
+
+// Per-thread suffix for shared cache files
+extern thread_local std::string g_session_tag;
 
 #endif // GLOBALS_H__
