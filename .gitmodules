@@ -19,3 +19,6 @@
 [submodule "sqnet_demo/imagenet-sample-images"]
 	path = sqnet_demo/imagenet-sample-images
 	url = https://github.com/EliSchwartz/imagenet-sample-images.git
+[submodule "deps/asio"]
+	path = deps/asio
+	url = https://github.com/chriskohlhoff/asio.git
