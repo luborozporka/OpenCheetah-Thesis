@@ -2264,17 +2264,14 @@ void ScaleDown4(int64_t s1, int64_t s2, int64_t s3, int64_t s4, uint64_t *arr,
   ClearMemSecret1(size, reshapedArr);
 }
 
-int main(int argc, char **argv) {
-  ArgMapping amap;
-
-  amap.arg("r", party, "Role of party: ALICE/SERVER = 1; BOB/CLIENT = 2");
-  amap.arg("p", port, "Port Number");
-  amap.arg("ip", address, "IP Address of server (ALICE)");
-  amap.arg("nt", num_threads, "Number of Threads");
-  amap.arg("ell", bitlength, "Uniform Bitwidth");
-  amap.arg("k", kScale, "scaling factor");
-
-  amap.parse(argc, argv);
+void run_sqnet_inference(int party_, int port_, const std::string &address_,
+                         int num_threads_, int32_t bitlength_, int32_t kScale_) {
+  party = party_;
+  port = port_;
+  address = address_;
+  num_threads = num_threads_;
+  bitlength = bitlength_;
+  kScale = kScale_;
 
   assert(party == SERVER || party == CLIENT);
 
@@ -3910,4 +3907,19 @@ int main(int argc, char **argv) {
     }
   }
   finalize();
+}
+
+int main(int argc, char **argv) {
+  ArgMapping amap;
+
+  amap.arg("r", party, "Role of party: ALICE/SERVER = 1; BOB/CLIENT = 2");
+  amap.arg("p", port, "Port Number");
+  amap.arg("ip", address, "IP Address of server (ALICE)");
+  amap.arg("nt", num_threads, "Number of Threads");
+  amap.arg("ell", bitlength, "Uniform Bitwidth");
+  amap.arg("k", kScale, "scaling factor");
+
+  amap.parse(argc, argv);
+
+  run_sqnet_inference(party, port, address, num_threads, bitlength, kScale);
 }
