@@ -34,16 +34,16 @@ using namespace std;
 static sci::NetIO *ioArr[MAX_THREADS];
 static sci::OTPack<sci::NetIO> *otpackArr[MAX_THREADS];
 
-int party = 0;
+thread_local int party = 0;
 int num_relu = 1 << 10, port = 32000;
 int num_relu_orig = 0;
 int b = 4;
 int batch_size = 0;
-string address = "127.0.0.1";
-int num_threads = 1;
+thread_local string address = "127.0.0.1";
+thread_local int num_threads = 1;
 string network = "none";
 vector<int> network_layer_sizes;
-int32_t bitlength = 32;
+thread_local int32_t bitlength = 32;
 
 const std::map<std::string, std::vector<int>> layer_sizes{
     {"sq", vector<int>({200704, 50176, 200704, 200704, 50176, 200704, 200704,

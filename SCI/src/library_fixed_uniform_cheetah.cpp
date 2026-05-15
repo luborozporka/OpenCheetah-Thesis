@@ -19,9 +19,9 @@
 extern int64_t getSignedVal(uint64_t x);
 extern uint64_t getRingElt(int64_t x);
 #else
-extern uint64_t prime_mod;
-extern uint64_t moduloMask;
-extern uint64_t moduloMidPt;
+extern thread_local uint64_t prime_mod;
+extern thread_local uint64_t moduloMask;
+extern thread_local uint64_t moduloMidPt;
 
 static inline int64_t getSignedVal(uint64_t x) {
   assert(x < prime_mod);

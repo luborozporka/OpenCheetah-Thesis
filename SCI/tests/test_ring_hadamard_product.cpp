@@ -26,8 +26,8 @@ SOFTWARE.
 using namespace sci;
 using namespace std;
 
-int party, port = 32000;
-string address = "127.0.0.1";
+thread_local int party, port = 32000;
+thread_local string address = "127.0.0.1";
 NetIO *io;
 OTPack<NetIO> *otpack;
 LinearOT *prod;

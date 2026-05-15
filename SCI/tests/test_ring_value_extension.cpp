@@ -33,8 +33,8 @@ uint64_t maskA = (bwA == 64 ? -1 : ((1ULL << bwA) - 1));
 uint64_t maskB = (bwB == 64 ? -1 : ((1ULL << bwB) - 1));
 
 // vars
-int party, port = 32000;
-string address = "127.0.0.1";
+thread_local int party, port = 32000;
+thread_local string address = "127.0.0.1";
 NetIO *io;
 OTPack<NetIO> *otpack;
 XTProtocol *ext;

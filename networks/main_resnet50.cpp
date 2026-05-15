@@ -14,12 +14,12 @@
 using namespace std;
 #define USE_FUSED_BN 1
 
-int party = 0;
-int port = 32000;
-string address = "127.0.0.1";
-int num_threads = 4;
-int32_t bitlength = 41;
-int32_t kScale = 12;
+thread_local int party = 0;
+thread_local int port = 32000;
+thread_local string address = "127.0.0.1";
+thread_local int num_threads = 4;
+thread_local int32_t bitlength = 41;
+thread_local int32_t kScale = 12;
 int32_t kDoExtractTruncate = 1;
 
 int64_t getSignValue(uint64_t x) {

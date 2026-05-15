@@ -46,9 +46,9 @@ SOFTWARE.
 const int SERVER = 1;
 const int CLIENT = 2;
 
-extern int party;
-extern std::string address;
-extern int port;
-extern int num_threads;
+extern thread_local int party;
+extern thread_local std::string address;
+extern thread_local int port;
+extern thread_local int num_threads;
 
 #endif

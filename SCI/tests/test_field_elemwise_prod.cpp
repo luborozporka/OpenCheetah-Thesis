@@ -25,11 +25,11 @@ using namespace std;
 using namespace seal;
 using namespace sci;
 
-int party = 0;
-int bitlength = 32;
-int num_threads = 1;
-int port = 8000;
-string address = "127.0.0.1";
+thread_local int party = 0;
+thread_local int bitlength = 32;
+thread_local int num_threads = 1;
+thread_local int port = 8000;
+thread_local string address = "127.0.0.1";
 int vec_size = 56 * 56;
 int filter_precision = 15;
 

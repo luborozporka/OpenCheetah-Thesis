@@ -35,11 +35,11 @@ SOFTWARE.
 // #undef LOG_LAYERWISE // undefine this to turn OFF the log
 
 #ifdef SCI_HE
-uint64_t prime_mod = sci::default_prime_mod.at(41);
+thread_local uint64_t prime_mod = sci::default_prime_mod.at(41);
 #elif SCI_OT
-uint64_t prime_mod = (bitlength == 64 ? 0ULL : 1ULL << bitlength);
-uint64_t moduloMask = prime_mod - 1;
-uint64_t moduloMidPt = prime_mod / 2;
+thread_local uint64_t prime_mod = (bitlength == 64 ? 0ULL : 1ULL << bitlength);
+thread_local uint64_t moduloMask = prime_mod - 1;
+thread_local uint64_t moduloMidPt = prime_mod / 2;
 #endif
 
 #if !USE_CHEETAH

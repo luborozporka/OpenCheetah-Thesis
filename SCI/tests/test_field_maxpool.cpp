@@ -31,15 +31,15 @@ using namespace sci;
 static sci::NetIO *ioArr[MAX_THREADS];
 static sci::OTPack<sci::NetIO> *otpackArr[MAX_THREADS];
 
-int party = 0;
-int port = 32000;
+thread_local int party = 0;
+thread_local int port = 32000;
 int num_rows = 1 << 10;
 int num_cols = 1 << 6;
-int bitlength = 32;
+thread_local int bitlength = 32;
 int b = 4;
 int batch_size = 0;
-string address = "127.0.0.1";
-int num_threads = 1;
+thread_local string address = "127.0.0.1";
+thread_local int num_threads = 1;
 
 void field_maxpool_thread(int tid, uint64_t *z, uint64_t *x, int lnum_rows,
                           int lnum_cols) {

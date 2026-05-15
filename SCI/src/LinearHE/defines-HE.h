@@ -26,9 +26,9 @@ SOFTWARE.
 #include <cmath>
 // #define HE_DEBUG
 
-extern uint64_t prime_mod;
-extern int32_t bitlength;
-extern int32_t num_threads;
+extern thread_local uint64_t prime_mod;
+extern thread_local int32_t bitlength;
+extern thread_local int32_t num_threads;
 
 const uint64_t POLY_MOD_DEGREE = 8192;
 const uint64_t POLY_MOD_DEGREE_LARGE = 65536;

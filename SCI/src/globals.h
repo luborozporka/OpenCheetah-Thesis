@@ -26,7 +26,7 @@ SOFTWARE.
 #include "session.h"
 
 #if USE_CHEETAH
-extern bool kIsSharedInput;
+extern thread_local bool kIsSharedInput;
 #endif
 
 #endif // GLOBALS_H__

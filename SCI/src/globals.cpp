@@ -22,5 +22,5 @@ SOFTWARE.
 #include "globals.h"
 
 #if USE_CHEETAH
-bool kIsSharedInput = false;
+thread_local bool kIsSharedInput = false;
 #endif

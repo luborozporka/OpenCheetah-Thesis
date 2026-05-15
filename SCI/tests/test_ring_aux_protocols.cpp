@@ -25,8 +25,8 @@ SOFTWARE.
 using namespace sci;
 using namespace std;
 
-int party, port = 8000, dim = 1 << 16;
-string address = "127.0.0.1";
+thread_local int party, port = 8000, dim = 1 << 16;
+thread_local string address = "127.0.0.1";
 NetIO *io;
 OTPack<NetIO> *otpack;
 AuxProtocols *aux;

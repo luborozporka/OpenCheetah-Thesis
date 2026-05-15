@@ -35,8 +35,8 @@ uint64_t mask_shift = (shift == 64 ? -1 : ((1ULL << shift) - 1));
 uint64_t mask_out = ((bw - shift) == 64 ? -1 : ((1ULL << (bw - shift)) - 1));
 
 // vars
-int party, port = 32000;
-string address = "127.0.0.1";
+thread_local int party, port = 32000;
+thread_local string address = "127.0.0.1";
 NetIO *io;
 OTPack<NetIO> *otpack;
 Truncation *trunc_oracle;

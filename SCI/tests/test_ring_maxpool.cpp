@@ -28,16 +28,16 @@ using namespace sci;
 
 #define MAX_THREADS 1
 
-int party = 0;
-int port = 32000;
+thread_local int party = 0;
+thread_local int port = 32000;
 int num_rows = 1 << 10;
 int num_cols = 1 << 6;
 int l = 32;
 int b = 4;
 int batch_size = 0;
-string address = "127.0.0.1";
-int num_threads = 1;
-int32_t bitlength = 32;
+thread_local string address = "127.0.0.1";
+thread_local int num_threads = 1;
+thread_local int32_t bitlength = 32;
 
 sci::NetIO *ioArr[MAX_THREADS];
 sci::OTPack<sci::NetIO> *otpackArr[MAX_THREADS];

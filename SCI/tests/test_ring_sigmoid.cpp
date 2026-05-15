@@ -29,9 +29,9 @@ using namespace std;
 
 #define MAX_THREADS 4
 
-int party, port = 32000;
-int num_threads = 1;
-string address = "127.0.0.1";
+thread_local int party, port = 32000;
+thread_local int num_threads = 1;
+thread_local string address = "127.0.0.1";
 
 int dim = 10000;
 int bw_x = 16;

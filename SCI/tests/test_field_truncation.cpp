@@ -30,11 +30,11 @@ int dim = 1 << 20;
 int bw = 41;
 int shift = 12;
 
-int party = 0;
-int bitlength = 41;
-int num_threads = 1;
-int port = 8000;
-string address = "127.0.0.1";
+thread_local int party = 0;
+thread_local int bitlength = 41;
+thread_local int num_threads = 1;
+thread_local int port = 8000;
+thread_local string address = "127.0.0.1";
 
 PRG128 prg;
 

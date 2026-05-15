@@ -31,9 +31,9 @@ SOFTWARE.
 #include <math.h>
 #include <vector>
 
-extern uint64_t prime_mod;
-extern uint64_t moduloMask;
-extern uint64_t moduloMidPt;
+extern thread_local uint64_t prime_mod;
+extern thread_local uint64_t moduloMask;
+extern thread_local uint64_t moduloMidPt;
 
 typedef std::vector<uint64_t> uint64_1D;
 typedef std::vector<std::vector<uint64_t>> uint64_2D;

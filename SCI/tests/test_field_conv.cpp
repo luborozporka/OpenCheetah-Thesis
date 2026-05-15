@@ -28,11 +28,11 @@ using namespace std;
 using namespace seal;
 using namespace sci;
 
-int party = 0;
-int bitlength = 40;
-int num_threads = 4;
-int port = 8000;
-string address = "127.0.0.1";
+thread_local int party = 0;
+thread_local int bitlength = 40;
+thread_local int num_threads = 4;
+thread_local int port = 8000;
+thread_local string address = "127.0.0.1";
 int image_h = 56;
 int inp_chans = 64;
 int filter_h = 3;
@@ -42,8 +42,8 @@ int pad_r = 0;
 int stride = 2;
 int filter_precision = 12;
 
-extern uint64_t moduloMask;
-extern uint64_t moduloMidPt;
+extern thread_local uint64_t moduloMask;
+extern thread_local uint64_t moduloMidPt;
 
 static inline int64_t getSignedVal(uint64_t x) {
   assert(x < prime_mod);

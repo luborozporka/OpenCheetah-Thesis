@@ -33,8 +33,8 @@ SOFTWARE.
 typedef uint64_t intType;
 typedef int64_t signedIntType;
 
-extern int32_t bitlength;
-extern uint64_t prime_mod;
+extern thread_local int32_t bitlength;
+extern thread_local uint64_t prime_mod;
 
 // #define NDEBUG //This must come first -- so that this marco is used
 // throughout code
