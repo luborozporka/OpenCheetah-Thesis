@@ -66,6 +66,7 @@ add_network_cheetah(mp3)
 add_network_cheetah(mp4)
 
 ## Multi-client server
-add_executable(server-cheetah server/main_server.cpp)
+add_executable(server-cheetah server/main_server.cpp networks/sqnet_inference.cpp)
 target_compile_definitions(server-cheetah PRIVATE ASIO_STANDALONE)
-target_link_libraries(server-cheetah Threads::Threads)
+target_compile_definitions(server-cheetah PUBLIC SCI_OT=1 USE_CHEETAH=1)
+target_link_libraries(server-cheetah gemini SCI-Cheetah Threads::Threads)
