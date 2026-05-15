@@ -41,7 +41,11 @@ include_directories(SCI/src/)
 
 ## demo
 macro (add_network_cheetah _name)
-  add_executable(${_name}-cheetah "networks/main_${_name}.cpp")
+  set(_sources "networks/main_${_name}.cpp")
+  if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/networks/${_name}_inference.cpp")
+    list(APPEND _sources "networks/${_name}_inference.cpp")
+  endif()
+  add_executable(${_name}-cheetah ${_sources})
   target_link_libraries(${_name}-cheetah gemini SCI-Cheetah)
   target_compile_definitions(${_name}-cheetah PUBLIC SCI_OT=1 USE_CHEETAH=1)
 endmacro()
