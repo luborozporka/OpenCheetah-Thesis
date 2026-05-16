@@ -7,15 +7,9 @@ Then hand crafted by Wen-jie Lu
 #include "globals.h"
 #include "energy_consumption.hpp"
 #include "csv_writer.hpp" // Added by Tanjina for writing the measurement values into a csv file
+#include "networks/networks.h"
 #include <iostream>
 using namespace std;
-
-thread_local int party = 0;
-thread_local int port = 32000;
-thread_local string address = "127.0.0.1";
-thread_local int num_threads = 4;
-thread_local int32_t bitlength = 32;
-thread_local int32_t kScale = 12;
 
 void MatAddBroadCast2(int64_t s1, int64_t s2, uint64_t *A, uint64_t *B,
                       uint64_t *outArr) {

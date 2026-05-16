@@ -43,7 +43,9 @@ include_directories(SCI/src/)
 macro (add_network_cheetah _name)
   set(_sources "networks/main_${_name}.cpp")
   if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/networks/${_name}_inference.cpp")
-    list(APPEND _sources "networks/${_name}_inference.cpp")
+    list(APPEND _sources
+         "networks/${_name}_inference.cpp"
+         "networks/network_globals.cpp")
   endif()
   add_executable(${_name}-cheetah ${_sources})
   target_link_libraries(${_name}-cheetah gemini SCI-Cheetah)
@@ -66,7 +68,10 @@ add_network_cheetah(mp3)
 add_network_cheetah(mp4)
 
 ## Multi-client server
-add_executable(server-cheetah server/main_server.cpp networks/sqnet_inference.cpp)
+add_executable(server-cheetah
+  server/main_server.cpp
+  networks/sqnet_inference.cpp
+  networks/network_globals.cpp)
 target_compile_definitions(server-cheetah PRIVATE ASIO_STANDALONE)
 target_compile_definitions(server-cheetah PUBLIC SCI_OT=1 USE_CHEETAH=1)
 target_link_libraries(server-cheetah gemini SCI-Cheetah Threads::Threads)
