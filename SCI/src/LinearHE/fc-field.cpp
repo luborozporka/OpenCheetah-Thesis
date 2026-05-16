@@ -326,7 +326,7 @@ void FCField::matrix_multiplication(int32_t num_rows, int32_t common_dim,
     parms_id_type parms_id = HE_result.parms_id();
     shared_ptr<const SEALContext::ContextData> context_data =
         context_->get_context_data(parms_id);
-    flood_ciphertext(HE_result, context_data, SMUDGING_BITLEN);
+    flood_ciphertext(HE_result, context_data, SMUDGING_BITLEN());
 
 #ifdef HE_DEBUG
     PRINT_NOISE_BUDGET(decryptor_, HE_result, "after noise flooding");

@@ -32,7 +32,10 @@ extern thread_local int32_t num_threads;
 
 const uint64_t POLY_MOD_DEGREE = 8192;
 const uint64_t POLY_MOD_DEGREE_LARGE = 65536;
-const int32_t SMUDGING_BITLEN = 100 - bitlength;
+
+// Migrated from const, so that concurrent sessions with
+// different bitlengths each get the correct smudging level
+inline int32_t SMUDGING_BITLEN() { return 100 - bitlength; }
 
 /* Helper function for rounding to the next power of 2
  * Credit:

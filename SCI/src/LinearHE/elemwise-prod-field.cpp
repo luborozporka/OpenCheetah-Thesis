@@ -139,7 +139,7 @@ void ElemWiseProdField::elemwise_product(int32_t size, vector<uint64_t> &inArr,
       shared_ptr<const SEALContext::ContextData> context_data =
           context->get_context_data(parms_id);
 
-      flood_ciphertext(enc_result[i], context_data, SMUDGING_BITLEN);
+      flood_ciphertext(enc_result[i], context_data, SMUDGING_BITLEN());
 
 #ifdef HE_DEBUG
       if (!i)

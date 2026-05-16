@@ -673,7 +673,7 @@ void ConvField::non_strided_conv(int32_t H, int32_t W, int32_t CI, int32_t FH,
     shared_ptr<const SEALContext::ContextData> context_data =
         context_->get_context_data(parms_id);
     for (size_t ct_idx = 0; ct_idx < result.size(); ct_idx++) {
-      flood_ciphertext(result[ct_idx], context_data, SMUDGING_BITLEN);
+      flood_ciphertext(result[ct_idx], context_data, SMUDGING_BITLEN());
     }
 
 #ifdef HE_DEBUG
