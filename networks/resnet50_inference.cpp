@@ -1796,10 +1796,9 @@ void FusedBN(int32_t N, int32_t H, int32_t W, int32_t CI, int32_t fh,
   ClearMemSecret1(CO * CI * fh * fw, scaled_filters);
 }
 
-#define gINPUT std::cin
-#define gINPUTCLOSE
 void run_resnet50_inference(int party_, int port_, const std::string &address_,
-                            int num_threads_, int32_t bitlength_, int32_t kScale_) {
+                            int num_threads_, int32_t bitlength_, int32_t kScale_,
+                            std::istream &in) {
   party = party_;
   port = port_;
   address = address_;
@@ -1860,7 +1859,7 @@ void run_resnet50_inference(int party_, int port_, const std::string &address_,
       for (uint64_t i2 = (uint64_t)0; i2 < 224; i2++) {
         for (uint64_t i3 = (uint64_t)0; i3 < 3; i3++) {
           if (party == CLIENT) {
-            gINPUT>> __tmp_in_tmp0;
+            in >> __tmp_in_tmp0;
           }
           Arr4DIdxRowM(tmp0, 1, 224, 224, 3, i0, i1, i2, i3) =
               (party == CLIENT) ? __tmp_in_tmp0 : 0;
@@ -1878,7 +1877,7 @@ void run_resnet50_inference(int party_, int port_, const std::string &address_,
       for (uint64_t i2 = (uint64_t)0; i2 < 3; i2++) {
         for (uint64_t i3 = (uint64_t)0; i3 < 64; i3++) {
           if (party == SERVER) {
-            gINPUT>> __tmp_in_tmp1;
+            in >> __tmp_in_tmp1;
           }
           Arr4DIdxRowM(tmp1, 7, 7, 3, 64, i0, i1, i2, i3) =
               (party == SERVER) ? __tmp_in_tmp1 : 0;
@@ -1893,7 +1892,7 @@ void run_resnet50_inference(int party_, int port_, const std::string &address_,
   uint64_t __tmp_in_tmp2;
   for (uint64_t i0 = (uint64_t)0; i0 < 64; i0++) {
     if (party == SERVER) {
-      gINPUT>> __tmp_in_tmp2;
+      in >> __tmp_in_tmp2;
     }
     Arr1DIdxRowM(tmp2, 64, i0) = (party == SERVER) ? __tmp_in_tmp2 : 0;
   }
@@ -1904,7 +1903,7 @@ void run_resnet50_inference(int party_, int port_, const std::string &address_,
   uint64_t __tmp_in_tmp3;
   for (uint64_t i0 = (uint64_t)0; i0 < 64; i0++) {
     if (party == SERVER) {
-      gINPUT>> __tmp_in_tmp3;
+      in >> __tmp_in_tmp3;
     }
     Arr1DIdxRowM(tmp3, 64, i0) = (party == SERVER) ? __tmp_in_tmp3 : 0;
   }
@@ -1915,7 +1914,7 @@ void run_resnet50_inference(int party_, int port_, const std::string &address_,
   uint64_t __tmp_in_tmp4;
   for (uint64_t i0 = (uint64_t)0; i0 < 64; i0++) {
     if (party == SERVER) {
-      gINPUT>> __tmp_in_tmp4;
+      in >> __tmp_in_tmp4;
     }
     Arr1DIdxRowM(tmp4, 64, i0) = (party == SERVER) ? __tmp_in_tmp4 : 0;
   }
@@ -1926,7 +1925,7 @@ void run_resnet50_inference(int party_, int port_, const std::string &address_,
   uint64_t __tmp_in_tmp5;
   for (uint64_t i0 = (uint64_t)0; i0 < 64; i0++) {
     if (party == SERVER) {
-      gINPUT>> __tmp_in_tmp5;
+      in >> __tmp_in_tmp5;
     }
     Arr1DIdxRowM(tmp5, 64, i0) = (party == SERVER) ? __tmp_in_tmp5 : 0;
   }
@@ -1940,7 +1939,7 @@ void run_resnet50_inference(int party_, int port_, const std::string &address_,
       for (uint64_t i2 = (uint64_t)0; i2 < 64; i2++) {
         for (uint64_t i3 = (uint64_t)0; i3 < 256; i3++) {
           if (party == SERVER) {
-            gINPUT>> __tmp_in_tmp6;
+            in >> __tmp_in_tmp6;
           }
           Arr4DIdxRowM(tmp6, 1, 1, 64, 256, i0, i1, i2, i3) =
               (party == SERVER) ? __tmp_in_tmp6 : 0;
@@ -1958,7 +1957,7 @@ void run_resnet50_inference(int party_, int port_, const std::string &address_,
       for (uint64_t i2 = (uint64_t)0; i2 < 64; i2++) {
         for (uint64_t i3 = (uint64_t)0; i3 < 64; i3++) {
           if (party == SERVER) {
-            gINPUT>> __tmp_in_tmp7;
+            in >> __tmp_in_tmp7;
           }
           Arr4DIdxRowM(tmp7, 1, 1, 64, 64, i0, i1, i2, i3) =
               (party == SERVER) ? __tmp_in_tmp7 : 0;
@@ -1974,7 +1973,7 @@ void run_resnet50_inference(int party_, int port_, const std::string &address_,
   uint64_t __tmp_in_tmp8;
   for (uint64_t i0 = (uint64_t)0; i0 < 64; i0++) {
     if (party == SERVER) {
-      gINPUT>> __tmp_in_tmp8;
+      in >> __tmp_in_tmp8;
     }
     Arr1DIdxRowM(tmp8, 64, i0) = (party == SERVER) ? __tmp_in_tmp8 : 0;
   }
@@ -1985,7 +1984,7 @@ void run_resnet50_inference(int party_, int port_, const std::string &address_,
   uint64_t __tmp_in_tmp9;
   for (uint64_t i0 = (uint64_t)0; i0 < 64; i0++) {
     if (party == SERVER) {
-      gINPUT>> __tmp_in_tmp9;
+      in >> __tmp_in_tmp9;
     }
     Arr1DIdxRowM(tmp9, 64, i0) = (party == SERVER) ? __tmp_in_tmp9 : 0;
   }
@@ -1996,7 +1995,7 @@ void run_resnet50_inference(int party_, int port_, const std::string &address_,
   uint64_t __tmp_in_tmp10;
   for (uint64_t i0 = (uint64_t)0; i0 < 64; i0++) {
     if (party == SERVER) {
-      gINPUT>> __tmp_in_tmp10;
+      in >> __tmp_in_tmp10;
     }
     Arr1DIdxRowM(tmp10, 64, i0) = (party == SERVER) ? __tmp_in_tmp10 : 0;
   }
@@ -2007,7 +2006,7 @@ void run_resnet50_inference(int party_, int port_, const std::string &address_,
   uint64_t __tmp_in_tmp11;
   for (uint64_t i0 = (uint64_t)0; i0 < 64; i0++) {
     if (party == SERVER) {
-      gINPUT>> __tmp_in_tmp11;
+      in >> __tmp_in_tmp11;
     }
     Arr1DIdxRowM(tmp11, 64, i0) = (party == SERVER) ? __tmp_in_tmp11 : 0;
   }
@@ -2021,7 +2020,7 @@ void run_resnet50_inference(int party_, int port_, const std::string &address_,
       for (uint64_t i2 = (uint64_t)0; i2 < 64; i2++) {
         for (uint64_t i3 = (uint64_t)0; i3 < 64; i3++) {
           if (party == SERVER) {
-            gINPUT>> __tmp_in_tmp12;
+            in >> __tmp_in_tmp12;
           }
           Arr4DIdxRowM(tmp12, 3, 3, 64, 64, i0, i1, i2, i3) =
               (party == SERVER) ? __tmp_in_tmp12 : 0;
@@ -2036,7 +2035,7 @@ void run_resnet50_inference(int party_, int port_, const std::string &address_,
   uint64_t __tmp_in_tmp13;
   for (uint64_t i0 = (uint64_t)0; i0 < 64; i0++) {
     if (party == SERVER) {
-      gINPUT>> __tmp_in_tmp13;
+      in >> __tmp_in_tmp13;
     }
     Arr1DIdxRowM(tmp13, 64, i0) = (party == SERVER) ? __tmp_in_tmp13 : 0;
   }
@@ -2047,7 +2046,7 @@ void run_resnet50_inference(int party_, int port_, const std::string &address_,
   uint64_t __tmp_in_tmp14;
   for (uint64_t i0 = (uint64_t)0; i0 < 64; i0++) {
     if (party == SERVER) {
-      gINPUT>> __tmp_in_tmp14;
+      in >> __tmp_in_tmp14;
     }
     Arr1DIdxRowM(tmp14, 64, i0) = (party == SERVER) ? __tmp_in_tmp14 : 0;
   }
@@ -2058,7 +2057,7 @@ void run_resnet50_inference(int party_, int port_, const std::string &address_,
   uint64_t __tmp_in_tmp15;
   for (uint64_t i0 = (uint64_t)0; i0 < 64; i0++) {
     if (party == SERVER) {
-      gINPUT>> __tmp_in_tmp15;
+      in >> __tmp_in_tmp15;
     }
     Arr1DIdxRowM(tmp15, 64, i0) = (party == SERVER) ? __tmp_in_tmp15 : 0;
   }
@@ -2069,7 +2068,7 @@ void run_resnet50_inference(int party_, int port_, const std::string &address_,
   uint64_t __tmp_in_tmp16;
   for (uint64_t i0 = (uint64_t)0; i0 < 64; i0++) {
     if (party == SERVER) {
-      gINPUT>> __tmp_in_tmp16;
+      in >> __tmp_in_tmp16;
     }
     Arr1DIdxRowM(tmp16, 64, i0) = (party == SERVER) ? __tmp_in_tmp16 : 0;
   }
@@ -2083,7 +2082,7 @@ void run_resnet50_inference(int party_, int port_, const std::string &address_,
       for (uint64_t i2 = (uint64_t)0; i2 < 64; i2++) {
         for (uint64_t i3 = (uint64_t)0; i3 < 256; i3++) {
           if (party == SERVER) {
-            gINPUT>> __tmp_in_tmp17;
+            in >> __tmp_in_tmp17;
           }
           Arr4DIdxRowM(tmp17, 1, 1, 64, 256, i0, i1, i2, i3) =
               (party == SERVER) ? __tmp_in_tmp17 : 0;
@@ -2098,7 +2097,7 @@ void run_resnet50_inference(int party_, int port_, const std::string &address_,
   uint64_t __tmp_in_tmp18;
   for (uint64_t i0 = (uint64_t)0; i0 < 256; i0++) {
     if (party == SERVER) {
-      gINPUT>> __tmp_in_tmp18;
+      in >> __tmp_in_tmp18;
     }
     Arr1DIdxRowM(tmp18, 256, i0) = (party == SERVER) ? __tmp_in_tmp18 : 0;
   }
@@ -2109,7 +2108,7 @@ void run_resnet50_inference(int party_, int port_, const std::string &address_,
   uint64_t __tmp_in_tmp19;
   for (uint64_t i0 = (uint64_t)0; i0 < 256; i0++) {
     if (party == SERVER) {
-      gINPUT>> __tmp_in_tmp19;
+      in >> __tmp_in_tmp19;
     }
     Arr1DIdxRowM(tmp19, 256, i0) = (party == SERVER) ? __tmp_in_tmp19 : 0;
   }
@@ -2120,7 +2119,7 @@ void run_resnet50_inference(int party_, int port_, const std::string &address_,
   uint64_t __tmp_in_tmp20;
   for (uint64_t i0 = (uint64_t)0; i0 < 256; i0++) {
     if (party == SERVER) {
-      gINPUT>> __tmp_in_tmp20;
+      in >> __tmp_in_tmp20;
     }
     Arr1DIdxRowM(tmp20, 256, i0) = (party == SERVER) ? __tmp_in_tmp20 : 0;
   }
@@ -2131,7 +2130,7 @@ void run_resnet50_inference(int party_, int port_, const std::string &address_,
   uint64_t __tmp_in_tmp21;
   for (uint64_t i0 = (uint64_t)0; i0 < 256; i0++) {
     if (party == SERVER) {
-      gINPUT>> __tmp_in_tmp21;
+      in >> __tmp_in_tmp21;
     }
     Arr1DIdxRowM(tmp21, 256, i0) = (party == SERVER) ? __tmp_in_tmp21 : 0;
   }
@@ -2145,7 +2144,7 @@ void run_resnet50_inference(int party_, int port_, const std::string &address_,
       for (uint64_t i2 = (uint64_t)0; i2 < 256; i2++) {
         for (uint64_t i3 = (uint64_t)0; i3 < 64; i3++) {
           if (party == SERVER) {
-            gINPUT>> __tmp_in_tmp22;
+            in >> __tmp_in_tmp22;
           }
           Arr4DIdxRowM(tmp22, 1, 1, 256, 64, i0, i1, i2, i3) =
               (party == SERVER) ? __tmp_in_tmp22 : 0;
@@ -2160,7 +2159,7 @@ void run_resnet50_inference(int party_, int port_, const std::string &address_,
   uint64_t __tmp_in_tmp23;
   for (uint64_t i0 = (uint64_t)0; i0 < 64; i0++) {
     if (party == SERVER) {
-      gINPUT>> __tmp_in_tmp23;
+      in >> __tmp_in_tmp23;
     }
     Arr1DIdxRowM(tmp23, 64, i0) = (party == SERVER) ? __tmp_in_tmp23 : 0;
   }
@@ -2171,7 +2170,7 @@ void run_resnet50_inference(int party_, int port_, const std::string &address_,
   uint64_t __tmp_in_tmp24;
   for (uint64_t i0 = (uint64_t)0; i0 < 64; i0++) {
     if (party == SERVER) {
-      gINPUT>> __tmp_in_tmp24;
+      in >> __tmp_in_tmp24;
     }
     Arr1DIdxRowM(tmp24, 64, i0) = (party == SERVER) ? __tmp_in_tmp24 : 0;
   }
@@ -2182,7 +2181,7 @@ void run_resnet50_inference(int party_, int port_, const std::string &address_,
   uint64_t __tmp_in_tmp25;
   for (uint64_t i0 = (uint64_t)0; i0 < 64; i0++) {
     if (party == SERVER) {
-      gINPUT>> __tmp_in_tmp25;
+      in >> __tmp_in_tmp25;
     }
     Arr1DIdxRowM(tmp25, 64, i0) = (party == SERVER) ? __tmp_in_tmp25 : 0;
   }
@@ -2193,7 +2192,7 @@ void run_resnet50_inference(int party_, int port_, const std::string &address_,
   uint64_t __tmp_in_tmp26;
   for (uint64_t i0 = (uint64_t)0; i0 < 64; i0++) {
     if (party == SERVER) {
-      gINPUT>> __tmp_in_tmp26;
+      in >> __tmp_in_tmp26;
     }
     Arr1DIdxRowM(tmp26, 64, i0) = (party == SERVER) ? __tmp_in_tmp26 : 0;
   }
@@ -2207,7 +2206,7 @@ void run_resnet50_inference(int party_, int port_, const std::string &address_,
       for (uint64_t i2 = (uint64_t)0; i2 < 64; i2++) {
         for (uint64_t i3 = (uint64_t)0; i3 < 64; i3++) {
           if (party == SERVER) {
-            gINPUT>> __tmp_in_tmp27;
+            in >> __tmp_in_tmp27;
           }
           Arr4DIdxRowM(tmp27, 3, 3, 64, 64, i0, i1, i2, i3) =
               (party == SERVER) ? __tmp_in_tmp27 : 0;
@@ -2222,7 +2221,7 @@ void run_resnet50_inference(int party_, int port_, const std::string &address_,
   uint64_t __tmp_in_tmp28;
   for (uint64_t i0 = (uint64_t)0; i0 < 64; i0++) {
     if (party == SERVER) {
-      gINPUT>> __tmp_in_tmp28;
+      in >> __tmp_in_tmp28;
     }
     Arr1DIdxRowM(tmp28, 64, i0) = (party == SERVER) ? __tmp_in_tmp28 : 0;
   }
@@ -2233,7 +2232,7 @@ void run_resnet50_inference(int party_, int port_, const std::string &address_,
   uint64_t __tmp_in_tmp29;
   for (uint64_t i0 = (uint64_t)0; i0 < 64; i0++) {
     if (party == SERVER) {
-      gINPUT>> __tmp_in_tmp29;
+      in >> __tmp_in_tmp29;
     }
     Arr1DIdxRowM(tmp29, 64, i0) = (party == SERVER) ? __tmp_in_tmp29 : 0;
   }
@@ -2244,7 +2243,7 @@ void run_resnet50_inference(int party_, int port_, const std::string &address_,
   uint64_t __tmp_in_tmp30;
   for (uint64_t i0 = (uint64_t)0; i0 < 64; i0++) {
     if (party == SERVER) {
-      gINPUT>> __tmp_in_tmp30;
+      in >> __tmp_in_tmp30;
     }
     Arr1DIdxRowM(tmp30, 64, i0) = (party == SERVER) ? __tmp_in_tmp30 : 0;
   }
@@ -2255,7 +2254,7 @@ void run_resnet50_inference(int party_, int port_, const std::string &address_,
   uint64_t __tmp_in_tmp31;
   for (uint64_t i0 = (uint64_t)0; i0 < 64; i0++) {
     if (party == SERVER) {
-      gINPUT>> __tmp_in_tmp31;
+      in >> __tmp_in_tmp31;
     }
     Arr1DIdxRowM(tmp31, 64, i0) = (party == SERVER) ? __tmp_in_tmp31 : 0;
   }
@@ -2269,7 +2268,7 @@ void run_resnet50_inference(int party_, int port_, const std::string &address_,
       for (uint64_t i2 = (uint64_t)0; i2 < 64; i2++) {
         for (uint64_t i3 = (uint64_t)0; i3 < 256; i3++) {
           if (party == SERVER) {
-            gINPUT>> __tmp_in_tmp32;
+            in >> __tmp_in_tmp32;
           }
           Arr4DIdxRowM(tmp32, 1, 1, 64, 256, i0, i1, i2, i3) =
               (party == SERVER) ? __tmp_in_tmp32 : 0;
@@ -2284,7 +2283,7 @@ void run_resnet50_inference(int party_, int port_, const std::string &address_,
   uint64_t __tmp_in_tmp33;
   for (uint64_t i0 = (uint64_t)0; i0 < 256; i0++) {
     if (party == SERVER) {
-      gINPUT>> __tmp_in_tmp33;
+      in >> __tmp_in_tmp33;
     }
     Arr1DIdxRowM(tmp33, 256, i0) = (party == SERVER) ? __tmp_in_tmp33 : 0;
   }
@@ -2295,7 +2294,7 @@ void run_resnet50_inference(int party_, int port_, const std::string &address_,
   uint64_t __tmp_in_tmp34;
   for (uint64_t i0 = (uint64_t)0; i0 < 256; i0++) {
     if (party == SERVER) {
-      gINPUT>> __tmp_in_tmp34;
+      in >> __tmp_in_tmp34;
     }
     Arr1DIdxRowM(tmp34, 256, i0) = (party == SERVER) ? __tmp_in_tmp34 : 0;
   }
@@ -2306,7 +2305,7 @@ void run_resnet50_inference(int party_, int port_, const std::string &address_,
   uint64_t __tmp_in_tmp35;
   for (uint64_t i0 = (uint64_t)0; i0 < 256; i0++) {
     if (party == SERVER) {
-      gINPUT>> __tmp_in_tmp35;
+      in >> __tmp_in_tmp35;
     }
     Arr1DIdxRowM(tmp35, 256, i0) = (party == SERVER) ? __tmp_in_tmp35 : 0;
   }
@@ -2317,7 +2316,7 @@ void run_resnet50_inference(int party_, int port_, const std::string &address_,
   uint64_t __tmp_in_tmp36;
   for (uint64_t i0 = (uint64_t)0; i0 < 256; i0++) {
     if (party == SERVER) {
-      gINPUT>> __tmp_in_tmp36;
+      in >> __tmp_in_tmp36;
     }
     Arr1DIdxRowM(tmp36, 256, i0) = (party == SERVER) ? __tmp_in_tmp36 : 0;
   }
@@ -2331,7 +2330,7 @@ void run_resnet50_inference(int party_, int port_, const std::string &address_,
       for (uint64_t i2 = (uint64_t)0; i2 < 256; i2++) {
         for (uint64_t i3 = (uint64_t)0; i3 < 64; i3++) {
           if (party == SERVER) {
-            gINPUT>> __tmp_in_tmp37;
+            in >> __tmp_in_tmp37;
           }
           Arr4DIdxRowM(tmp37, 1, 1, 256, 64, i0, i1, i2, i3) =
               (party == SERVER) ? __tmp_in_tmp37 : 0;
@@ -2346,7 +2345,7 @@ void run_resnet50_inference(int party_, int port_, const std::string &address_,
   uint64_t __tmp_in_tmp38;
   for (uint64_t i0 = (uint64_t)0; i0 < 64; i0++) {
     if (party == SERVER) {
-      gINPUT>> __tmp_in_tmp38;
+      in >> __tmp_in_tmp38;
     }
     Arr1DIdxRowM(tmp38, 64, i0) = (party == SERVER) ? __tmp_in_tmp38 : 0;
   }
@@ -2357,7 +2356,7 @@ void run_resnet50_inference(int party_, int port_, const std::string &address_,
   uint64_t __tmp_in_tmp39;
   for (uint64_t i0 = (uint64_t)0; i0 < 64; i0++) {
     if (party == SERVER) {
-      gINPUT>> __tmp_in_tmp39;
+      in >> __tmp_in_tmp39;
     }
     Arr1DIdxRowM(tmp39, 64, i0) = (party == SERVER) ? __tmp_in_tmp39 : 0;
   }
@@ -2368,7 +2367,7 @@ void run_resnet50_inference(int party_, int port_, const std::string &address_,
   uint64_t __tmp_in_tmp40;
   for (uint64_t i0 = (uint64_t)0; i0 < 64; i0++) {
     if (party == SERVER) {
-      gINPUT>> __tmp_in_tmp40;
+      in >> __tmp_in_tmp40;
     }
     Arr1DIdxRowM(tmp40, 64, i0) = (party == SERVER) ? __tmp_in_tmp40 : 0;
   }
@@ -2379,7 +2378,7 @@ void run_resnet50_inference(int party_, int port_, const std::string &address_,
   uint64_t __tmp_in_tmp41;
   for (uint64_t i0 = (uint64_t)0; i0 < 64; i0++) {
     if (party == SERVER) {
-      gINPUT>> __tmp_in_tmp41;
+      in >> __tmp_in_tmp41;
     }
     Arr1DIdxRowM(tmp41, 64, i0) = (party == SERVER) ? __tmp_in_tmp41 : 0;
   }
@@ -2393,7 +2392,7 @@ void run_resnet50_inference(int party_, int port_, const std::string &address_,
       for (uint64_t i2 = (uint64_t)0; i2 < 64; i2++) {
         for (uint64_t i3 = (uint64_t)0; i3 < 64; i3++) {
           if (party == SERVER) {
-            gINPUT>> __tmp_in_tmp42;
+            in >> __tmp_in_tmp42;
           }
           Arr4DIdxRowM(tmp42, 3, 3, 64, 64, i0, i1, i2, i3) =
               (party == SERVER) ? __tmp_in_tmp42 : 0;
@@ -2408,7 +2407,7 @@ void run_resnet50_inference(int party_, int port_, const std::string &address_,
   uint64_t __tmp_in_tmp43;
   for (uint64_t i0 = (uint64_t)0; i0 < 64; i0++) {
     if (party == SERVER) {
-      gINPUT>> __tmp_in_tmp43;
+      in >> __tmp_in_tmp43;
     }
     Arr1DIdxRowM(tmp43, 64, i0) = (party == SERVER) ? __tmp_in_tmp43 : 0;
   }
@@ -2419,7 +2418,7 @@ void run_resnet50_inference(int party_, int port_, const std::string &address_,
   uint64_t __tmp_in_tmp44;
   for (uint64_t i0 = (uint64_t)0; i0 < 64; i0++) {
     if (party == SERVER) {
-      gINPUT>> __tmp_in_tmp44;
+      in >> __tmp_in_tmp44;
     }
     Arr1DIdxRowM(tmp44, 64, i0) = (party == SERVER) ? __tmp_in_tmp44 : 0;
   }
@@ -2430,7 +2429,7 @@ void run_resnet50_inference(int party_, int port_, const std::string &address_,
   uint64_t __tmp_in_tmp45;
   for (uint64_t i0 = (uint64_t)0; i0 < 64; i0++) {
     if (party == SERVER) {
-      gINPUT>> __tmp_in_tmp45;
+      in >> __tmp_in_tmp45;
     }
     Arr1DIdxRowM(tmp45, 64, i0) = (party == SERVER) ? __tmp_in_tmp45 : 0;
   }
@@ -2441,7 +2440,7 @@ void run_resnet50_inference(int party_, int port_, const std::string &address_,
   uint64_t __tmp_in_tmp46;
   for (uint64_t i0 = (uint64_t)0; i0 < 64; i0++) {
     if (party == SERVER) {
-      gINPUT>> __tmp_in_tmp46;
+      in >> __tmp_in_tmp46;
     }
     Arr1DIdxRowM(tmp46, 64, i0) = (party == SERVER) ? __tmp_in_tmp46 : 0;
   }
@@ -2455,7 +2454,7 @@ void run_resnet50_inference(int party_, int port_, const std::string &address_,
       for (uint64_t i2 = (uint64_t)0; i2 < 64; i2++) {
         for (uint64_t i3 = (uint64_t)0; i3 < 256; i3++) {
           if (party == SERVER) {
-            gINPUT>> __tmp_in_tmp47;
+            in >> __tmp_in_tmp47;
           }
           Arr4DIdxRowM(tmp47, 1, 1, 64, 256, i0, i1, i2, i3) =
               (party == SERVER) ? __tmp_in_tmp47 : 0;
@@ -2470,7 +2469,7 @@ void run_resnet50_inference(int party_, int port_, const std::string &address_,
   uint64_t __tmp_in_tmp48;
   for (uint64_t i0 = (uint64_t)0; i0 < 256; i0++) {
     if (party == SERVER) {
-      gINPUT>> __tmp_in_tmp48;
+      in >> __tmp_in_tmp48;
     }
     Arr1DIdxRowM(tmp48, 256, i0) = (party == SERVER) ? __tmp_in_tmp48 : 0;
   }
@@ -2481,7 +2480,7 @@ void run_resnet50_inference(int party_, int port_, const std::string &address_,
   uint64_t __tmp_in_tmp49;
   for (uint64_t i0 = (uint64_t)0; i0 < 256; i0++) {
     if (party == SERVER) {
-      gINPUT>> __tmp_in_tmp49;
+      in >> __tmp_in_tmp49;
     }
     Arr1DIdxRowM(tmp49, 256, i0) = (party == SERVER) ? __tmp_in_tmp49 : 0;
   }
@@ -2492,7 +2491,7 @@ void run_resnet50_inference(int party_, int port_, const std::string &address_,
   uint64_t __tmp_in_tmp50;
   for (uint64_t i0 = (uint64_t)0; i0 < 256; i0++) {
     if (party == SERVER) {
-      gINPUT>> __tmp_in_tmp50;
+      in >> __tmp_in_tmp50;
     }
     Arr1DIdxRowM(tmp50, 256, i0) = (party == SERVER) ? __tmp_in_tmp50 : 0;
   }
@@ -2503,7 +2502,7 @@ void run_resnet50_inference(int party_, int port_, const std::string &address_,
   uint64_t __tmp_in_tmp51;
   for (uint64_t i0 = (uint64_t)0; i0 < 256; i0++) {
     if (party == SERVER) {
-      gINPUT>> __tmp_in_tmp51;
+      in >> __tmp_in_tmp51;
     }
     Arr1DIdxRowM(tmp51, 256, i0) = (party == SERVER) ? __tmp_in_tmp51 : 0;
   }
@@ -2517,7 +2516,7 @@ void run_resnet50_inference(int party_, int port_, const std::string &address_,
       for (uint64_t i2 = (uint64_t)0; i2 < 256; i2++) {
         for (uint64_t i3 = (uint64_t)0; i3 < 512; i3++) {
           if (party == SERVER) {
-            gINPUT>> __tmp_in_tmp52;
+            in >> __tmp_in_tmp52;
           }
           Arr4DIdxRowM(tmp52, 1, 1, 256, 512, i0, i1, i2, i3) =
               (party == SERVER) ? __tmp_in_tmp52 : 0;
@@ -2535,7 +2534,7 @@ void run_resnet50_inference(int party_, int port_, const std::string &address_,
       for (uint64_t i2 = (uint64_t)0; i2 < 256; i2++) {
         for (uint64_t i3 = (uint64_t)0; i3 < 128; i3++) {
           if (party == SERVER) {
-            gINPUT>> __tmp_in_tmp53;
+            in >> __tmp_in_tmp53;
           }
           Arr4DIdxRowM(tmp53, 1, 1, 256, 128, i0, i1, i2, i3) =
               (party == SERVER) ? __tmp_in_tmp53 : 0;
@@ -2550,7 +2549,7 @@ void run_resnet50_inference(int party_, int port_, const std::string &address_,
   uint64_t __tmp_in_tmp54;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if (party == SERVER) {
-      gINPUT>> __tmp_in_tmp54;
+      in >> __tmp_in_tmp54;
     }
     Arr1DIdxRowM(tmp54, 128, i0) = (party == SERVER) ? __tmp_in_tmp54 : 0;
   }
@@ -2561,7 +2560,7 @@ void run_resnet50_inference(int party_, int port_, const std::string &address_,
   uint64_t __tmp_in_tmp55;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if (party == SERVER) {
-      gINPUT>> __tmp_in_tmp55;
+      in >> __tmp_in_tmp55;
     }
     Arr1DIdxRowM(tmp55, 128, i0) = (party == SERVER) ? __tmp_in_tmp55 : 0;
   }
@@ -2572,7 +2571,7 @@ void run_resnet50_inference(int party_, int port_, const std::string &address_,
   uint64_t __tmp_in_tmp56;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if (party == SERVER) {
-      gINPUT>> __tmp_in_tmp56;
+      in >> __tmp_in_tmp56;
     }
     Arr1DIdxRowM(tmp56, 128, i0) = (party == SERVER) ? __tmp_in_tmp56 : 0;
   }
@@ -2583,7 +2582,7 @@ void run_resnet50_inference(int party_, int port_, const std::string &address_,
   uint64_t __tmp_in_tmp57;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if (party == SERVER) {
-      gINPUT>> __tmp_in_tmp57;
+      in >> __tmp_in_tmp57;
     }
     Arr1DIdxRowM(tmp57, 128, i0) = (party == SERVER) ? __tmp_in_tmp57 : 0;
   }
@@ -2597,7 +2596,7 @@ void run_resnet50_inference(int party_, int port_, const std::string &address_,
       for (uint64_t i2 = (uint64_t)0; i2 < 128; i2++) {
         for (uint64_t i3 = (uint64_t)0; i3 < 128; i3++) {
           if (party == SERVER) {
-            gINPUT>> __tmp_in_tmp58;
+            in >> __tmp_in_tmp58;
           }
           Arr4DIdxRowM(tmp58, 3, 3, 128, 128, i0, i1, i2, i3) =
               (party == SERVER) ? __tmp_in_tmp58 : 0;
@@ -2612,7 +2611,7 @@ void run_resnet50_inference(int party_, int port_, const std::string &address_,
   uint64_t __tmp_in_tmp59;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if (party == SERVER) {
-      gINPUT>> __tmp_in_tmp59;
+      in >> __tmp_in_tmp59;
     }
     Arr1DIdxRowM(tmp59, 128, i0) = (party == SERVER) ? __tmp_in_tmp59 : 0;
   }
@@ -2623,7 +2622,7 @@ void run_resnet50_inference(int party_, int port_, const std::string &address_,
   uint64_t __tmp_in_tmp60;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if (party == SERVER) {
-      gINPUT>> __tmp_in_tmp60;
+      in >> __tmp_in_tmp60;
     }
     Arr1DIdxRowM(tmp60, 128, i0) = (party == SERVER) ? __tmp_in_tmp60 : 0;
   }
@@ -2634,7 +2633,7 @@ void run_resnet50_inference(int party_, int port_, const std::string &address_,
   uint64_t __tmp_in_tmp61;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if (party == SERVER) {
-      gINPUT>> __tmp_in_tmp61;
+      in >> __tmp_in_tmp61;
     }
     Arr1DIdxRowM(tmp61, 128, i0) = (party == SERVER) ? __tmp_in_tmp61 : 0;
   }
@@ -2645,7 +2644,7 @@ void run_resnet50_inference(int party_, int port_, const std::string &address_,
   uint64_t __tmp_in_tmp62;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if (party == SERVER) {
-      gINPUT>> __tmp_in_tmp62;
+      in >> __tmp_in_tmp62;
     }
     Arr1DIdxRowM(tmp62, 128, i0) = (party == SERVER) ? __tmp_in_tmp62 : 0;
   }
@@ -2659,7 +2658,7 @@ void run_resnet50_inference(int party_, int port_, const std::string &address_,
       for (uint64_t i2 = (uint64_t)0; i2 < 128; i2++) {
         for (uint64_t i3 = (uint64_t)0; i3 < 512; i3++) {
           if (party == SERVER) {
-            gINPUT>> __tmp_in_tmp63;
+            in >> __tmp_in_tmp63;
           }
           Arr4DIdxRowM(tmp63, 1, 1, 128, 512, i0, i1, i2, i3) =
               (party == SERVER) ? __tmp_in_tmp63 : 0;
@@ -2674,7 +2673,7 @@ void run_resnet50_inference(int party_, int port_, const std::string &address_,
   uint64_t __tmp_in_tmp64;
   for (uint64_t i0 = (uint64_t)0; i0 < 512; i0++) {
     if (party == SERVER) {
-      gINPUT>> __tmp_in_tmp64;
+      in >> __tmp_in_tmp64;
     }
     Arr1DIdxRowM(tmp64, 512, i0) = (party == SERVER) ? __tmp_in_tmp64 : 0;
   }
@@ -2685,7 +2684,7 @@ void run_resnet50_inference(int party_, int port_, const std::string &address_,
   uint64_t __tmp_in_tmp65;
   for (uint64_t i0 = (uint64_t)0; i0 < 512; i0++) {
     if (party == SERVER) {
-      gINPUT>> __tmp_in_tmp65;
+      in >> __tmp_in_tmp65;
     }
     Arr1DIdxRowM(tmp65, 512, i0) = (party == SERVER) ? __tmp_in_tmp65 : 0;
   }
@@ -2696,7 +2695,7 @@ void run_resnet50_inference(int party_, int port_, const std::string &address_,
   uint64_t __tmp_in_tmp66;
   for (uint64_t i0 = (uint64_t)0; i0 < 512; i0++) {
     if (party == SERVER) {
-      gINPUT>> __tmp_in_tmp66;
+      in >> __tmp_in_tmp66;
     }
     Arr1DIdxRowM(tmp66, 512, i0) = (party == SERVER) ? __tmp_in_tmp66 : 0;
   }
@@ -2707,7 +2706,7 @@ void run_resnet50_inference(int party_, int port_, const std::string &address_,
   uint64_t __tmp_in_tmp67;
   for (uint64_t i0 = (uint64_t)0; i0 < 512; i0++) {
     if (party == SERVER) {
-      gINPUT>> __tmp_in_tmp67;
+      in >> __tmp_in_tmp67;
     }
     Arr1DIdxRowM(tmp67, 512, i0) = (party == SERVER) ? __tmp_in_tmp67 : 0;
   }
@@ -2721,7 +2720,7 @@ void run_resnet50_inference(int party_, int port_, const std::string &address_,
       for (uint64_t i2 = (uint64_t)0; i2 < 512; i2++) {
         for (uint64_t i3 = (uint64_t)0; i3 < 128; i3++) {
           if (party == SERVER) {
-            gINPUT>> __tmp_in_tmp68;
+            in >> __tmp_in_tmp68;
           }
           Arr4DIdxRowM(tmp68, 1, 1, 512, 128, i0, i1, i2, i3) =
               (party == SERVER) ? __tmp_in_tmp68 : 0;
@@ -2736,7 +2735,7 @@ void run_resnet50_inference(int party_, int port_, const std::string &address_,
   uint64_t __tmp_in_tmp69;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if (party == SERVER) {
-      gINPUT>> __tmp_in_tmp69;
+      in >> __tmp_in_tmp69;
     }
     Arr1DIdxRowM(tmp69, 128, i0) = (party == SERVER) ? __tmp_in_tmp69 : 0;
   }
@@ -2747,7 +2746,7 @@ void run_resnet50_inference(int party_, int port_, const std::string &address_,
   uint64_t __tmp_in_tmp70;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if (party == SERVER) {
-      gINPUT>> __tmp_in_tmp70;
+      in >> __tmp_in_tmp70;
     }
     Arr1DIdxRowM(tmp70, 128, i0) = (party == SERVER) ? __tmp_in_tmp70 : 0;
   }
@@ -2758,7 +2757,7 @@ void run_resnet50_inference(int party_, int port_, const std::string &address_,
   uint64_t __tmp_in_tmp71;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if (party == SERVER) {
-      gINPUT>> __tmp_in_tmp71;
+      in >> __tmp_in_tmp71;
     }
     Arr1DIdxRowM(tmp71, 128, i0) = (party == SERVER) ? __tmp_in_tmp71 : 0;
   }
@@ -2769,7 +2768,7 @@ void run_resnet50_inference(int party_, int port_, const std::string &address_,
   uint64_t __tmp_in_tmp72;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if (party == SERVER) {
-      gINPUT>> __tmp_in_tmp72;
+      in >> __tmp_in_tmp72;
     }
     Arr1DIdxRowM(tmp72, 128, i0) = (party == SERVER) ? __tmp_in_tmp72 : 0;
   }
@@ -2783,7 +2782,7 @@ void run_resnet50_inference(int party_, int port_, const std::string &address_,
       for (uint64_t i2 = (uint64_t)0; i2 < 128; i2++) {
         for (uint64_t i3 = (uint64_t)0; i3 < 128; i3++) {
           if (party == SERVER) {
-            gINPUT>> __tmp_in_tmp73;
+            in >> __tmp_in_tmp73;
           }
           Arr4DIdxRowM(tmp73, 3, 3, 128, 128, i0, i1, i2, i3) =
               (party == SERVER) ? __tmp_in_tmp73 : 0;
@@ -2798,7 +2797,7 @@ void run_resnet50_inference(int party_, int port_, const std::string &address_,
   uint64_t __tmp_in_tmp74;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if (party == SERVER) {
-      gINPUT>> __tmp_in_tmp74;
+      in >> __tmp_in_tmp74;
     }
     Arr1DIdxRowM(tmp74, 128, i0) = (party == SERVER) ? __tmp_in_tmp74 : 0;
   }
@@ -2809,7 +2808,7 @@ void run_resnet50_inference(int party_, int port_, const std::string &address_,
   uint64_t __tmp_in_tmp75;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if (party == SERVER) {
-      gINPUT>> __tmp_in_tmp75;
+      in >> __tmp_in_tmp75;
     }
     Arr1DIdxRowM(tmp75, 128, i0) = (party == SERVER) ? __tmp_in_tmp75 : 0;
   }
@@ -2820,7 +2819,7 @@ void run_resnet50_inference(int party_, int port_, const std::string &address_,
   uint64_t __tmp_in_tmp76;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if (party == SERVER) {
-      gINPUT>> __tmp_in_tmp76;
+      in >> __tmp_in_tmp76;
     }
     Arr1DIdxRowM(tmp76, 128, i0) = (party == SERVER) ? __tmp_in_tmp76 : 0;
   }
@@ -2831,7 +2830,7 @@ void run_resnet50_inference(int party_, int port_, const std::string &address_,
   uint64_t __tmp_in_tmp77;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if (party == SERVER) {
-      gINPUT>> __tmp_in_tmp77;
+      in >> __tmp_in_tmp77;
     }
     Arr1DIdxRowM(tmp77, 128, i0) = (party == SERVER) ? __tmp_in_tmp77 : 0;
   }
@@ -2845,7 +2844,7 @@ void run_resnet50_inference(int party_, int port_, const std::string &address_,
       for (uint64_t i2 = (uint64_t)0; i2 < 128; i2++) {
         for (uint64_t i3 = (uint64_t)0; i3 < 512; i3++) {
           if (party == SERVER) {
-            gINPUT>> __tmp_in_tmp78;
+            in >> __tmp_in_tmp78;
           }
           Arr4DIdxRowM(tmp78, 1, 1, 128, 512, i0, i1, i2, i3) =
               (party == SERVER) ? __tmp_in_tmp78 : 0;
@@ -2860,7 +2859,7 @@ void run_resnet50_inference(int party_, int port_, const std::string &address_,
   uint64_t __tmp_in_tmp79;
   for (uint64_t i0 = (uint64_t)0; i0 < 512; i0++) {
     if (party == SERVER) {
-      gINPUT>> __tmp_in_tmp79;
+      in >> __tmp_in_tmp79;
     }
     Arr1DIdxRowM(tmp79, 512, i0) = (party == SERVER) ? __tmp_in_tmp79 : 0;
   }
@@ -2871,7 +2870,7 @@ void run_resnet50_inference(int party_, int port_, const std::string &address_,
   uint64_t __tmp_in_tmp80;
   for (uint64_t i0 = (uint64_t)0; i0 < 512; i0++) {
     if (party == SERVER) {
-      gINPUT>> __tmp_in_tmp80;
+      in >> __tmp_in_tmp80;
     }
     Arr1DIdxRowM(tmp80, 512, i0) = (party == SERVER) ? __tmp_in_tmp80 : 0;
   }
@@ -2882,7 +2881,7 @@ void run_resnet50_inference(int party_, int port_, const std::string &address_,
   uint64_t __tmp_in_tmp81;
   for (uint64_t i0 = (uint64_t)0; i0 < 512; i0++) {
     if (party == SERVER) {
-      gINPUT>> __tmp_in_tmp81;
+      in >> __tmp_in_tmp81;
     }
     Arr1DIdxRowM(tmp81, 512, i0) = (party == SERVER) ? __tmp_in_tmp81 : 0;
   }
@@ -2893,7 +2892,7 @@ void run_resnet50_inference(int party_, int port_, const std::string &address_,
   uint64_t __tmp_in_tmp82;
   for (uint64_t i0 = (uint64_t)0; i0 < 512; i0++) {
     if (party == SERVER) {
-      gINPUT>> __tmp_in_tmp82;
+      in >> __tmp_in_tmp82;
     }
     Arr1DIdxRowM(tmp82, 512, i0) = (party == SERVER) ? __tmp_in_tmp82 : 0;
   }
@@ -2907,7 +2906,7 @@ void run_resnet50_inference(int party_, int port_, const std::string &address_,
       for (uint64_t i2 = (uint64_t)0; i2 < 512; i2++) {
         for (uint64_t i3 = (uint64_t)0; i3 < 128; i3++) {
           if (party == SERVER) {
-            gINPUT>> __tmp_in_tmp83;
+            in >> __tmp_in_tmp83;
           }
           Arr4DIdxRowM(tmp83, 1, 1, 512, 128, i0, i1, i2, i3) =
               (party == SERVER) ? __tmp_in_tmp83 : 0;
@@ -2922,7 +2921,7 @@ void run_resnet50_inference(int party_, int port_, const std::string &address_,
   uint64_t __tmp_in_tmp84;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if (party == SERVER) {
-      gINPUT>> __tmp_in_tmp84;
+      in >> __tmp_in_tmp84;
     }
     Arr1DIdxRowM(tmp84, 128, i0) = (party == SERVER) ? __tmp_in_tmp84 : 0;
   }
@@ -2933,7 +2932,7 @@ void run_resnet50_inference(int party_, int port_, const std::string &address_,
   uint64_t __tmp_in_tmp85;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if (party == SERVER) {
-      gINPUT>> __tmp_in_tmp85;
+      in >> __tmp_in_tmp85;
     }
     Arr1DIdxRowM(tmp85, 128, i0) = (party == SERVER) ? __tmp_in_tmp85 : 0;
   }
@@ -2944,7 +2943,7 @@ void run_resnet50_inference(int party_, int port_, const std::string &address_,
   uint64_t __tmp_in_tmp86;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if (party == SERVER) {
-      gINPUT>> __tmp_in_tmp86;
+      in >> __tmp_in_tmp86;
     }
     Arr1DIdxRowM(tmp86, 128, i0) = (party == SERVER) ? __tmp_in_tmp86 : 0;
   }
@@ -2955,7 +2954,7 @@ void run_resnet50_inference(int party_, int port_, const std::string &address_,
   uint64_t __tmp_in_tmp87;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if (party == SERVER) {
-      gINPUT>> __tmp_in_tmp87;
+      in >> __tmp_in_tmp87;
     }
     Arr1DIdxRowM(tmp87, 128, i0) = (party == SERVER) ? __tmp_in_tmp87 : 0;
   }
@@ -2969,7 +2968,7 @@ void run_resnet50_inference(int party_, int port_, const std::string &address_,
       for (uint64_t i2 = (uint64_t)0; i2 < 128; i2++) {
         for (uint64_t i3 = (uint64_t)0; i3 < 128; i3++) {
           if (party == SERVER) {
-            gINPUT>> __tmp_in_tmp88;
+            in >> __tmp_in_tmp88;
           }
           Arr4DIdxRowM(tmp88, 3, 3, 128, 128, i0, i1, i2, i3) =
               (party == SERVER) ? __tmp_in_tmp88 : 0;
@@ -2984,7 +2983,7 @@ void run_resnet50_inference(int party_, int port_, const std::string &address_,
   uint64_t __tmp_in_tmp89;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if (party == SERVER) {
-      gINPUT>> __tmp_in_tmp89;
+      in >> __tmp_in_tmp89;
     }
     Arr1DIdxRowM(tmp89, 128, i0) = (party == SERVER) ? __tmp_in_tmp89 : 0;
   }
@@ -2995,7 +2994,7 @@ void run_resnet50_inference(int party_, int port_, const std::string &address_,
   uint64_t __tmp_in_tmp90;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if (party == SERVER) {
-      gINPUT>> __tmp_in_tmp90;
+      in >> __tmp_in_tmp90;
     }
     Arr1DIdxRowM(tmp90, 128, i0) = (party == SERVER) ? __tmp_in_tmp90 : 0;
   }
@@ -3006,7 +3005,7 @@ void run_resnet50_inference(int party_, int port_, const std::string &address_,
   uint64_t __tmp_in_tmp91;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if (party == SERVER) {
-      gINPUT>> __tmp_in_tmp91;
+      in >> __tmp_in_tmp91;
     }
     Arr1DIdxRowM(tmp91, 128, i0) = (party == SERVER) ? __tmp_in_tmp91 : 0;
   }
@@ -3017,7 +3016,7 @@ void run_resnet50_inference(int party_, int port_, const std::string &address_,
   uint64_t __tmp_in_tmp92;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if (party == SERVER) {
-      gINPUT>> __tmp_in_tmp92;
+      in >> __tmp_in_tmp92;
     }
     Arr1DIdxRowM(tmp92, 128, i0) = (party == SERVER) ? __tmp_in_tmp92 : 0;
   }
@@ -3031,7 +3030,7 @@ void run_resnet50_inference(int party_, int port_, const std::string &address_,
       for (uint64_t i2 = (uint64_t)0; i2 < 128; i2++) {
         for (uint64_t i3 = (uint64_t)0; i3 < 512; i3++) {
           if (party == SERVER) {
-            gINPUT>> __tmp_in_tmp93;
+            in >> __tmp_in_tmp93;
           }
           Arr4DIdxRowM(tmp93, 1, 1, 128, 512, i0, i1, i2, i3) =
               (party == SERVER) ? __tmp_in_tmp93 : 0;
@@ -3046,7 +3045,7 @@ void run_resnet50_inference(int party_, int port_, const std::string &address_,
   uint64_t __tmp_in_tmp94;
   for (uint64_t i0 = (uint64_t)0; i0 < 512; i0++) {
     if (party == SERVER) {
-      gINPUT>> __tmp_in_tmp94;
+      in >> __tmp_in_tmp94;
     }
     Arr1DIdxRowM(tmp94, 512, i0) = (party == SERVER) ? __tmp_in_tmp94 : 0;
   }
@@ -3057,7 +3056,7 @@ void run_resnet50_inference(int party_, int port_, const std::string &address_,
   uint64_t __tmp_in_tmp95;
   for (uint64_t i0 = (uint64_t)0; i0 < 512; i0++) {
     if (party == SERVER) {
-      gINPUT>> __tmp_in_tmp95;
+      in >> __tmp_in_tmp95;
     }
     Arr1DIdxRowM(tmp95, 512, i0) = (party == SERVER) ? __tmp_in_tmp95 : 0;
   }
@@ -3068,7 +3067,7 @@ void run_resnet50_inference(int party_, int port_, const std::string &address_,
   uint64_t __tmp_in_tmp96;
   for (uint64_t i0 = (uint64_t)0; i0 < 512; i0++) {
     if (party == SERVER) {
-      gINPUT>> __tmp_in_tmp96;
+      in >> __tmp_in_tmp96;
     }
     Arr1DIdxRowM(tmp96, 512, i0) = (party == SERVER) ? __tmp_in_tmp96 : 0;
   }
@@ -3079,7 +3078,7 @@ void run_resnet50_inference(int party_, int port_, const std::string &address_,
   uint64_t __tmp_in_tmp97;
   for (uint64_t i0 = (uint64_t)0; i0 < 512; i0++) {
     if (party == SERVER) {
-      gINPUT>> __tmp_in_tmp97;
+      in >> __tmp_in_tmp97;
     }
     Arr1DIdxRowM(tmp97, 512, i0) = (party == SERVER) ? __tmp_in_tmp97 : 0;
   }
@@ -3093,7 +3092,7 @@ void run_resnet50_inference(int party_, int port_, const std::string &address_,
       for (uint64_t i2 = (uint64_t)0; i2 < 512; i2++) {
         for (uint64_t i3 = (uint64_t)0; i3 < 128; i3++) {
           if (party == SERVER) {
-            gINPUT>> __tmp_in_tmp98;
+            in >> __tmp_in_tmp98;
           }
           Arr4DIdxRowM(tmp98, 1, 1, 512, 128, i0, i1, i2, i3) =
               (party == SERVER) ? __tmp_in_tmp98 : 0;
@@ -3108,7 +3107,7 @@ void run_resnet50_inference(int party_, int port_, const std::string &address_,
   uint64_t __tmp_in_tmp99;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if (party == SERVER) {
-      gINPUT>> __tmp_in_tmp99;
+      in >> __tmp_in_tmp99;
     }
     Arr1DIdxRowM(tmp99, 128, i0) = (party == SERVER) ? __tmp_in_tmp99 : 0;
   }
@@ -3119,7 +3118,7 @@ void run_resnet50_inference(int party_, int port_, const std::string &address_,
   uint64_t __tmp_in_tmp100;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if (party == SERVER) {
-      gINPUT>> __tmp_in_tmp100;
+      in >> __tmp_in_tmp100;
     }
     Arr1DIdxRowM(tmp100, 128, i0) = (party == SERVER) ? __tmp_in_tmp100 : 0;
   }
@@ -3130,7 +3129,7 @@ void run_resnet50_inference(int party_, int port_, const std::string &address_,
   uint64_t __tmp_in_tmp101;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if (party == SERVER) {
-      gINPUT>> __tmp_in_tmp101;
+      in >> __tmp_in_tmp101;
     }
     Arr1DIdxRowM(tmp101, 128, i0) = (party == SERVER) ? __tmp_in_tmp101 : 0;
   }
@@ -3141,7 +3140,7 @@ void run_resnet50_inference(int party_, int port_, const std::string &address_,
   uint64_t __tmp_in_tmp102;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if (party == SERVER) {
-      gINPUT>> __tmp_in_tmp102;
+      in >> __tmp_in_tmp102;
     }
     Arr1DIdxRowM(tmp102, 128, i0) = (party == SERVER) ? __tmp_in_tmp102 : 0;
   }
@@ -3155,7 +3154,7 @@ void run_resnet50_inference(int party_, int port_, const std::string &address_,
       for (uint64_t i2 = (uint64_t)0; i2 < 128; i2++) {
         for (uint64_t i3 = (uint64_t)0; i3 < 128; i3++) {
           if (party == SERVER) {
-            gINPUT>> __tmp_in_tmp103;
+            in >> __tmp_in_tmp103;
           }
           Arr4DIdxRowM(tmp103, 3, 3, 128, 128, i0, i1, i2, i3) =
               (party == SERVER) ? __tmp_in_tmp103 : 0;
@@ -3170,7 +3169,7 @@ void run_resnet50_inference(int party_, int port_, const std::string &address_,
   uint64_t __tmp_in_tmp104;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if (party == SERVER) {
-      gINPUT>> __tmp_in_tmp104;
+      in >> __tmp_in_tmp104;
     }
     Arr1DIdxRowM(tmp104, 128, i0) = (party == SERVER) ? __tmp_in_tmp104 : 0;
   }
@@ -3181,7 +3180,7 @@ void run_resnet50_inference(int party_, int port_, const std::string &address_,
   uint64_t __tmp_in_tmp105;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if (party == SERVER) {
-      gINPUT>> __tmp_in_tmp105;
+      in >> __tmp_in_tmp105;
     }
     Arr1DIdxRowM(tmp105, 128, i0) = (party == SERVER) ? __tmp_in_tmp105 : 0;
   }
@@ -3192,7 +3191,7 @@ void run_resnet50_inference(int party_, int port_, const std::string &address_,
   uint64_t __tmp_in_tmp106;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if (party == SERVER) {
-      gINPUT>> __tmp_in_tmp106;
+      in >> __tmp_in_tmp106;
     }
     Arr1DIdxRowM(tmp106, 128, i0) = (party == SERVER) ? __tmp_in_tmp106 : 0;
   }
@@ -3203,7 +3202,7 @@ void run_resnet50_inference(int party_, int port_, const std::string &address_,
   uint64_t __tmp_in_tmp107;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if (party == SERVER) {
-      gINPUT>> __tmp_in_tmp107;
+      in >> __tmp_in_tmp107;
     }
     Arr1DIdxRowM(tmp107, 128, i0) = (party == SERVER) ? __tmp_in_tmp107 : 0;
   }
@@ -3217,7 +3216,7 @@ void run_resnet50_inference(int party_, int port_, const std::string &address_,
       for (uint64_t i2 = (uint64_t)0; i2 < 128; i2++) {
         for (uint64_t i3 = (uint64_t)0; i3 < 512; i3++) {
           if (party == SERVER) {
-            gINPUT>> __tmp_in_tmp108;
+            in >> __tmp_in_tmp108;
           }
           Arr4DIdxRowM(tmp108, 1, 1, 128, 512, i0, i1, i2, i3) =
               (party == SERVER) ? __tmp_in_tmp108 : 0;
@@ -3232,7 +3231,7 @@ void run_resnet50_inference(int party_, int port_, const std::string &address_,
   uint64_t __tmp_in_tmp109;
   for (uint64_t i0 = (uint64_t)0; i0 < 512; i0++) {
     if (party == SERVER) {
-      gINPUT>> __tmp_in_tmp109;
+      in >> __tmp_in_tmp109;
     }
     Arr1DIdxRowM(tmp109, 512, i0) = (party == SERVER) ? __tmp_in_tmp109 : 0;
   }
@@ -3243,7 +3242,7 @@ void run_resnet50_inference(int party_, int port_, const std::string &address_,
   uint64_t __tmp_in_tmp110;
   for (uint64_t i0 = (uint64_t)0; i0 < 512; i0++) {
     if (party == SERVER) {
-      gINPUT>> __tmp_in_tmp110;
+      in >> __tmp_in_tmp110;
     }
     Arr1DIdxRowM(tmp110, 512, i0) = (party == SERVER) ? __tmp_in_tmp110 : 0;
   }
@@ -3254,7 +3253,7 @@ void run_resnet50_inference(int party_, int port_, const std::string &address_,
   uint64_t __tmp_in_tmp111;
   for (uint64_t i0 = (uint64_t)0; i0 < 512; i0++) {
     if (party == SERVER) {
-      gINPUT>> __tmp_in_tmp111;
+      in >> __tmp_in_tmp111;
     }
     Arr1DIdxRowM(tmp111, 512, i0) = (party == SERVER) ? __tmp_in_tmp111 : 0;
   }
@@ -3265,7 +3264,7 @@ void run_resnet50_inference(int party_, int port_, const std::string &address_,
   uint64_t __tmp_in_tmp112;
   for (uint64_t i0 = (uint64_t)0; i0 < 512; i0++) {
     if (party == SERVER) {
-      gINPUT>> __tmp_in_tmp112;
+      in >> __tmp_in_tmp112;
     }
     Arr1DIdxRowM(tmp112, 512, i0) = (party == SERVER) ? __tmp_in_tmp112 : 0;
   }
@@ -3279,7 +3278,7 @@ void run_resnet50_inference(int party_, int port_, const std::string &address_,
       for (uint64_t i2 = (uint64_t)0; i2 < 512; i2++) {
         for (uint64_t i3 = (uint64_t)0; i3 < 1024; i3++) {
           if (party == SERVER) {
-            gINPUT>> __tmp_in_tmp113;
+            in >> __tmp_in_tmp113;
           }
           Arr4DIdxRowM(tmp113, 1, 1, 512, 1024, i0, i1, i2, i3) =
               (party == SERVER) ? __tmp_in_tmp113 : 0;
@@ -3297,7 +3296,7 @@ void run_resnet50_inference(int party_, int port_, const std::string &address_,
       for (uint64_t i2 = (uint64_t)0; i2 < 512; i2++) {
         for (uint64_t i3 = (uint64_t)0; i3 < 256; i3++) {
           if (party == SERVER) {
-            gINPUT>> __tmp_in_tmp114;
+            in >> __tmp_in_tmp114;
           }
           Arr4DIdxRowM(tmp114, 1, 1, 512, 256, i0, i1, i2, i3) =
               (party == SERVER) ? __tmp_in_tmp114 : 0;
@@ -3312,7 +3311,7 @@ void run_resnet50_inference(int party_, int port_, const std::string &address_,
   uint64_t __tmp_in_tmp115;
   for (uint64_t i0 = (uint64_t)0; i0 < 256; i0++) {
     if (party == SERVER) {
-      gINPUT>> __tmp_in_tmp115;
+      in >> __tmp_in_tmp115;
     }
     Arr1DIdxRowM(tmp115, 256, i0) = (party == SERVER) ? __tmp_in_tmp115 : 0;
   }
@@ -3323,7 +3322,7 @@ void run_resnet50_inference(int party_, int port_, const std::string &address_,
   uint64_t __tmp_in_tmp116;
   for (uint64_t i0 = (uint64_t)0; i0 < 256; i0++) {
     if (party == SERVER) {
-      gINPUT>> __tmp_in_tmp116;
+      in >> __tmp_in_tmp116;
     }
     Arr1DIdxRowM(tmp116, 256, i0) = (party == SERVER) ? __tmp_in_tmp116 : 0;
   }
@@ -3334,7 +3333,7 @@ void run_resnet50_inference(int party_, int port_, const std::string &address_,
   uint64_t __tmp_in_tmp117;
   for (uint64_t i0 = (uint64_t)0; i0 < 256; i0++) {
     if (party == SERVER) {
-      gINPUT>> __tmp_in_tmp117;
+      in >> __tmp_in_tmp117;
     }
     Arr1DIdxRowM(tmp117, 256, i0) = (party == SERVER) ? __tmp_in_tmp117 : 0;
   }
@@ -3345,7 +3344,7 @@ void run_resnet50_inference(int party_, int port_, const std::string &address_,
   uint64_t __tmp_in_tmp118;
   for (uint64_t i0 = (uint64_t)0; i0 < 256; i0++) {
     if (party == SERVER) {
-      gINPUT>> __tmp_in_tmp118;
+      in >> __tmp_in_tmp118;
     }
     Arr1DIdxRowM(tmp118, 256, i0) = (party == SERVER) ? __tmp_in_tmp118 : 0;
   }
@@ -3359,7 +3358,7 @@ void run_resnet50_inference(int party_, int port_, const std::string &address_,
       for (uint64_t i2 = (uint64_t)0; i2 < 256; i2++) {
         for (uint64_t i3 = (uint64_t)0; i3 < 256; i3++) {
           if (party == SERVER) {
-            gINPUT>> __tmp_in_tmp119;
+            in >> __tmp_in_tmp119;
           }
           Arr4DIdxRowM(tmp119, 3, 3, 256, 256, i0, i1, i2, i3) =
               (party == SERVER) ? __tmp_in_tmp119 : 0;
@@ -3374,7 +3373,7 @@ void run_resnet50_inference(int party_, int port_, const std::string &address_,
   uint64_t __tmp_in_tmp120;
   for (uint64_t i0 = (uint64_t)0; i0 < 256; i0++) {
     if (party == SERVER) {
-      gINPUT>> __tmp_in_tmp120;
+      in >> __tmp_in_tmp120;
     }
     Arr1DIdxRowM(tmp120, 256, i0) = (party == SERVER) ? __tmp_in_tmp120 : 0;
   }
@@ -3385,7 +3384,7 @@ void run_resnet50_inference(int party_, int port_, const std::string &address_,
   uint64_t __tmp_in_tmp121;
   for (uint64_t i0 = (uint64_t)0; i0 < 256; i0++) {
     if (party == SERVER) {
-      gINPUT>> __tmp_in_tmp121;
+      in >> __tmp_in_tmp121;
     }
     Arr1DIdxRowM(tmp121, 256, i0) = (party == SERVER) ? __tmp_in_tmp121 : 0;
   }
@@ -3396,7 +3395,7 @@ void run_resnet50_inference(int party_, int port_, const std::string &address_,
   uint64_t __tmp_in_tmp122;
   for (uint64_t i0 = (uint64_t)0; i0 < 256; i0++) {
     if (party == SERVER) {
-      gINPUT>> __tmp_in_tmp122;
+      in >> __tmp_in_tmp122;
     }
     Arr1DIdxRowM(tmp122, 256, i0) = (party == SERVER) ? __tmp_in_tmp122 : 0;
   }
@@ -3407,7 +3406,7 @@ void run_resnet50_inference(int party_, int port_, const std::string &address_,
   uint64_t __tmp_in_tmp123;
   for (uint64_t i0 = (uint64_t)0; i0 < 256; i0++) {
     if (party == SERVER) {
-      gINPUT>> __tmp_in_tmp123;
+      in >> __tmp_in_tmp123;
     }
     Arr1DIdxRowM(tmp123, 256, i0) = (party == SERVER) ? __tmp_in_tmp123 : 0;
   }
@@ -3421,7 +3420,7 @@ void run_resnet50_inference(int party_, int port_, const std::string &address_,
       for (uint64_t i2 = (uint64_t)0; i2 < 256; i2++) {
         for (uint64_t i3 = (uint64_t)0; i3 < 1024; i3++) {
           if (party == SERVER) {
-            gINPUT>> __tmp_in_tmp124;
+            in >> __tmp_in_tmp124;
           }
           Arr4DIdxRowM(tmp124, 1, 1, 256, 1024, i0, i1, i2, i3) =
               (party == SERVER) ? __tmp_in_tmp124 : 0;
@@ -3436,7 +3435,7 @@ void run_resnet50_inference(int party_, int port_, const std::string &address_,
   uint64_t __tmp_in_tmp125;
   for (uint64_t i0 = (uint64_t)0; i0 < 1024; i0++) {
     if (party == SERVER) {
-      gINPUT>> __tmp_in_tmp125;
+      in >> __tmp_in_tmp125;
     }
     Arr1DIdxRowM(tmp125, 1024, i0) = (party == SERVER) ? __tmp_in_tmp125 : 0;
   }
@@ -3447,7 +3446,7 @@ void run_resnet50_inference(int party_, int port_, const std::string &address_,
   uint64_t __tmp_in_tmp126;
   for (uint64_t i0 = (uint64_t)0; i0 < 1024; i0++) {
     if (party == SERVER) {
-      gINPUT>> __tmp_in_tmp126;
+      in >> __tmp_in_tmp126;
     }
     Arr1DIdxRowM(tmp126, 1024, i0) = (party == SERVER) ? __tmp_in_tmp126 : 0;
   }
@@ -3458,7 +3457,7 @@ void run_resnet50_inference(int party_, int port_, const std::string &address_,
   uint64_t __tmp_in_tmp127;
   for (uint64_t i0 = (uint64_t)0; i0 < 1024; i0++) {
     if (party == SERVER) {
-      gINPUT>> __tmp_in_tmp127;
+      in >> __tmp_in_tmp127;
     }
     Arr1DIdxRowM(tmp127, 1024, i0) = (party == SERVER) ? __tmp_in_tmp127 : 0;
   }
@@ -3469,7 +3468,7 @@ void run_resnet50_inference(int party_, int port_, const std::string &address_,
   uint64_t __tmp_in_tmp128;
   for (uint64_t i0 = (uint64_t)0; i0 < 1024; i0++) {
     if (party == SERVER) {
-      gINPUT>> __tmp_in_tmp128;
+      in >> __tmp_in_tmp128;
     }
     Arr1DIdxRowM(tmp128, 1024, i0) = (party == SERVER) ? __tmp_in_tmp128 : 0;
   }
@@ -3483,7 +3482,7 @@ void run_resnet50_inference(int party_, int port_, const std::string &address_,
       for (uint64_t i2 = (uint64_t)0; i2 < 1024; i2++) {
         for (uint64_t i3 = (uint64_t)0; i3 < 256; i3++) {
           if (party == SERVER) {
-            gINPUT>> __tmp_in_tmp129;
+            in >> __tmp_in_tmp129;
           }
           Arr4DIdxRowM(tmp129, 1, 1, 1024, 256, i0, i1, i2, i3) =
               (party == SERVER) ? __tmp_in_tmp129 : 0;
@@ -3498,7 +3497,7 @@ void run_resnet50_inference(int party_, int port_, const std::string &address_,
   uint64_t __tmp_in_tmp130;
   for (uint64_t i0 = (uint64_t)0; i0 < 256; i0++) {
     if (party == SERVER) {
-      gINPUT>> __tmp_in_tmp130;
+      in >> __tmp_in_tmp130;
     }
     Arr1DIdxRowM(tmp130, 256, i0) = (party == SERVER) ? __tmp_in_tmp130 : 0;
   }
@@ -3509,7 +3508,7 @@ void run_resnet50_inference(int party_, int port_, const std::string &address_,
   uint64_t __tmp_in_tmp131;
   for (uint64_t i0 = (uint64_t)0; i0 < 256; i0++) {
     if (party == SERVER) {
-      gINPUT>> __tmp_in_tmp131;
+      in >> __tmp_in_tmp131;
     }
     Arr1DIdxRowM(tmp131, 256, i0) = (party == SERVER) ? __tmp_in_tmp131 : 0;
   }
@@ -3520,7 +3519,7 @@ void run_resnet50_inference(int party_, int port_, const std::string &address_,
   uint64_t __tmp_in_tmp132;
   for (uint64_t i0 = (uint64_t)0; i0 < 256; i0++) {
     if (party == SERVER) {
-      gINPUT>> __tmp_in_tmp132;
+      in >> __tmp_in_tmp132;
     }
     Arr1DIdxRowM(tmp132, 256, i0) = (party == SERVER) ? __tmp_in_tmp132 : 0;
   }
@@ -3531,7 +3530,7 @@ void run_resnet50_inference(int party_, int port_, const std::string &address_,
   uint64_t __tmp_in_tmp133;
   for (uint64_t i0 = (uint64_t)0; i0 < 256; i0++) {
     if (party == SERVER) {
-      gINPUT>> __tmp_in_tmp133;
+      in >> __tmp_in_tmp133;
     }
     Arr1DIdxRowM(tmp133, 256, i0) = (party == SERVER) ? __tmp_in_tmp133 : 0;
   }
@@ -3545,7 +3544,7 @@ void run_resnet50_inference(int party_, int port_, const std::string &address_,
       for (uint64_t i2 = (uint64_t)0; i2 < 256; i2++) {
         for (uint64_t i3 = (uint64_t)0; i3 < 256; i3++) {
           if (party == SERVER) {
-            gINPUT>> __tmp_in_tmp134;
+            in >> __tmp_in_tmp134;
           }
           Arr4DIdxRowM(tmp134, 3, 3, 256, 256, i0, i1, i2, i3) =
               (party == SERVER) ? __tmp_in_tmp134 : 0;
@@ -3560,7 +3559,7 @@ void run_resnet50_inference(int party_, int port_, const std::string &address_,
   uint64_t __tmp_in_tmp135;
   for (uint64_t i0 = (uint64_t)0; i0 < 256; i0++) {
     if (party == SERVER) {
-      gINPUT>> __tmp_in_tmp135;
+      in >> __tmp_in_tmp135;
     }
     Arr1DIdxRowM(tmp135, 256, i0) = (party == SERVER) ? __tmp_in_tmp135 : 0;
   }
@@ -3571,7 +3570,7 @@ void run_resnet50_inference(int party_, int port_, const std::string &address_,
   uint64_t __tmp_in_tmp136;
   for (uint64_t i0 = (uint64_t)0; i0 < 256; i0++) {
     if (party == SERVER) {
-      gINPUT>> __tmp_in_tmp136;
+      in >> __tmp_in_tmp136;
     }
     Arr1DIdxRowM(tmp136, 256, i0) = (party == SERVER) ? __tmp_in_tmp136 : 0;
   }
@@ -3582,7 +3581,7 @@ void run_resnet50_inference(int party_, int port_, const std::string &address_,
   uint64_t __tmp_in_tmp137;
   for (uint64_t i0 = (uint64_t)0; i0 < 256; i0++) {
     if (party == SERVER) {
-      gINPUT>> __tmp_in_tmp137;
+      in >> __tmp_in_tmp137;
     }
     Arr1DIdxRowM(tmp137, 256, i0) = (party == SERVER) ? __tmp_in_tmp137 : 0;
   }
@@ -3593,7 +3592,7 @@ void run_resnet50_inference(int party_, int port_, const std::string &address_,
   uint64_t __tmp_in_tmp138;
   for (uint64_t i0 = (uint64_t)0; i0 < 256; i0++) {
     if (party == SERVER) {
-      gINPUT>> __tmp_in_tmp138;
+      in >> __tmp_in_tmp138;
     }
     Arr1DIdxRowM(tmp138, 256, i0) = (party == SERVER) ? __tmp_in_tmp138 : 0;
   }
@@ -3607,7 +3606,7 @@ void run_resnet50_inference(int party_, int port_, const std::string &address_,
       for (uint64_t i2 = (uint64_t)0; i2 < 256; i2++) {
         for (uint64_t i3 = (uint64_t)0; i3 < 1024; i3++) {
           if (party == SERVER) {
-            gINPUT>> __tmp_in_tmp139;
+            in >> __tmp_in_tmp139;
           }
           Arr4DIdxRowM(tmp139, 1, 1, 256, 1024, i0, i1, i2, i3) =
               (party == SERVER) ? __tmp_in_tmp139 : 0;
@@ -3622,7 +3621,7 @@ void run_resnet50_inference(int party_, int port_, const std::string &address_,
   uint64_t __tmp_in_tmp140;
   for (uint64_t i0 = (uint64_t)0; i0 < 1024; i0++) {
     if (party == SERVER) {
-      gINPUT>> __tmp_in_tmp140;
+      in >> __tmp_in_tmp140;
     }
     Arr1DIdxRowM(tmp140, 1024, i0) = (party == SERVER) ? __tmp_in_tmp140 : 0;
   }
@@ -3633,7 +3632,7 @@ void run_resnet50_inference(int party_, int port_, const std::string &address_,
   uint64_t __tmp_in_tmp141;
   for (uint64_t i0 = (uint64_t)0; i0 < 1024; i0++) {
     if (party == SERVER) {
-      gINPUT>> __tmp_in_tmp141;
+      in >> __tmp_in_tmp141;
     }
     Arr1DIdxRowM(tmp141, 1024, i0) = (party == SERVER) ? __tmp_in_tmp141 : 0;
   }
@@ -3644,7 +3643,7 @@ void run_resnet50_inference(int party_, int port_, const std::string &address_,
   uint64_t __tmp_in_tmp142;
   for (uint64_t i0 = (uint64_t)0; i0 < 1024; i0++) {
     if (party == SERVER) {
-      gINPUT>> __tmp_in_tmp142;
+      in >> __tmp_in_tmp142;
     }
     Arr1DIdxRowM(tmp142, 1024, i0) = (party == SERVER) ? __tmp_in_tmp142 : 0;
   }
@@ -3655,7 +3654,7 @@ void run_resnet50_inference(int party_, int port_, const std::string &address_,
   uint64_t __tmp_in_tmp143;
   for (uint64_t i0 = (uint64_t)0; i0 < 1024; i0++) {
     if (party == SERVER) {
-      gINPUT>> __tmp_in_tmp143;
+      in >> __tmp_in_tmp143;
     }
     Arr1DIdxRowM(tmp143, 1024, i0) = (party == SERVER) ? __tmp_in_tmp143 : 0;
   }
@@ -3669,7 +3668,7 @@ void run_resnet50_inference(int party_, int port_, const std::string &address_,
       for (uint64_t i2 = (uint64_t)0; i2 < 1024; i2++) {
         for (uint64_t i3 = (uint64_t)0; i3 < 256; i3++) {
           if (party == SERVER) {
-            gINPUT>> __tmp_in_tmp144;
+            in >> __tmp_in_tmp144;
           }
           Arr4DIdxRowM(tmp144, 1, 1, 1024, 256, i0, i1, i2, i3) =
               (party == SERVER) ? __tmp_in_tmp144 : 0;
@@ -3684,7 +3683,7 @@ void run_resnet50_inference(int party_, int port_, const std::string &address_,
   uint64_t __tmp_in_tmp145;
   for (uint64_t i0 = (uint64_t)0; i0 < 256; i0++) {
     if (party == SERVER) {
-      gINPUT>> __tmp_in_tmp145;
+      in >> __tmp_in_tmp145;
     }
     Arr1DIdxRowM(tmp145, 256, i0) = (party == SERVER) ? __tmp_in_tmp145 : 0;
   }
@@ -3695,7 +3694,7 @@ void run_resnet50_inference(int party_, int port_, const std::string &address_,
   uint64_t __tmp_in_tmp146;
   for (uint64_t i0 = (uint64_t)0; i0 < 256; i0++) {
     if (party == SERVER) {
-      gINPUT>> __tmp_in_tmp146;
+      in >> __tmp_in_tmp146;
     }
     Arr1DIdxRowM(tmp146, 256, i0) = (party == SERVER) ? __tmp_in_tmp146 : 0;
   }
@@ -3706,7 +3705,7 @@ void run_resnet50_inference(int party_, int port_, const std::string &address_,
   uint64_t __tmp_in_tmp147;
   for (uint64_t i0 = (uint64_t)0; i0 < 256; i0++) {
     if (party == SERVER) {
-      gINPUT>> __tmp_in_tmp147;
+      in >> __tmp_in_tmp147;
     }
     Arr1DIdxRowM(tmp147, 256, i0) = (party == SERVER) ? __tmp_in_tmp147 : 0;
   }
@@ -3717,7 +3716,7 @@ void run_resnet50_inference(int party_, int port_, const std::string &address_,
   uint64_t __tmp_in_tmp148;
   for (uint64_t i0 = (uint64_t)0; i0 < 256; i0++) {
     if (party == SERVER) {
-      gINPUT>> __tmp_in_tmp148;
+      in >> __tmp_in_tmp148;
     }
     Arr1DIdxRowM(tmp148, 256, i0) = (party == SERVER) ? __tmp_in_tmp148 : 0;
   }
@@ -3731,7 +3730,7 @@ void run_resnet50_inference(int party_, int port_, const std::string &address_,
       for (uint64_t i2 = (uint64_t)0; i2 < 256; i2++) {
         for (uint64_t i3 = (uint64_t)0; i3 < 256; i3++) {
           if (party == SERVER) {
-            gINPUT>> __tmp_in_tmp149;
+            in >> __tmp_in_tmp149;
           }
           Arr4DIdxRowM(tmp149, 3, 3, 256, 256, i0, i1, i2, i3) =
               (party == SERVER) ? __tmp_in_tmp149 : 0;
@@ -3746,7 +3745,7 @@ void run_resnet50_inference(int party_, int port_, const std::string &address_,
   uint64_t __tmp_in_tmp150;
   for (uint64_t i0 = (uint64_t)0; i0 < 256; i0++) {
     if (party == SERVER) {
-      gINPUT>> __tmp_in_tmp150;
+      in >> __tmp_in_tmp150;
     }
     Arr1DIdxRowM(tmp150, 256, i0) = (party == SERVER) ? __tmp_in_tmp150 : 0;
   }
@@ -3757,7 +3756,7 @@ void run_resnet50_inference(int party_, int port_, const std::string &address_,
   uint64_t __tmp_in_tmp151;
   for (uint64_t i0 = (uint64_t)0; i0 < 256; i0++) {
     if (party == SERVER) {
-      gINPUT>> __tmp_in_tmp151;
+      in >> __tmp_in_tmp151;
     }
     Arr1DIdxRowM(tmp151, 256, i0) = (party == SERVER) ? __tmp_in_tmp151 : 0;
   }
@@ -3768,7 +3767,7 @@ void run_resnet50_inference(int party_, int port_, const std::string &address_,
   uint64_t __tmp_in_tmp152;
   for (uint64_t i0 = (uint64_t)0; i0 < 256; i0++) {
     if (party == SERVER) {
-      gINPUT>> __tmp_in_tmp152;
+      in >> __tmp_in_tmp152;
     }
     Arr1DIdxRowM(tmp152, 256, i0) = (party == SERVER) ? __tmp_in_tmp152 : 0;
   }
@@ -3779,7 +3778,7 @@ void run_resnet50_inference(int party_, int port_, const std::string &address_,
   uint64_t __tmp_in_tmp153;
   for (uint64_t i0 = (uint64_t)0; i0 < 256; i0++) {
     if (party == SERVER) {
-      gINPUT>> __tmp_in_tmp153;
+      in >> __tmp_in_tmp153;
     }
     Arr1DIdxRowM(tmp153, 256, i0) = (party == SERVER) ? __tmp_in_tmp153 : 0;
   }
@@ -3793,7 +3792,7 @@ void run_resnet50_inference(int party_, int port_, const std::string &address_,
       for (uint64_t i2 = (uint64_t)0; i2 < 256; i2++) {
         for (uint64_t i3 = (uint64_t)0; i3 < 1024; i3++) {
           if (party == SERVER) {
-            gINPUT>> __tmp_in_tmp154;
+            in >> __tmp_in_tmp154;
           }
           Arr4DIdxRowM(tmp154, 1, 1, 256, 1024, i0, i1, i2, i3) =
               (party == SERVER) ? __tmp_in_tmp154 : 0;
@@ -3808,7 +3807,7 @@ void run_resnet50_inference(int party_, int port_, const std::string &address_,
   uint64_t __tmp_in_tmp155;
   for (uint64_t i0 = (uint64_t)0; i0 < 1024; i0++) {
     if (party == SERVER) {
-      gINPUT>> __tmp_in_tmp155;
+      in >> __tmp_in_tmp155;
     }
     Arr1DIdxRowM(tmp155, 1024, i0) = (party == SERVER) ? __tmp_in_tmp155 : 0;
   }
@@ -3819,7 +3818,7 @@ void run_resnet50_inference(int party_, int port_, const std::string &address_,
   uint64_t __tmp_in_tmp156;
   for (uint64_t i0 = (uint64_t)0; i0 < 1024; i0++) {
     if (party == SERVER) {
-      gINPUT>> __tmp_in_tmp156;
+      in >> __tmp_in_tmp156;
     }
     Arr1DIdxRowM(tmp156, 1024, i0) = (party == SERVER) ? __tmp_in_tmp156 : 0;
   }
@@ -3830,7 +3829,7 @@ void run_resnet50_inference(int party_, int port_, const std::string &address_,
   uint64_t __tmp_in_tmp157;
   for (uint64_t i0 = (uint64_t)0; i0 < 1024; i0++) {
     if (party == SERVER) {
-      gINPUT>> __tmp_in_tmp157;
+      in >> __tmp_in_tmp157;
     }
     Arr1DIdxRowM(tmp157, 1024, i0) = (party == SERVER) ? __tmp_in_tmp157 : 0;
   }
@@ -3841,7 +3840,7 @@ void run_resnet50_inference(int party_, int port_, const std::string &address_,
   uint64_t __tmp_in_tmp158;
   for (uint64_t i0 = (uint64_t)0; i0 < 1024; i0++) {
     if (party == SERVER) {
-      gINPUT>> __tmp_in_tmp158;
+      in >> __tmp_in_tmp158;
     }
     Arr1DIdxRowM(tmp158, 1024, i0) = (party == SERVER) ? __tmp_in_tmp158 : 0;
   }
@@ -3855,7 +3854,7 @@ void run_resnet50_inference(int party_, int port_, const std::string &address_,
       for (uint64_t i2 = (uint64_t)0; i2 < 1024; i2++) {
         for (uint64_t i3 = (uint64_t)0; i3 < 256; i3++) {
           if (party == SERVER) {
-            gINPUT>> __tmp_in_tmp159;
+            in >> __tmp_in_tmp159;
           }
           Arr4DIdxRowM(tmp159, 1, 1, 1024, 256, i0, i1, i2, i3) =
               (party == SERVER) ? __tmp_in_tmp159 : 0;
@@ -3870,7 +3869,7 @@ void run_resnet50_inference(int party_, int port_, const std::string &address_,
   uint64_t __tmp_in_tmp160;
   for (uint64_t i0 = (uint64_t)0; i0 < 256; i0++) {
     if (party == SERVER) {
-      gINPUT>> __tmp_in_tmp160;
+      in >> __tmp_in_tmp160;
     }
     Arr1DIdxRowM(tmp160, 256, i0) = (party == SERVER) ? __tmp_in_tmp160 : 0;
   }
@@ -3881,7 +3880,7 @@ void run_resnet50_inference(int party_, int port_, const std::string &address_,
   uint64_t __tmp_in_tmp161;
   for (uint64_t i0 = (uint64_t)0; i0 < 256; i0++) {
     if (party == SERVER) {
-      gINPUT>> __tmp_in_tmp161;
+      in >> __tmp_in_tmp161;
     }
     Arr1DIdxRowM(tmp161, 256, i0) = (party == SERVER) ? __tmp_in_tmp161 : 0;
   }
@@ -3892,7 +3891,7 @@ void run_resnet50_inference(int party_, int port_, const std::string &address_,
   uint64_t __tmp_in_tmp162;
   for (uint64_t i0 = (uint64_t)0; i0 < 256; i0++) {
     if (party == SERVER) {
-      gINPUT>> __tmp_in_tmp162;
+      in >> __tmp_in_tmp162;
     }
     Arr1DIdxRowM(tmp162, 256, i0) = (party == SERVER) ? __tmp_in_tmp162 : 0;
   }
@@ -3903,7 +3902,7 @@ void run_resnet50_inference(int party_, int port_, const std::string &address_,
   uint64_t __tmp_in_tmp163;
   for (uint64_t i0 = (uint64_t)0; i0 < 256; i0++) {
     if (party == SERVER) {
-      gINPUT>> __tmp_in_tmp163;
+      in >> __tmp_in_tmp163;
     }
     Arr1DIdxRowM(tmp163, 256, i0) = (party == SERVER) ? __tmp_in_tmp163 : 0;
   }
@@ -3917,7 +3916,7 @@ void run_resnet50_inference(int party_, int port_, const std::string &address_,
       for (uint64_t i2 = (uint64_t)0; i2 < 256; i2++) {
         for (uint64_t i3 = (uint64_t)0; i3 < 256; i3++) {
           if (party == SERVER) {
-            gINPUT>> __tmp_in_tmp164;
+            in >> __tmp_in_tmp164;
           }
           Arr4DIdxRowM(tmp164, 3, 3, 256, 256, i0, i1, i2, i3) =
               (party == SERVER) ? __tmp_in_tmp164 : 0;
@@ -3932,7 +3931,7 @@ void run_resnet50_inference(int party_, int port_, const std::string &address_,
   uint64_t __tmp_in_tmp165;
   for (uint64_t i0 = (uint64_t)0; i0 < 256; i0++) {
     if (party == SERVER) {
-      gINPUT>> __tmp_in_tmp165;
+      in >> __tmp_in_tmp165;
     }
     Arr1DIdxRowM(tmp165, 256, i0) = (party == SERVER) ? __tmp_in_tmp165 : 0;
   }
@@ -3943,7 +3942,7 @@ void run_resnet50_inference(int party_, int port_, const std::string &address_,
   uint64_t __tmp_in_tmp166;
   for (uint64_t i0 = (uint64_t)0; i0 < 256; i0++) {
     if (party == SERVER) {
-      gINPUT>> __tmp_in_tmp166;
+      in >> __tmp_in_tmp166;
     }
     Arr1DIdxRowM(tmp166, 256, i0) = (party == SERVER) ? __tmp_in_tmp166 : 0;
   }
@@ -3954,7 +3953,7 @@ void run_resnet50_inference(int party_, int port_, const std::string &address_,
   uint64_t __tmp_in_tmp167;
   for (uint64_t i0 = (uint64_t)0; i0 < 256; i0++) {
     if (party == SERVER) {
-      gINPUT>> __tmp_in_tmp167;
+      in >> __tmp_in_tmp167;
     }
     Arr1DIdxRowM(tmp167, 256, i0) = (party == SERVER) ? __tmp_in_tmp167 : 0;
   }
@@ -3965,7 +3964,7 @@ void run_resnet50_inference(int party_, int port_, const std::string &address_,
   uint64_t __tmp_in_tmp168;
   for (uint64_t i0 = (uint64_t)0; i0 < 256; i0++) {
     if (party == SERVER) {
-      gINPUT>> __tmp_in_tmp168;
+      in >> __tmp_in_tmp168;
     }
     Arr1DIdxRowM(tmp168, 256, i0) = (party == SERVER) ? __tmp_in_tmp168 : 0;
   }
@@ -3979,7 +3978,7 @@ void run_resnet50_inference(int party_, int port_, const std::string &address_,
       for (uint64_t i2 = (uint64_t)0; i2 < 256; i2++) {
         for (uint64_t i3 = (uint64_t)0; i3 < 1024; i3++) {
           if (party == SERVER) {
-            gINPUT>> __tmp_in_tmp169;
+            in >> __tmp_in_tmp169;
           }
           Arr4DIdxRowM(tmp169, 1, 1, 256, 1024, i0, i1, i2, i3) =
               (party == SERVER) ? __tmp_in_tmp169 : 0;
@@ -3994,7 +3993,7 @@ void run_resnet50_inference(int party_, int port_, const std::string &address_,
   uint64_t __tmp_in_tmp170;
   for (uint64_t i0 = (uint64_t)0; i0 < 1024; i0++) {
     if (party == SERVER) {
-      gINPUT>> __tmp_in_tmp170;
+      in >> __tmp_in_tmp170;
     }
     Arr1DIdxRowM(tmp170, 1024, i0) = (party == SERVER) ? __tmp_in_tmp170 : 0;
   }
@@ -4005,7 +4004,7 @@ void run_resnet50_inference(int party_, int port_, const std::string &address_,
   uint64_t __tmp_in_tmp171;
   for (uint64_t i0 = (uint64_t)0; i0 < 1024; i0++) {
     if (party == SERVER) {
-      gINPUT>> __tmp_in_tmp171;
+      in >> __tmp_in_tmp171;
     }
     Arr1DIdxRowM(tmp171, 1024, i0) = (party == SERVER) ? __tmp_in_tmp171 : 0;
   }
@@ -4016,7 +4015,7 @@ void run_resnet50_inference(int party_, int port_, const std::string &address_,
   uint64_t __tmp_in_tmp172;
   for (uint64_t i0 = (uint64_t)0; i0 < 1024; i0++) {
     if (party == SERVER) {
-      gINPUT>> __tmp_in_tmp172;
+      in >> __tmp_in_tmp172;
     }
     Arr1DIdxRowM(tmp172, 1024, i0) = (party == SERVER) ? __tmp_in_tmp172 : 0;
   }
@@ -4027,7 +4026,7 @@ void run_resnet50_inference(int party_, int port_, const std::string &address_,
   uint64_t __tmp_in_tmp173;
   for (uint64_t i0 = (uint64_t)0; i0 < 1024; i0++) {
     if (party == SERVER) {
-      gINPUT>> __tmp_in_tmp173;
+      in >> __tmp_in_tmp173;
     }
     Arr1DIdxRowM(tmp173, 1024, i0) = (party == SERVER) ? __tmp_in_tmp173 : 0;
   }
@@ -4041,7 +4040,7 @@ void run_resnet50_inference(int party_, int port_, const std::string &address_,
       for (uint64_t i2 = (uint64_t)0; i2 < 1024; i2++) {
         for (uint64_t i3 = (uint64_t)0; i3 < 256; i3++) {
           if (party == SERVER) {
-            gINPUT>> __tmp_in_tmp174;
+            in >> __tmp_in_tmp174;
           }
           Arr4DIdxRowM(tmp174, 1, 1, 1024, 256, i0, i1, i2, i3) =
               (party == SERVER) ? __tmp_in_tmp174 : 0;
@@ -4056,7 +4055,7 @@ void run_resnet50_inference(int party_, int port_, const std::string &address_,
   uint64_t __tmp_in_tmp175;
   for (uint64_t i0 = (uint64_t)0; i0 < 256; i0++) {
     if (party == SERVER) {
-      gINPUT>> __tmp_in_tmp175;
+      in >> __tmp_in_tmp175;
     }
     Arr1DIdxRowM(tmp175, 256, i0) = (party == SERVER) ? __tmp_in_tmp175 : 0;
   }
@@ -4067,7 +4066,7 @@ void run_resnet50_inference(int party_, int port_, const std::string &address_,
   uint64_t __tmp_in_tmp176;
   for (uint64_t i0 = (uint64_t)0; i0 < 256; i0++) {
     if (party == SERVER) {
-      gINPUT>> __tmp_in_tmp176;
+      in >> __tmp_in_tmp176;
     }
     Arr1DIdxRowM(tmp176, 256, i0) = (party == SERVER) ? __tmp_in_tmp176 : 0;
   }
@@ -4078,7 +4077,7 @@ void run_resnet50_inference(int party_, int port_, const std::string &address_,
   uint64_t __tmp_in_tmp177;
   for (uint64_t i0 = (uint64_t)0; i0 < 256; i0++) {
     if (party == SERVER) {
-      gINPUT>> __tmp_in_tmp177;
+      in >> __tmp_in_tmp177;
     }
     Arr1DIdxRowM(tmp177, 256, i0) = (party == SERVER) ? __tmp_in_tmp177 : 0;
   }
@@ -4089,7 +4088,7 @@ void run_resnet50_inference(int party_, int port_, const std::string &address_,
   uint64_t __tmp_in_tmp178;
   for (uint64_t i0 = (uint64_t)0; i0 < 256; i0++) {
     if (party == SERVER) {
-      gINPUT>> __tmp_in_tmp178;
+      in >> __tmp_in_tmp178;
     }
     Arr1DIdxRowM(tmp178, 256, i0) = (party == SERVER) ? __tmp_in_tmp178 : 0;
   }
@@ -4103,7 +4102,7 @@ void run_resnet50_inference(int party_, int port_, const std::string &address_,
       for (uint64_t i2 = (uint64_t)0; i2 < 256; i2++) {
         for (uint64_t i3 = (uint64_t)0; i3 < 256; i3++) {
           if (party == SERVER) {
-            gINPUT>> __tmp_in_tmp179;
+            in >> __tmp_in_tmp179;
           }
           Arr4DIdxRowM(tmp179, 3, 3, 256, 256, i0, i1, i2, i3) =
               (party == SERVER) ? __tmp_in_tmp179 : 0;
@@ -4118,7 +4117,7 @@ void run_resnet50_inference(int party_, int port_, const std::string &address_,
   uint64_t __tmp_in_tmp180;
   for (uint64_t i0 = (uint64_t)0; i0 < 256; i0++) {
     if (party == SERVER) {
-      gINPUT>> __tmp_in_tmp180;
+      in >> __tmp_in_tmp180;
     }
     Arr1DIdxRowM(tmp180, 256, i0) = (party == SERVER) ? __tmp_in_tmp180 : 0;
   }
@@ -4129,7 +4128,7 @@ void run_resnet50_inference(int party_, int port_, const std::string &address_,
   uint64_t __tmp_in_tmp181;
   for (uint64_t i0 = (uint64_t)0; i0 < 256; i0++) {
     if (party == SERVER) {
-      gINPUT>> __tmp_in_tmp181;
+      in >> __tmp_in_tmp181;
     }
     Arr1DIdxRowM(tmp181, 256, i0) = (party == SERVER) ? __tmp_in_tmp181 : 0;
   }
@@ -4140,7 +4139,7 @@ void run_resnet50_inference(int party_, int port_, const std::string &address_,
   uint64_t __tmp_in_tmp182;
   for (uint64_t i0 = (uint64_t)0; i0 < 256; i0++) {
     if (party == SERVER) {
-      gINPUT>> __tmp_in_tmp182;
+      in >> __tmp_in_tmp182;
     }
     Arr1DIdxRowM(tmp182, 256, i0) = (party == SERVER) ? __tmp_in_tmp182 : 0;
   }
@@ -4151,7 +4150,7 @@ void run_resnet50_inference(int party_, int port_, const std::string &address_,
   uint64_t __tmp_in_tmp183;
   for (uint64_t i0 = (uint64_t)0; i0 < 256; i0++) {
     if (party == SERVER) {
-      gINPUT>> __tmp_in_tmp183;
+      in >> __tmp_in_tmp183;
     }
     Arr1DIdxRowM(tmp183, 256, i0) = (party == SERVER) ? __tmp_in_tmp183 : 0;
   }
@@ -4165,7 +4164,7 @@ void run_resnet50_inference(int party_, int port_, const std::string &address_,
       for (uint64_t i2 = (uint64_t)0; i2 < 256; i2++) {
         for (uint64_t i3 = (uint64_t)0; i3 < 1024; i3++) {
           if (party == SERVER) {
-            gINPUT>> __tmp_in_tmp184;
+            in >> __tmp_in_tmp184;
           }
           Arr4DIdxRowM(tmp184, 1, 1, 256, 1024, i0, i1, i2, i3) =
               (party == SERVER) ? __tmp_in_tmp184 : 0;
@@ -4180,7 +4179,7 @@ void run_resnet50_inference(int party_, int port_, const std::string &address_,
   uint64_t __tmp_in_tmp185;
   for (uint64_t i0 = (uint64_t)0; i0 < 1024; i0++) {
     if (party == SERVER) {
-      gINPUT>> __tmp_in_tmp185;
+      in >> __tmp_in_tmp185;
     }
     Arr1DIdxRowM(tmp185, 1024, i0) = (party == SERVER) ? __tmp_in_tmp185 : 0;
   }
@@ -4191,7 +4190,7 @@ void run_resnet50_inference(int party_, int port_, const std::string &address_,
   uint64_t __tmp_in_tmp186;
   for (uint64_t i0 = (uint64_t)0; i0 < 1024; i0++) {
     if (party == SERVER) {
-      gINPUT>> __tmp_in_tmp186;
+      in >> __tmp_in_tmp186;
     }
     Arr1DIdxRowM(tmp186, 1024, i0) = (party == SERVER) ? __tmp_in_tmp186 : 0;
   }
@@ -4202,7 +4201,7 @@ void run_resnet50_inference(int party_, int port_, const std::string &address_,
   uint64_t __tmp_in_tmp187;
   for (uint64_t i0 = (uint64_t)0; i0 < 1024; i0++) {
     if (party == SERVER) {
-      gINPUT>> __tmp_in_tmp187;
+      in >> __tmp_in_tmp187;
     }
     Arr1DIdxRowM(tmp187, 1024, i0) = (party == SERVER) ? __tmp_in_tmp187 : 0;
   }
@@ -4213,7 +4212,7 @@ void run_resnet50_inference(int party_, int port_, const std::string &address_,
   uint64_t __tmp_in_tmp188;
   for (uint64_t i0 = (uint64_t)0; i0 < 1024; i0++) {
     if (party == SERVER) {
-      gINPUT>> __tmp_in_tmp188;
+      in >> __tmp_in_tmp188;
     }
     Arr1DIdxRowM(tmp188, 1024, i0) = (party == SERVER) ? __tmp_in_tmp188 : 0;
   }
@@ -4227,7 +4226,7 @@ void run_resnet50_inference(int party_, int port_, const std::string &address_,
       for (uint64_t i2 = (uint64_t)0; i2 < 1024; i2++) {
         for (uint64_t i3 = (uint64_t)0; i3 < 256; i3++) {
           if (party == SERVER) {
-            gINPUT>> __tmp_in_tmp189;
+            in >> __tmp_in_tmp189;
           }
           Arr4DIdxRowM(tmp189, 1, 1, 1024, 256, i0, i1, i2, i3) =
               (party == SERVER) ? __tmp_in_tmp189 : 0;
@@ -4242,7 +4241,7 @@ void run_resnet50_inference(int party_, int port_, const std::string &address_,
   uint64_t __tmp_in_tmp190;
   for (uint64_t i0 = (uint64_t)0; i0 < 256; i0++) {
     if (party == SERVER) {
-      gINPUT>> __tmp_in_tmp190;
+      in >> __tmp_in_tmp190;
     }
     Arr1DIdxRowM(tmp190, 256, i0) = (party == SERVER) ? __tmp_in_tmp190 : 0;
   }
@@ -4253,7 +4252,7 @@ void run_resnet50_inference(int party_, int port_, const std::string &address_,
   uint64_t __tmp_in_tmp191;
   for (uint64_t i0 = (uint64_t)0; i0 < 256; i0++) {
     if (party == SERVER) {
-      gINPUT>> __tmp_in_tmp191;
+      in >> __tmp_in_tmp191;
     }
     Arr1DIdxRowM(tmp191, 256, i0) = (party == SERVER) ? __tmp_in_tmp191 : 0;
   }
@@ -4264,7 +4263,7 @@ void run_resnet50_inference(int party_, int port_, const std::string &address_,
   uint64_t __tmp_in_tmp192;
   for (uint64_t i0 = (uint64_t)0; i0 < 256; i0++) {
     if (party == SERVER) {
-      gINPUT>> __tmp_in_tmp192;
+      in >> __tmp_in_tmp192;
     }
     Arr1DIdxRowM(tmp192, 256, i0) = (party == SERVER) ? __tmp_in_tmp192 : 0;
   }
@@ -4275,7 +4274,7 @@ void run_resnet50_inference(int party_, int port_, const std::string &address_,
   uint64_t __tmp_in_tmp193;
   for (uint64_t i0 = (uint64_t)0; i0 < 256; i0++) {
     if (party == SERVER) {
-      gINPUT>> __tmp_in_tmp193;
+      in >> __tmp_in_tmp193;
     }
     Arr1DIdxRowM(tmp193, 256, i0) = (party == SERVER) ? __tmp_in_tmp193 : 0;
   }
@@ -4289,7 +4288,7 @@ void run_resnet50_inference(int party_, int port_, const std::string &address_,
       for (uint64_t i2 = (uint64_t)0; i2 < 256; i2++) {
         for (uint64_t i3 = (uint64_t)0; i3 < 256; i3++) {
           if (party == SERVER) {
-            gINPUT>> __tmp_in_tmp194;
+            in >> __tmp_in_tmp194;
           }
           Arr4DIdxRowM(tmp194, 3, 3, 256, 256, i0, i1, i2, i3) =
               (party == SERVER) ? __tmp_in_tmp194 : 0;
@@ -4304,7 +4303,7 @@ void run_resnet50_inference(int party_, int port_, const std::string &address_,
   uint64_t __tmp_in_tmp195;
   for (uint64_t i0 = (uint64_t)0; i0 < 256; i0++) {
     if (party == SERVER) {
-      gINPUT>> __tmp_in_tmp195;
+      in >> __tmp_in_tmp195;
     }
     Arr1DIdxRowM(tmp195, 256, i0) = (party == SERVER) ? __tmp_in_tmp195 : 0;
   }
@@ -4315,7 +4314,7 @@ void run_resnet50_inference(int party_, int port_, const std::string &address_,
   uint64_t __tmp_in_tmp196;
   for (uint64_t i0 = (uint64_t)0; i0 < 256; i0++) {
     if (party == SERVER) {
-      gINPUT>> __tmp_in_tmp196;
+      in >> __tmp_in_tmp196;
     }
     Arr1DIdxRowM(tmp196, 256, i0) = (party == SERVER) ? __tmp_in_tmp196 : 0;
   }
@@ -4326,7 +4325,7 @@ void run_resnet50_inference(int party_, int port_, const std::string &address_,
   uint64_t __tmp_in_tmp197;
   for (uint64_t i0 = (uint64_t)0; i0 < 256; i0++) {
     if (party == SERVER) {
-      gINPUT>> __tmp_in_tmp197;
+      in >> __tmp_in_tmp197;
     }
     Arr1DIdxRowM(tmp197, 256, i0) = (party == SERVER) ? __tmp_in_tmp197 : 0;
   }
@@ -4337,7 +4336,7 @@ void run_resnet50_inference(int party_, int port_, const std::string &address_,
   uint64_t __tmp_in_tmp198;
   for (uint64_t i0 = (uint64_t)0; i0 < 256; i0++) {
     if (party == SERVER) {
-      gINPUT>> __tmp_in_tmp198;
+      in >> __tmp_in_tmp198;
     }
     Arr1DIdxRowM(tmp198, 256, i0) = (party == SERVER) ? __tmp_in_tmp198 : 0;
   }
@@ -4351,7 +4350,7 @@ void run_resnet50_inference(int party_, int port_, const std::string &address_,
       for (uint64_t i2 = (uint64_t)0; i2 < 256; i2++) {
         for (uint64_t i3 = (uint64_t)0; i3 < 1024; i3++) {
           if (party == SERVER) {
-            gINPUT>> __tmp_in_tmp199;
+            in >> __tmp_in_tmp199;
           }
           Arr4DIdxRowM(tmp199, 1, 1, 256, 1024, i0, i1, i2, i3) =
               (party == SERVER) ? __tmp_in_tmp199 : 0;
@@ -4366,7 +4365,7 @@ void run_resnet50_inference(int party_, int port_, const std::string &address_,
   uint64_t __tmp_in_tmp200;
   for (uint64_t i0 = (uint64_t)0; i0 < 1024; i0++) {
     if (party == SERVER) {
-      gINPUT>> __tmp_in_tmp200;
+      in >> __tmp_in_tmp200;
     }
     Arr1DIdxRowM(tmp200, 1024, i0) = (party == SERVER) ? __tmp_in_tmp200 : 0;
   }
@@ -4377,7 +4376,7 @@ void run_resnet50_inference(int party_, int port_, const std::string &address_,
   uint64_t __tmp_in_tmp201;
   for (uint64_t i0 = (uint64_t)0; i0 < 1024; i0++) {
     if (party == SERVER) {
-      gINPUT>> __tmp_in_tmp201;
+      in >> __tmp_in_tmp201;
     }
     Arr1DIdxRowM(tmp201, 1024, i0) = (party == SERVER) ? __tmp_in_tmp201 : 0;
   }
@@ -4388,7 +4387,7 @@ void run_resnet50_inference(int party_, int port_, const std::string &address_,
   uint64_t __tmp_in_tmp202;
   for (uint64_t i0 = (uint64_t)0; i0 < 1024; i0++) {
     if (party == SERVER) {
-      gINPUT>> __tmp_in_tmp202;
+      in >> __tmp_in_tmp202;
     }
     Arr1DIdxRowM(tmp202, 1024, i0) = (party == SERVER) ? __tmp_in_tmp202 : 0;
   }
@@ -4399,7 +4398,7 @@ void run_resnet50_inference(int party_, int port_, const std::string &address_,
   uint64_t __tmp_in_tmp203;
   for (uint64_t i0 = (uint64_t)0; i0 < 1024; i0++) {
     if (party == SERVER) {
-      gINPUT>> __tmp_in_tmp203;
+      in >> __tmp_in_tmp203;
     }
     Arr1DIdxRowM(tmp203, 1024, i0) = (party == SERVER) ? __tmp_in_tmp203 : 0;
   }
@@ -4413,7 +4412,7 @@ void run_resnet50_inference(int party_, int port_, const std::string &address_,
       for (uint64_t i2 = (uint64_t)0; i2 < 1024; i2++) {
         for (uint64_t i3 = (uint64_t)0; i3 < 2048; i3++) {
           if (party == SERVER) {
-            gINPUT>> __tmp_in_tmp204;
+            in >> __tmp_in_tmp204;
           }
           Arr4DIdxRowM(tmp204, 1, 1, 1024, 2048, i0, i1, i2, i3) =
               (party == SERVER) ? __tmp_in_tmp204 : 0;
@@ -4431,7 +4430,7 @@ void run_resnet50_inference(int party_, int port_, const std::string &address_,
       for (uint64_t i2 = (uint64_t)0; i2 < 1024; i2++) {
         for (uint64_t i3 = (uint64_t)0; i3 < 512; i3++) {
           if (party == SERVER) {
-            gINPUT>> __tmp_in_tmp205;
+            in >> __tmp_in_tmp205;
           }
           Arr4DIdxRowM(tmp205, 1, 1, 1024, 512, i0, i1, i2, i3) =
               (party == SERVER) ? __tmp_in_tmp205 : 0;
@@ -4446,7 +4445,7 @@ void run_resnet50_inference(int party_, int port_, const std::string &address_,
   uint64_t __tmp_in_tmp206;
   for (uint64_t i0 = (uint64_t)0; i0 < 512; i0++) {
     if (party == SERVER) {
-      gINPUT>> __tmp_in_tmp206;
+      in >> __tmp_in_tmp206;
     }
     Arr1DIdxRowM(tmp206, 512, i0) = (party == SERVER) ? __tmp_in_tmp206 : 0;
   }
@@ -4457,7 +4456,7 @@ void run_resnet50_inference(int party_, int port_, const std::string &address_,
   uint64_t __tmp_in_tmp207;
   for (uint64_t i0 = (uint64_t)0; i0 < 512; i0++) {
     if (party == SERVER) {
-      gINPUT>> __tmp_in_tmp207;
+      in >> __tmp_in_tmp207;
     }
     Arr1DIdxRowM(tmp207, 512, i0) = (party == SERVER) ? __tmp_in_tmp207 : 0;
   }
@@ -4468,7 +4467,7 @@ void run_resnet50_inference(int party_, int port_, const std::string &address_,
   uint64_t __tmp_in_tmp208;
   for (uint64_t i0 = (uint64_t)0; i0 < 512; i0++) {
     if (party == SERVER) {
-      gINPUT>> __tmp_in_tmp208;
+      in >> __tmp_in_tmp208;
     }
     Arr1DIdxRowM(tmp208, 512, i0) = (party == SERVER) ? __tmp_in_tmp208 : 0;
   }
@@ -4479,7 +4478,7 @@ void run_resnet50_inference(int party_, int port_, const std::string &address_,
   uint64_t __tmp_in_tmp209;
   for (uint64_t i0 = (uint64_t)0; i0 < 512; i0++) {
     if (party == SERVER) {
-      gINPUT>> __tmp_in_tmp209;
+      in >> __tmp_in_tmp209;
     }
     Arr1DIdxRowM(tmp209, 512, i0) = (party == SERVER) ? __tmp_in_tmp209 : 0;
   }
@@ -4493,7 +4492,7 @@ void run_resnet50_inference(int party_, int port_, const std::string &address_,
       for (uint64_t i2 = (uint64_t)0; i2 < 512; i2++) {
         for (uint64_t i3 = (uint64_t)0; i3 < 512; i3++) {
           if (party == SERVER) {
-            gINPUT>> __tmp_in_tmp210;
+            in >> __tmp_in_tmp210;
           }
           Arr4DIdxRowM(tmp210, 3, 3, 512, 512, i0, i1, i2, i3) =
               (party == SERVER) ? __tmp_in_tmp210 : 0;
@@ -4508,7 +4507,7 @@ void run_resnet50_inference(int party_, int port_, const std::string &address_,
   uint64_t __tmp_in_tmp211;
   for (uint64_t i0 = (uint64_t)0; i0 < 512; i0++) {
     if (party == SERVER) {
-      gINPUT>> __tmp_in_tmp211;
+      in >> __tmp_in_tmp211;
     }
     Arr1DIdxRowM(tmp211, 512, i0) = (party == SERVER) ? __tmp_in_tmp211 : 0;
   }
@@ -4519,7 +4518,7 @@ void run_resnet50_inference(int party_, int port_, const std::string &address_,
   uint64_t __tmp_in_tmp212;
   for (uint64_t i0 = (uint64_t)0; i0 < 512; i0++) {
     if (party == SERVER) {
-      gINPUT>> __tmp_in_tmp212;
+      in >> __tmp_in_tmp212;
     }
     Arr1DIdxRowM(tmp212, 512, i0) = (party == SERVER) ? __tmp_in_tmp212 : 0;
   }
@@ -4530,7 +4529,7 @@ void run_resnet50_inference(int party_, int port_, const std::string &address_,
   uint64_t __tmp_in_tmp213;
   for (uint64_t i0 = (uint64_t)0; i0 < 512; i0++) {
     if (party == SERVER) {
-      gINPUT>> __tmp_in_tmp213;
+      in >> __tmp_in_tmp213;
     }
     Arr1DIdxRowM(tmp213, 512, i0) = (party == SERVER) ? __tmp_in_tmp213 : 0;
   }
@@ -4541,7 +4540,7 @@ void run_resnet50_inference(int party_, int port_, const std::string &address_,
   uint64_t __tmp_in_tmp214;
   for (uint64_t i0 = (uint64_t)0; i0 < 512; i0++) {
     if (party == SERVER) {
-      gINPUT>> __tmp_in_tmp214;
+      in >> __tmp_in_tmp214;
     }
     Arr1DIdxRowM(tmp214, 512, i0) = (party == SERVER) ? __tmp_in_tmp214 : 0;
   }
@@ -4555,7 +4554,7 @@ void run_resnet50_inference(int party_, int port_, const std::string &address_,
       for (uint64_t i2 = (uint64_t)0; i2 < 512; i2++) {
         for (uint64_t i3 = (uint64_t)0; i3 < 2048; i3++) {
           if (party == SERVER) {
-            gINPUT>> __tmp_in_tmp215;
+            in >> __tmp_in_tmp215;
           }
           Arr4DIdxRowM(tmp215, 1, 1, 512, 2048, i0, i1, i2, i3) =
               (party == SERVER) ? __tmp_in_tmp215 : 0;
@@ -4570,7 +4569,7 @@ void run_resnet50_inference(int party_, int port_, const std::string &address_,
   uint64_t __tmp_in_tmp216;
   for (uint64_t i0 = (uint64_t)0; i0 < 2048; i0++) {
     if (party == SERVER) {
-      gINPUT>> __tmp_in_tmp216;
+      in >> __tmp_in_tmp216;
     }
     Arr1DIdxRowM(tmp216, 2048, i0) = (party == SERVER) ? __tmp_in_tmp216 : 0;
   }
@@ -4581,7 +4580,7 @@ void run_resnet50_inference(int party_, int port_, const std::string &address_,
   uint64_t __tmp_in_tmp217;
   for (uint64_t i0 = (uint64_t)0; i0 < 2048; i0++) {
     if (party == SERVER) {
-      gINPUT>> __tmp_in_tmp217;
+      in >> __tmp_in_tmp217;
     }
     Arr1DIdxRowM(tmp217, 2048, i0) = (party == SERVER) ? __tmp_in_tmp217 : 0;
   }
@@ -4592,7 +4591,7 @@ void run_resnet50_inference(int party_, int port_, const std::string &address_,
   uint64_t __tmp_in_tmp218;
   for (uint64_t i0 = (uint64_t)0; i0 < 2048; i0++) {
     if (party == SERVER) {
-      gINPUT>> __tmp_in_tmp218;
+      in >> __tmp_in_tmp218;
     }
     Arr1DIdxRowM(tmp218, 2048, i0) = (party == SERVER) ? __tmp_in_tmp218 : 0;
   }
@@ -4603,7 +4602,7 @@ void run_resnet50_inference(int party_, int port_, const std::string &address_,
   uint64_t __tmp_in_tmp219;
   for (uint64_t i0 = (uint64_t)0; i0 < 2048; i0++) {
     if (party == SERVER) {
-      gINPUT>> __tmp_in_tmp219;
+      in >> __tmp_in_tmp219;
     }
     Arr1DIdxRowM(tmp219, 2048, i0) = (party == SERVER) ? __tmp_in_tmp219 : 0;
   }
@@ -4617,7 +4616,7 @@ void run_resnet50_inference(int party_, int port_, const std::string &address_,
       for (uint64_t i2 = (uint64_t)0; i2 < 2048; i2++) {
         for (uint64_t i3 = (uint64_t)0; i3 < 512; i3++) {
           if (party == SERVER) {
-            gINPUT>> __tmp_in_tmp220;
+            in >> __tmp_in_tmp220;
           }
           Arr4DIdxRowM(tmp220, 1, 1, 2048, 512, i0, i1, i2, i3) =
               (party == SERVER) ? __tmp_in_tmp220 : 0;
@@ -4632,7 +4631,7 @@ void run_resnet50_inference(int party_, int port_, const std::string &address_,
   uint64_t __tmp_in_tmp221;
   for (uint64_t i0 = (uint64_t)0; i0 < 512; i0++) {
     if (party == SERVER) {
-      gINPUT>> __tmp_in_tmp221;
+      in >> __tmp_in_tmp221;
     }
     Arr1DIdxRowM(tmp221, 512, i0) = (party == SERVER) ? __tmp_in_tmp221 : 0;
   }
@@ -4643,7 +4642,7 @@ void run_resnet50_inference(int party_, int port_, const std::string &address_,
   uint64_t __tmp_in_tmp222;
   for (uint64_t i0 = (uint64_t)0; i0 < 512; i0++) {
     if (party == SERVER) {
-      gINPUT>> __tmp_in_tmp222;
+      in >> __tmp_in_tmp222;
     }
     Arr1DIdxRowM(tmp222, 512, i0) = (party == SERVER) ? __tmp_in_tmp222 : 0;
   }
@@ -4654,7 +4653,7 @@ void run_resnet50_inference(int party_, int port_, const std::string &address_,
   uint64_t __tmp_in_tmp223;
   for (uint64_t i0 = (uint64_t)0; i0 < 512; i0++) {
     if (party == SERVER) {
-      gINPUT>> __tmp_in_tmp223;
+      in >> __tmp_in_tmp223;
     }
     Arr1DIdxRowM(tmp223, 512, i0) = (party == SERVER) ? __tmp_in_tmp223 : 0;
   }
@@ -4665,7 +4664,7 @@ void run_resnet50_inference(int party_, int port_, const std::string &address_,
   uint64_t __tmp_in_tmp224;
   for (uint64_t i0 = (uint64_t)0; i0 < 512; i0++) {
     if (party == SERVER) {
-      gINPUT>> __tmp_in_tmp224;
+      in >> __tmp_in_tmp224;
     }
     Arr1DIdxRowM(tmp224, 512, i0) = (party == SERVER) ? __tmp_in_tmp224 : 0;
   }
@@ -4679,7 +4678,7 @@ void run_resnet50_inference(int party_, int port_, const std::string &address_,
       for (uint64_t i2 = (uint64_t)0; i2 < 512; i2++) {
         for (uint64_t i3 = (uint64_t)0; i3 < 512; i3++) {
           if (party == SERVER) {
-            gINPUT>> __tmp_in_tmp225;
+            in >> __tmp_in_tmp225;
           }
           Arr4DIdxRowM(tmp225, 3, 3, 512, 512, i0, i1, i2, i3) =
               (party == SERVER) ? __tmp_in_tmp225 : 0;
@@ -4694,7 +4693,7 @@ void run_resnet50_inference(int party_, int port_, const std::string &address_,
   uint64_t __tmp_in_tmp226;
   for (uint64_t i0 = (uint64_t)0; i0 < 512; i0++) {
     if (party == SERVER) {
-      gINPUT>> __tmp_in_tmp226;
+      in >> __tmp_in_tmp226;
     }
     Arr1DIdxRowM(tmp226, 512, i0) = (party == SERVER) ? __tmp_in_tmp226 : 0;
   }
@@ -4705,7 +4704,7 @@ void run_resnet50_inference(int party_, int port_, const std::string &address_,
   uint64_t __tmp_in_tmp227;
   for (uint64_t i0 = (uint64_t)0; i0 < 512; i0++) {
     if (party == SERVER) {
-      gINPUT>> __tmp_in_tmp227;
+      in >> __tmp_in_tmp227;
     }
     Arr1DIdxRowM(tmp227, 512, i0) = (party == SERVER) ? __tmp_in_tmp227 : 0;
   }
@@ -4716,7 +4715,7 @@ void run_resnet50_inference(int party_, int port_, const std::string &address_,
   uint64_t __tmp_in_tmp228;
   for (uint64_t i0 = (uint64_t)0; i0 < 512; i0++) {
     if (party == SERVER) {
-      gINPUT>> __tmp_in_tmp228;
+      in >> __tmp_in_tmp228;
     }
     Arr1DIdxRowM(tmp228, 512, i0) = (party == SERVER) ? __tmp_in_tmp228 : 0;
   }
@@ -4727,7 +4726,7 @@ void run_resnet50_inference(int party_, int port_, const std::string &address_,
   uint64_t __tmp_in_tmp229;
   for (uint64_t i0 = (uint64_t)0; i0 < 512; i0++) {
     if (party == SERVER) {
-      gINPUT>> __tmp_in_tmp229;
+      in >> __tmp_in_tmp229;
     }
     Arr1DIdxRowM(tmp229, 512, i0) = (party == SERVER) ? __tmp_in_tmp229 : 0;
   }
@@ -4741,7 +4740,7 @@ void run_resnet50_inference(int party_, int port_, const std::string &address_,
       for (uint64_t i2 = (uint64_t)0; i2 < 512; i2++) {
         for (uint64_t i3 = (uint64_t)0; i3 < 2048; i3++) {
           if (party == SERVER) {
-            gINPUT>> __tmp_in_tmp230;
+            in >> __tmp_in_tmp230;
           }
           Arr4DIdxRowM(tmp230, 1, 1, 512, 2048, i0, i1, i2, i3) =
               (party == SERVER) ? __tmp_in_tmp230 : 0;
@@ -4756,7 +4755,7 @@ void run_resnet50_inference(int party_, int port_, const std::string &address_,
   uint64_t __tmp_in_tmp231;
   for (uint64_t i0 = (uint64_t)0; i0 < 2048; i0++) {
     if (party == SERVER) {
-      gINPUT>> __tmp_in_tmp231;
+      in >> __tmp_in_tmp231;
     }
     Arr1DIdxRowM(tmp231, 2048, i0) = (party == SERVER) ? __tmp_in_tmp231 : 0;
   }
@@ -4767,7 +4766,7 @@ void run_resnet50_inference(int party_, int port_, const std::string &address_,
   uint64_t __tmp_in_tmp232;
   for (uint64_t i0 = (uint64_t)0; i0 < 2048; i0++) {
     if (party == SERVER) {
-      gINPUT>> __tmp_in_tmp232;
+      in >> __tmp_in_tmp232;
     }
     Arr1DIdxRowM(tmp232, 2048, i0) = (party == SERVER) ? __tmp_in_tmp232 : 0;
   }
@@ -4778,7 +4777,7 @@ void run_resnet50_inference(int party_, int port_, const std::string &address_,
   uint64_t __tmp_in_tmp233;
   for (uint64_t i0 = (uint64_t)0; i0 < 2048; i0++) {
     if (party == SERVER) {
-      gINPUT>> __tmp_in_tmp233;
+      in >> __tmp_in_tmp233;
     }
     Arr1DIdxRowM(tmp233, 2048, i0) = (party == SERVER) ? __tmp_in_tmp233 : 0;
   }
@@ -4789,7 +4788,7 @@ void run_resnet50_inference(int party_, int port_, const std::string &address_,
   uint64_t __tmp_in_tmp234;
   for (uint64_t i0 = (uint64_t)0; i0 < 2048; i0++) {
     if (party == SERVER) {
-      gINPUT>> __tmp_in_tmp234;
+      in >> __tmp_in_tmp234;
     }
     Arr1DIdxRowM(tmp234, 2048, i0) = (party == SERVER) ? __tmp_in_tmp234 : 0;
   }
@@ -4803,7 +4802,7 @@ void run_resnet50_inference(int party_, int port_, const std::string &address_,
       for (uint64_t i2 = (uint64_t)0; i2 < 2048; i2++) {
         for (uint64_t i3 = (uint64_t)0; i3 < 512; i3++) {
           if (party == SERVER) {
-            gINPUT>> __tmp_in_tmp235;
+            in >> __tmp_in_tmp235;
           }
           Arr4DIdxRowM(tmp235, 1, 1, 2048, 512, i0, i1, i2, i3) =
               (party == SERVER) ? __tmp_in_tmp235 : 0;
@@ -4818,7 +4817,7 @@ void run_resnet50_inference(int party_, int port_, const std::string &address_,
   uint64_t __tmp_in_tmp236;
   for (uint64_t i0 = (uint64_t)0; i0 < 512; i0++) {
     if (party == SERVER) {
-      gINPUT>> __tmp_in_tmp236;
+      in >> __tmp_in_tmp236;
     }
     Arr1DIdxRowM(tmp236, 512, i0) = (party == SERVER) ? __tmp_in_tmp236 : 0;
   }
@@ -4829,7 +4828,7 @@ void run_resnet50_inference(int party_, int port_, const std::string &address_,
   uint64_t __tmp_in_tmp237;
   for (uint64_t i0 = (uint64_t)0; i0 < 512; i0++) {
     if (party == SERVER) {
-      gINPUT>> __tmp_in_tmp237;
+      in >> __tmp_in_tmp237;
     }
     Arr1DIdxRowM(tmp237, 512, i0) = (party == SERVER) ? __tmp_in_tmp237 : 0;
   }
@@ -4840,7 +4839,7 @@ void run_resnet50_inference(int party_, int port_, const std::string &address_,
   uint64_t __tmp_in_tmp238;
   for (uint64_t i0 = (uint64_t)0; i0 < 512; i0++) {
     if (party == SERVER) {
-      gINPUT>> __tmp_in_tmp238;
+      in >> __tmp_in_tmp238;
     }
     Arr1DIdxRowM(tmp238, 512, i0) = (party == SERVER) ? __tmp_in_tmp238 : 0;
   }
@@ -4851,7 +4850,7 @@ void run_resnet50_inference(int party_, int port_, const std::string &address_,
   uint64_t __tmp_in_tmp239;
   for (uint64_t i0 = (uint64_t)0; i0 < 512; i0++) {
     if (party == SERVER) {
-      gINPUT>> __tmp_in_tmp239;
+      in >> __tmp_in_tmp239;
     }
     Arr1DIdxRowM(tmp239, 512, i0) = (party == SERVER) ? __tmp_in_tmp239 : 0;
   }
@@ -4865,7 +4864,7 @@ void run_resnet50_inference(int party_, int port_, const std::string &address_,
       for (uint64_t i2 = (uint64_t)0; i2 < 512; i2++) {
         for (uint64_t i3 = (uint64_t)0; i3 < 512; i3++) {
           if (party == SERVER) {
-            gINPUT>> __tmp_in_tmp240;
+            in >> __tmp_in_tmp240;
           }
           Arr4DIdxRowM(tmp240, 3, 3, 512, 512, i0, i1, i2, i3) =
               (party == SERVER) ? __tmp_in_tmp240 : 0;
@@ -4880,7 +4879,7 @@ void run_resnet50_inference(int party_, int port_, const std::string &address_,
   uint64_t __tmp_in_tmp241;
   for (uint64_t i0 = (uint64_t)0; i0 < 512; i0++) {
     if (party == SERVER) {
-      gINPUT>> __tmp_in_tmp241;
+      in >> __tmp_in_tmp241;
     }
     Arr1DIdxRowM(tmp241, 512, i0) = (party == SERVER) ? __tmp_in_tmp241 : 0;
   }
@@ -4891,7 +4890,7 @@ void run_resnet50_inference(int party_, int port_, const std::string &address_,
   uint64_t __tmp_in_tmp242;
   for (uint64_t i0 = (uint64_t)0; i0 < 512; i0++) {
     if (party == SERVER) {
-      gINPUT>> __tmp_in_tmp242;
+      in >> __tmp_in_tmp242;
     }
     Arr1DIdxRowM(tmp242, 512, i0) = (party == SERVER) ? __tmp_in_tmp242 : 0;
   }
@@ -4902,7 +4901,7 @@ void run_resnet50_inference(int party_, int port_, const std::string &address_,
   uint64_t __tmp_in_tmp243;
   for (uint64_t i0 = (uint64_t)0; i0 < 512; i0++) {
     if (party == SERVER) {
-      gINPUT>> __tmp_in_tmp243;
+      in >> __tmp_in_tmp243;
     }
     Arr1DIdxRowM(tmp243, 512, i0) = (party == SERVER) ? __tmp_in_tmp243 : 0;
   }
@@ -4913,7 +4912,7 @@ void run_resnet50_inference(int party_, int port_, const std::string &address_,
   uint64_t __tmp_in_tmp244;
   for (uint64_t i0 = (uint64_t)0; i0 < 512; i0++) {
     if (party == SERVER) {
-      gINPUT>> __tmp_in_tmp244;
+      in >> __tmp_in_tmp244;
     }
     Arr1DIdxRowM(tmp244, 512, i0) = (party == SERVER) ? __tmp_in_tmp244 : 0;
   }
@@ -4927,7 +4926,7 @@ void run_resnet50_inference(int party_, int port_, const std::string &address_,
       for (uint64_t i2 = (uint64_t)0; i2 < 512; i2++) {
         for (uint64_t i3 = (uint64_t)0; i3 < 2048; i3++) {
           if (party == SERVER) {
-            gINPUT>> __tmp_in_tmp245;
+            in >> __tmp_in_tmp245;
           }
           Arr4DIdxRowM(tmp245, 1, 1, 512, 2048, i0, i1, i2, i3) =
               (party == SERVER) ? __tmp_in_tmp245 : 0;
@@ -4942,7 +4941,7 @@ void run_resnet50_inference(int party_, int port_, const std::string &address_,
   uint64_t __tmp_in_tmp246;
   for (uint64_t i0 = (uint64_t)0; i0 < 2048; i0++) {
     if (party == SERVER) {
-      gINPUT>> __tmp_in_tmp246;
+      in >> __tmp_in_tmp246;
     }
     Arr1DIdxRowM(tmp246, 2048, i0) = (party == SERVER) ? __tmp_in_tmp246 : 0;
   }
@@ -4953,7 +4952,7 @@ void run_resnet50_inference(int party_, int port_, const std::string &address_,
   uint64_t __tmp_in_tmp247;
   for (uint64_t i0 = (uint64_t)0; i0 < 2048; i0++) {
     if (party == SERVER) {
-      gINPUT>> __tmp_in_tmp247;
+      in >> __tmp_in_tmp247;
     }
     Arr1DIdxRowM(tmp247, 2048, i0) = (party == SERVER) ? __tmp_in_tmp247 : 0;
   }
@@ -4964,7 +4963,7 @@ void run_resnet50_inference(int party_, int port_, const std::string &address_,
   uint64_t __tmp_in_tmp248;
   for (uint64_t i0 = (uint64_t)0; i0 < 2048; i0++) {
     if (party == SERVER) {
-      gINPUT>> __tmp_in_tmp248;
+      in >> __tmp_in_tmp248;
     }
     Arr1DIdxRowM(tmp248, 2048, i0) = (party == SERVER) ? __tmp_in_tmp248 : 0;
   }
@@ -4975,7 +4974,7 @@ void run_resnet50_inference(int party_, int port_, const std::string &address_,
   uint64_t __tmp_in_tmp249;
   for (uint64_t i0 = (uint64_t)0; i0 < 2048; i0++) {
     if (party == SERVER) {
-      gINPUT>> __tmp_in_tmp249;
+      in >> __tmp_in_tmp249;
     }
     Arr1DIdxRowM(tmp249, 2048, i0) = (party == SERVER) ? __tmp_in_tmp249 : 0;
   }
@@ -4987,7 +4986,7 @@ void run_resnet50_inference(int party_, int port_, const std::string &address_,
   for (uint64_t i0 = (uint64_t)0; i0 < 2048; i0++) {
     for (uint64_t i1 = (uint64_t)0; i1 < 1001; i1++) {
       if (party == SERVER) {
-        gINPUT>> __tmp_in_tmp250;
+        in >> __tmp_in_tmp250;
       }
       Arr2DIdxRowM(tmp250, 2048, 1001, i0, i1) =
           (party == SERVER) ? __tmp_in_tmp250 : 0;
@@ -5000,12 +4999,11 @@ void run_resnet50_inference(int party_, int port_, const std::string &address_,
   uint64_t __tmp_in_tmp251;
   for (uint64_t i0 = (uint64_t)0; i0 < 1001; i0++) {
     if (party == SERVER) {
-      gINPUT>> __tmp_in_tmp251;
+      in >> __tmp_in_tmp251;
     }
     Arr1DIdxRowM(tmp251, 1001, i0) = (party == SERVER) ? __tmp_in_tmp251 : 0;
   }
   std::cerr << "input loaded, starting computation..." << std::endl;
-  gINPUTCLOSE;
 
   int64_t *tmp252 = make_array<int64_t>(4, 2);
   Arr2DIdxRowM(tmp252, 4, 2, (int64_t)0, (int64_t)0) = 0;
