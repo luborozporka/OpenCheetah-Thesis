@@ -71,6 +71,7 @@ add_network_cheetah(mp4)
 add_executable(server-cheetah
   server/main_server.cpp
   networks/sqnet_inference.cpp
+  networks/resnet50_inference.cpp
   networks/network_globals.cpp)
 target_compile_definitions(server-cheetah PRIVATE ASIO_STANDALONE)
 target_compile_definitions(server-cheetah PUBLIC SCI_OT=1 USE_CHEETAH=1)

@@ -22,6 +22,7 @@ constexpr char kMagic[4] = {'S', 'N', 'N', 'I'};
 
 enum class NetworkId : uint32_t {
   Sqnet = 1,
+  Resnet50 = 2,
 };
 
 enum class Status : uint32_t {
@@ -29,6 +30,7 @@ enum class Status : uint32_t {
   BadMagic = 1,
   UnknownNetwork = 2,
   BadConfig = 3,
+  ModelUnavailable = 4,
 };
 
 struct Request {
@@ -44,9 +46,12 @@ struct Response {
   uint32_t data_port;
 };
 
+using InferenceFn = void (*)(int, int, const std::string &, int, int32_t, int32_t, std::istream &);
+
 // Model weights are loaded only once at startup,
 // and are then shared with worker threads
-std::string g_weights;
+std::string g_sqnet_weights;
+std::string g_resnet50_weights;
 
 // Atomic port allocator
 std::atomic<int> g_next_data_port{0};
@@ -68,8 +73,28 @@ void handle_client(asio::ip::tcp::socket socket) {
       send_response(socket, Status::BadMagic, 0);
       return;
     }
-    if (req.network_id != NetworkId::Sqnet) {
-      send_response(socket, Status::UnknownNetwork, 0);
+
+    const char *network_name = nullptr;
+    const std::string *weights = nullptr;
+    InferenceFn inference_fn = nullptr;
+    switch (req.network_id) {
+      case NetworkId::Sqnet:
+        network_name = "sqnet";
+        weights = &g_sqnet_weights;
+        inference_fn = &run_sqnet_inference;
+        break;
+      case NetworkId::Resnet50:
+        network_name = "resnet50";
+        weights = &g_resnet50_weights;
+        inference_fn = &run_resnet50_inference;
+        break;
+      default:
+        send_response(socket, Status::UnknownNetwork, 0);
+        return;
+    }
+
+    if (weights->empty()) {
+      send_response(socket, Status::ModelUnavailable, 0);
       return;
     }
     if (req.num_threads <= 0 || req.num_threads > MAX_THREADS) {
@@ -81,15 +106,15 @@ void handle_client(asio::ip::tcp::socket socket) {
     send_response(socket, Status::OK, data_port);
     socket.close();
 
-    std::cout << "[server] " << peer << " -> sqnet on port " << data_port
-              << std::endl;
+    std::cout << "[server] " << peer << " -> " << network_name << " on port "
+              << data_port << std::endl;
 
     g_session_tag = "w" + std::to_string(data_port);
 
-    std::istringstream weights_in(g_weights);
-    run_sqnet_inference(/*party=*/1, /*port=*/static_cast<int>(data_port),
-                        /*address=*/"127.0.0.1", req.num_threads,
-                        req.bitlength, req.scale, weights_in);
+    std::istringstream weights_in(*weights);
+    inference_fn(/*party=*/1, /*port=*/static_cast<int>(data_port),
+                 /*address=*/"127.0.0.1", req.num_threads,
+                 req.bitlength, req.scale, weights_in);
 
     std::cout << "[server] " << peer << " done (port " << data_port << ")"
               << std::endl;
@@ -112,25 +137,37 @@ std::string read_file(const std::string &path) {
 int main(int argc, char **argv) {
   int port = 12345;
   int data_port_base = 0;
-  std::string weights_path;
+  std::string sqnet_weights_path;
+  std::string resnet50_weights_path;
 
   ArgMapping amap;
   amap.arg("p", port, "Control port");
   amap.arg("dp", data_port_base, "Base port for data channels (default: p+1)");
-  amap.arg("weights", weights_path, "Path to model weights file");
+  amap.arg("sqnet_weights", sqnet_weights_path, "Path to sqnet weights file");
+  amap.arg("resnet50_weights", resnet50_weights_path, "Path to resnet50 weights file");
   amap.parse(argc, argv);
 
-  if (weights_path.empty()) {
-    std::cerr << "[server] weights=... is required" << std::endl;
+  if (sqnet_weights_path.empty() && resnet50_weights_path.empty()) {
+    std::cerr << "[server] at least one of sqnet_weights=... or resnet50_weights=... is required"
+              << std::endl;
     return 1;
   }
   if (data_port_base == 0) data_port_base = port + 1;
   g_next_data_port.store(data_port_base);
 
   try {
-    g_weights = read_file(weights_path);
-    std::cout << "[server] loaded " << g_weights.size() << " bytes from "
-              << weights_path << std::endl;
+    if (!sqnet_weights_path.empty()) {
+      g_sqnet_weights = read_file(sqnet_weights_path);
+      std::cout << "[server] loaded " << g_sqnet_weights.size()
+                << " bytes from " << sqnet_weights_path << " (sqnet)"
+                << std::endl;
+    }
+    if (!resnet50_weights_path.empty()) {
+      g_resnet50_weights = read_file(resnet50_weights_path);
+      std::cout << "[server] loaded " << g_resnet50_weights.size()
+                << " bytes from " << resnet50_weights_path << " (resnet50)"
+                << std::endl;
+    }
   } catch (const std::exception &e) {
     std::cerr << "[server] " << e.what() << std::endl;
     return 1;
