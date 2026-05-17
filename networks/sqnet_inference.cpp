@@ -11,6 +11,10 @@ Then hand crafted by Wen-jie Lu
 #include <iostream>
 using namespace std;
 
+// Anonymous namespace so that all 3 supported networks can be linked into
+// server-cheetah without multiple-definition errors on these helpers.
+namespace {
+
 void MatAddBroadCast2(int64_t s1, int64_t s2, uint64_t *A, uint64_t *B,
                       uint64_t *outArr) {
   for (uint64_t i1 = (int32_t)0; i1 < s1; i1++) {
@@ -2257,6 +2261,8 @@ void ScaleDown4(int64_t s1, int64_t s2, int64_t s3, int64_t s4, uint64_t *arr,
   }
   ClearMemSecret1(size, reshapedArr);
 }
+
+}  // namespace
 
 void run_sqnet_inference(int party_, int port_, const std::string &address_,
                          int num_threads_, int32_t bitlength_, int32_t kScale_,

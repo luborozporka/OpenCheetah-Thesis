@@ -13,6 +13,10 @@ Then hand crafted by Wen-jie Lu
 
 using namespace std;
 
+// Anonymous namespace so that all 3 supported networks can be linked into
+// server-cheetah without multiple-definition errors on these helpers.
+namespace {
+
 static const int32_t kDoExtractTruncate = 1;
 
 int64_t getSignValue(uint64_t x) {
@@ -2164,6 +2168,8 @@ void FusedBN(int32_t N, int32_t H, int32_t W, int32_t CI, int32_t fh,
   }
   ClearMemSecret1(CO * CI * fh * fw, scaled_filters);
 }
+
+}  // namespace
 
 void run_densenet121_inference(int party_, int port_, const std::string &address_,
                                int num_threads_, int32_t bitlength_, int32_t kScale_,
