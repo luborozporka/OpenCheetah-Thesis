@@ -2170,17 +2170,14 @@ void FusedBN(int32_t N, int32_t H, int32_t W, int32_t CI, int32_t fh,
   ClearMemSecret1(CO * CI * fh * fw, scaled_filters);
 }
 
-int main(int argc, char **argv) {
-  ArgMapping amap;
-
-  amap.arg("r", party, "Role of party: ALICE/SERVER = 1; BOB/CLIENT = 2");
-  amap.arg("p", port, "Port Number");
-  amap.arg("ip", address, "IP Address of server (ALICE)");
-  amap.arg("nt", num_threads, "Number of Threads");
-  amap.arg("ell", bitlength, "Uniform Bitwidth");
-  amap.arg("k", kScale, "bits of scale");
-  amap.parse(argc, argv);
-
+void run_densenet121_inference(int party_, int port_, const std::string &address_,
+                               int num_threads_, int32_t bitlength_, int32_t kScale_) {
+  party = party_;
+  port = port_;
+  address = address_;
+  num_threads = num_threads_;
+  bitlength = bitlength_;
+  kScale = kScale_;
 
   assert(party == SERVER || party == CLIENT);
 
@@ -12028,4 +12025,19 @@ int main(int argc, char **argv) {
       }
     }
   }
+}
+
+int main(int argc, char **argv) {
+  ArgMapping amap;
+
+  amap.arg("r", party, "Role of party: ALICE/SERVER = 1; BOB/CLIENT = 2");
+  amap.arg("p", port, "Port Number");
+  amap.arg("ip", address, "IP Address of server (ALICE)");
+  amap.arg("nt", num_threads, "Number of Threads");
+  amap.arg("ell", bitlength, "Uniform Bitwidth");
+  amap.arg("k", kScale, "bits of scale");
+
+  amap.parse(argc, argv);
+
+  run_densenet121_inference(party, port, address, num_threads, bitlength, kScale);
 }
