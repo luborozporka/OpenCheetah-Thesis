@@ -1,3 +1,4 @@
+#include "globals.h"
 #include "networks/networks.h"
 #include "utils/ArgMapping/ArgMapping.h"
 
@@ -22,6 +23,10 @@ int main(int argc, char **argv) {
   amap.arg("k", kScale, "bits of scale");
 
   amap.parse(argc, argv);
+
+  // Tag the pre-OT cache files by port so concurrent client processes
+  // do not mess with each other's caches via the shared `./data/pre_ot_data_reg_*_bob` path
+  g_session_tag = "p" + std::to_string(port);
 
   run_resnet50_inference(party, port, address, num_threads, bitlength, kScale);
 }
