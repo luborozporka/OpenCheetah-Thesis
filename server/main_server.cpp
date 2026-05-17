@@ -23,6 +23,7 @@ constexpr char kMagic[4] = {'S', 'N', 'N', 'I'};
 enum class NetworkId : uint32_t {
   Sqnet = 1,
   Resnet50 = 2,
+  Densenet121 = 3,
 };
 
 enum class Status : uint32_t {
@@ -52,6 +53,7 @@ using InferenceFn = void (*)(int, int, const std::string &, int, int32_t, int32_
 // and are then shared with worker threads
 std::string g_sqnet_weights;
 std::string g_resnet50_weights;
+std::string g_densenet121_weights;
 
 // Atomic port allocator
 std::atomic<int> g_next_data_port{0};
@@ -87,6 +89,11 @@ void handle_client(asio::ip::tcp::socket socket) {
         network_name = "resnet50";
         weights = &g_resnet50_weights;
         inference_fn = &run_resnet50_inference;
+        break;
+      case NetworkId::Densenet121:
+        network_name = "densenet121";
+        weights = &g_densenet121_weights;
+        inference_fn = &run_densenet121_inference;
         break;
       default:
         send_response(socket, Status::UnknownNetwork, 0);
@@ -139,16 +146,20 @@ int main(int argc, char **argv) {
   int data_port_base = 0;
   std::string sqnet_weights_path;
   std::string resnet50_weights_path;
+  std::string densenet121_weights_path;
 
   ArgMapping amap;
   amap.arg("p", port, "Control port");
   amap.arg("dp", data_port_base, "Base port for data channels (default: p+1)");
   amap.arg("sqnet_weights", sqnet_weights_path, "Path to sqnet weights file");
   amap.arg("resnet50_weights", resnet50_weights_path, "Path to resnet50 weights file");
+  amap.arg("densenet121_weights", densenet121_weights_path, "Path to densenet121 weights file");
   amap.parse(argc, argv);
 
-  if (sqnet_weights_path.empty() && resnet50_weights_path.empty()) {
-    std::cerr << "[server] at least one of sqnet_weights=... or resnet50_weights=... is required"
+  if (sqnet_weights_path.empty()
+      && resnet50_weights_path.empty()
+      && densenet121_weights_path.empty()) {
+    std::cerr << "[server] at least one of sqnet_weights=..., resnet50_weights=..., or densenet121_weights=... is required"
               << std::endl;
     return 1;
   }
@@ -166,6 +177,12 @@ int main(int argc, char **argv) {
       g_resnet50_weights = read_file(resnet50_weights_path);
       std::cout << "[server] loaded " << g_resnet50_weights.size()
                 << " bytes from " << resnet50_weights_path << " (resnet50)"
+                << std::endl;
+    }
+    if (!densenet121_weights_path.empty()) {
+      g_densenet121_weights = read_file(densenet121_weights_path);
+      std::cout << "[server] loaded " << g_densenet121_weights.size()
+                << " bytes from " << densenet121_weights_path << " (densenet121)"
                 << std::endl;
     }
   } catch (const std::exception &e) {
