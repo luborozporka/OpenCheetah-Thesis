@@ -2166,7 +2166,8 @@ void FusedBN(int32_t N, int32_t H, int32_t W, int32_t CI, int32_t fh,
 }
 
 void run_densenet121_inference(int party_, int port_, const std::string &address_,
-                               int num_threads_, int32_t bitlength_, int32_t kScale_) {
+                               int num_threads_, int32_t bitlength_, int32_t kScale_,
+                               std::istream &in) {
   party = party_;
   port = port_;
   address = address_;
@@ -2223,7 +2224,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
       for (uint64_t i2 = (uint64_t)0; i2 < 224; i2++) {
         for (uint64_t i3 = (uint64_t)0; i3 < 3; i3++) {
           if ((party == CLIENT)) {
-            cin >> __tmp_in_tmp0;
+            in >> __tmp_in_tmp0;
           }
           Arr4DIdxRowM(tmp0, 1, 224, 224, 3, i0, i1, i2, i3) =
               (party == CLIENT) ? __tmp_in_tmp0 : 0;
@@ -2241,7 +2242,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
       for (uint64_t i2 = (uint64_t)0; i2 < 3; i2++) {
         for (uint64_t i3 = (uint64_t)0; i3 < 64; i3++) {
           if ((party == SERVER)) {
-            cin >> __tmp_in_tmp1;
+            in >> __tmp_in_tmp1;
           }
           Arr4DIdxRowM(tmp1, 7, 7, 3, 64, i0, i1, i2, i3) =
               (party == SERVER) ? __tmp_in_tmp1 : 0;
@@ -2256,7 +2257,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp2;
   for (uint64_t i0 = (uint64_t)0; i0 < 64; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp2;
+      in >> __tmp_in_tmp2;
     }
     Arr1DIdxRowM(tmp2, 64, i0) = (party == SERVER) ? __tmp_in_tmp2 : 0;
   }
@@ -2267,7 +2268,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp3;
   for (uint64_t i0 = (uint64_t)0; i0 < 64; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp3;
+      in >> __tmp_in_tmp3;
     }
     Arr1DIdxRowM(tmp3, 64, i0) = (party == SERVER) ? __tmp_in_tmp3 : 0;
   }
@@ -2278,7 +2279,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp4;
   for (uint64_t i0 = (uint64_t)0; i0 < 64; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp4;
+      in >> __tmp_in_tmp4;
     }
     Arr1DIdxRowM(tmp4, 64, i0) = (party == SERVER) ? __tmp_in_tmp4 : 0;
   }
@@ -2289,7 +2290,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp5;
   for (uint64_t i0 = (uint64_t)0; i0 < 64; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp5;
+      in >> __tmp_in_tmp5;
     }
     Arr1DIdxRowM(tmp5, 64, i0) = (party == SERVER) ? __tmp_in_tmp5 : 0;
   }
@@ -2300,7 +2301,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp6;
   for (uint64_t i0 = (uint64_t)0; i0 < 64; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp6;
+      in >> __tmp_in_tmp6;
     }
     Arr1DIdxRowM(tmp6, 64, i0) = (party == SERVER) ? __tmp_in_tmp6 : 0;
   }
@@ -2311,7 +2312,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp7;
   for (uint64_t i0 = (uint64_t)0; i0 < 64; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp7;
+      in >> __tmp_in_tmp7;
     }
     Arr1DIdxRowM(tmp7, 64, i0) = (party == SERVER) ? __tmp_in_tmp7 : 0;
   }
@@ -2322,7 +2323,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp8;
   for (uint64_t i0 = (uint64_t)0; i0 < 64; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp8;
+      in >> __tmp_in_tmp8;
     }
     Arr1DIdxRowM(tmp8, 64, i0) = (party == SERVER) ? __tmp_in_tmp8 : 0;
   }
@@ -2333,7 +2334,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp9;
   for (uint64_t i0 = (uint64_t)0; i0 < 64; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp9;
+      in >> __tmp_in_tmp9;
     }
     Arr1DIdxRowM(tmp9, 64, i0) = (party == SERVER) ? __tmp_in_tmp9 : 0;
   }
@@ -2347,7 +2348,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
       for (uint64_t i2 = (uint64_t)0; i2 < 64; i2++) {
         for (uint64_t i3 = (uint64_t)0; i3 < 128; i3++) {
           if ((party == SERVER)) {
-            cin >> __tmp_in_tmp10;
+            in >> __tmp_in_tmp10;
           }
           Arr4DIdxRowM(tmp10, 1, 1, 64, 128, i0, i1, i2, i3) =
               (party == SERVER) ? __tmp_in_tmp10 : 0;
@@ -2362,7 +2363,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp11;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp11;
+      in >> __tmp_in_tmp11;
     }
     Arr1DIdxRowM(tmp11, 128, i0) = (party == SERVER) ? __tmp_in_tmp11 : 0;
   }
@@ -2373,7 +2374,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp12;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp12;
+      in >> __tmp_in_tmp12;
     }
     Arr1DIdxRowM(tmp12, 128, i0) = (party == SERVER) ? __tmp_in_tmp12 : 0;
   }
@@ -2384,7 +2385,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp13;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp13;
+      in >> __tmp_in_tmp13;
     }
     Arr1DIdxRowM(tmp13, 128, i0) = (party == SERVER) ? __tmp_in_tmp13 : 0;
   }
@@ -2395,7 +2396,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp14;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp14;
+      in >> __tmp_in_tmp14;
     }
     Arr1DIdxRowM(tmp14, 128, i0) = (party == SERVER) ? __tmp_in_tmp14 : 0;
   }
@@ -2409,7 +2410,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
       for (uint64_t i2 = (uint64_t)0; i2 < 128; i2++) {
         for (uint64_t i3 = (uint64_t)0; i3 < 32; i3++) {
           if ((party == SERVER)) {
-            cin >> __tmp_in_tmp15;
+            in >> __tmp_in_tmp15;
           }
           Arr4DIdxRowM(tmp15, 3, 3, 128, 32, i0, i1, i2, i3) =
               (party == SERVER) ? __tmp_in_tmp15 : 0;
@@ -2424,7 +2425,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp16;
   for (uint64_t i0 = (uint64_t)0; i0 < 96; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp16;
+      in >> __tmp_in_tmp16;
     }
     Arr1DIdxRowM(tmp16, 96, i0) = (party == SERVER) ? __tmp_in_tmp16 : 0;
   }
@@ -2435,7 +2436,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp17;
   for (uint64_t i0 = (uint64_t)0; i0 < 96; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp17;
+      in >> __tmp_in_tmp17;
     }
     Arr1DIdxRowM(tmp17, 96, i0) = (party == SERVER) ? __tmp_in_tmp17 : 0;
   }
@@ -2446,7 +2447,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp18;
   for (uint64_t i0 = (uint64_t)0; i0 < 96; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp18;
+      in >> __tmp_in_tmp18;
     }
     Arr1DIdxRowM(tmp18, 96, i0) = (party == SERVER) ? __tmp_in_tmp18 : 0;
   }
@@ -2457,7 +2458,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp19;
   for (uint64_t i0 = (uint64_t)0; i0 < 96; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp19;
+      in >> __tmp_in_tmp19;
     }
     Arr1DIdxRowM(tmp19, 96, i0) = (party == SERVER) ? __tmp_in_tmp19 : 0;
   }
@@ -2471,7 +2472,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
       for (uint64_t i2 = (uint64_t)0; i2 < 96; i2++) {
         for (uint64_t i3 = (uint64_t)0; i3 < 128; i3++) {
           if ((party == SERVER)) {
-            cin >> __tmp_in_tmp20;
+            in >> __tmp_in_tmp20;
           }
           Arr4DIdxRowM(tmp20, 1, 1, 96, 128, i0, i1, i2, i3) =
               (party == SERVER) ? __tmp_in_tmp20 : 0;
@@ -2486,7 +2487,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp21;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp21;
+      in >> __tmp_in_tmp21;
     }
     Arr1DIdxRowM(tmp21, 128, i0) = (party == SERVER) ? __tmp_in_tmp21 : 0;
   }
@@ -2497,7 +2498,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp22;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp22;
+      in >> __tmp_in_tmp22;
     }
     Arr1DIdxRowM(tmp22, 128, i0) = (party == SERVER) ? __tmp_in_tmp22 : 0;
   }
@@ -2508,7 +2509,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp23;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp23;
+      in >> __tmp_in_tmp23;
     }
     Arr1DIdxRowM(tmp23, 128, i0) = (party == SERVER) ? __tmp_in_tmp23 : 0;
   }
@@ -2519,7 +2520,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp24;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp24;
+      in >> __tmp_in_tmp24;
     }
     Arr1DIdxRowM(tmp24, 128, i0) = (party == SERVER) ? __tmp_in_tmp24 : 0;
   }
@@ -2533,7 +2534,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
       for (uint64_t i2 = (uint64_t)0; i2 < 128; i2++) {
         for (uint64_t i3 = (uint64_t)0; i3 < 32; i3++) {
           if ((party == SERVER)) {
-            cin >> __tmp_in_tmp25;
+            in >> __tmp_in_tmp25;
           }
           Arr4DIdxRowM(tmp25, 3, 3, 128, 32, i0, i1, i2, i3) =
               (party == SERVER) ? __tmp_in_tmp25 : 0;
@@ -2548,7 +2549,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp26;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp26;
+      in >> __tmp_in_tmp26;
     }
     Arr1DIdxRowM(tmp26, 128, i0) = (party == SERVER) ? __tmp_in_tmp26 : 0;
   }
@@ -2559,7 +2560,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp27;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp27;
+      in >> __tmp_in_tmp27;
     }
     Arr1DIdxRowM(tmp27, 128, i0) = (party == SERVER) ? __tmp_in_tmp27 : 0;
   }
@@ -2570,7 +2571,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp28;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp28;
+      in >> __tmp_in_tmp28;
     }
     Arr1DIdxRowM(tmp28, 128, i0) = (party == SERVER) ? __tmp_in_tmp28 : 0;
   }
@@ -2581,7 +2582,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp29;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp29;
+      in >> __tmp_in_tmp29;
     }
     Arr1DIdxRowM(tmp29, 128, i0) = (party == SERVER) ? __tmp_in_tmp29 : 0;
   }
@@ -2595,7 +2596,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
       for (uint64_t i2 = (uint64_t)0; i2 < 128; i2++) {
         for (uint64_t i3 = (uint64_t)0; i3 < 128; i3++) {
           if ((party == SERVER)) {
-            cin >> __tmp_in_tmp30;
+            in >> __tmp_in_tmp30;
           }
           Arr4DIdxRowM(tmp30, 1, 1, 128, 128, i0, i1, i2, i3) =
               (party == SERVER) ? __tmp_in_tmp30 : 0;
@@ -2610,7 +2611,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp31;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp31;
+      in >> __tmp_in_tmp31;
     }
     Arr1DIdxRowM(tmp31, 128, i0) = (party == SERVER) ? __tmp_in_tmp31 : 0;
   }
@@ -2621,7 +2622,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp32;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp32;
+      in >> __tmp_in_tmp32;
     }
     Arr1DIdxRowM(tmp32, 128, i0) = (party == SERVER) ? __tmp_in_tmp32 : 0;
   }
@@ -2632,7 +2633,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp33;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp33;
+      in >> __tmp_in_tmp33;
     }
     Arr1DIdxRowM(tmp33, 128, i0) = (party == SERVER) ? __tmp_in_tmp33 : 0;
   }
@@ -2643,7 +2644,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp34;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp34;
+      in >> __tmp_in_tmp34;
     }
     Arr1DIdxRowM(tmp34, 128, i0) = (party == SERVER) ? __tmp_in_tmp34 : 0;
   }
@@ -2657,7 +2658,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
       for (uint64_t i2 = (uint64_t)0; i2 < 128; i2++) {
         for (uint64_t i3 = (uint64_t)0; i3 < 32; i3++) {
           if ((party == SERVER)) {
-            cin >> __tmp_in_tmp35;
+            in >> __tmp_in_tmp35;
           }
           Arr4DIdxRowM(tmp35, 3, 3, 128, 32, i0, i1, i2, i3) =
               (party == SERVER) ? __tmp_in_tmp35 : 0;
@@ -2672,7 +2673,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp36;
   for (uint64_t i0 = (uint64_t)0; i0 < 160; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp36;
+      in >> __tmp_in_tmp36;
     }
     Arr1DIdxRowM(tmp36, 160, i0) = (party == SERVER) ? __tmp_in_tmp36 : 0;
   }
@@ -2683,7 +2684,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp37;
   for (uint64_t i0 = (uint64_t)0; i0 < 160; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp37;
+      in >> __tmp_in_tmp37;
     }
     Arr1DIdxRowM(tmp37, 160, i0) = (party == SERVER) ? __tmp_in_tmp37 : 0;
   }
@@ -2694,7 +2695,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp38;
   for (uint64_t i0 = (uint64_t)0; i0 < 160; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp38;
+      in >> __tmp_in_tmp38;
     }
     Arr1DIdxRowM(tmp38, 160, i0) = (party == SERVER) ? __tmp_in_tmp38 : 0;
   }
@@ -2705,7 +2706,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp39;
   for (uint64_t i0 = (uint64_t)0; i0 < 160; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp39;
+      in >> __tmp_in_tmp39;
     }
     Arr1DIdxRowM(tmp39, 160, i0) = (party == SERVER) ? __tmp_in_tmp39 : 0;
   }
@@ -2719,7 +2720,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
       for (uint64_t i2 = (uint64_t)0; i2 < 160; i2++) {
         for (uint64_t i3 = (uint64_t)0; i3 < 128; i3++) {
           if ((party == SERVER)) {
-            cin >> __tmp_in_tmp40;
+            in >> __tmp_in_tmp40;
           }
           Arr4DIdxRowM(tmp40, 1, 1, 160, 128, i0, i1, i2, i3) =
               (party == SERVER) ? __tmp_in_tmp40 : 0;
@@ -2734,7 +2735,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp41;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp41;
+      in >> __tmp_in_tmp41;
     }
     Arr1DIdxRowM(tmp41, 128, i0) = (party == SERVER) ? __tmp_in_tmp41 : 0;
   }
@@ -2745,7 +2746,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp42;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp42;
+      in >> __tmp_in_tmp42;
     }
     Arr1DIdxRowM(tmp42, 128, i0) = (party == SERVER) ? __tmp_in_tmp42 : 0;
   }
@@ -2756,7 +2757,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp43;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp43;
+      in >> __tmp_in_tmp43;
     }
     Arr1DIdxRowM(tmp43, 128, i0) = (party == SERVER) ? __tmp_in_tmp43 : 0;
   }
@@ -2767,7 +2768,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp44;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp44;
+      in >> __tmp_in_tmp44;
     }
     Arr1DIdxRowM(tmp44, 128, i0) = (party == SERVER) ? __tmp_in_tmp44 : 0;
   }
@@ -2781,7 +2782,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
       for (uint64_t i2 = (uint64_t)0; i2 < 128; i2++) {
         for (uint64_t i3 = (uint64_t)0; i3 < 32; i3++) {
           if ((party == SERVER)) {
-            cin >> __tmp_in_tmp45;
+            in >> __tmp_in_tmp45;
           }
           Arr4DIdxRowM(tmp45, 3, 3, 128, 32, i0, i1, i2, i3) =
               (party == SERVER) ? __tmp_in_tmp45 : 0;
@@ -2796,7 +2797,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp46;
   for (uint64_t i0 = (uint64_t)0; i0 < 192; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp46;
+      in >> __tmp_in_tmp46;
     }
     Arr1DIdxRowM(tmp46, 192, i0) = (party == SERVER) ? __tmp_in_tmp46 : 0;
   }
@@ -2807,7 +2808,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp47;
   for (uint64_t i0 = (uint64_t)0; i0 < 192; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp47;
+      in >> __tmp_in_tmp47;
     }
     Arr1DIdxRowM(tmp47, 192, i0) = (party == SERVER) ? __tmp_in_tmp47 : 0;
   }
@@ -2818,7 +2819,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp48;
   for (uint64_t i0 = (uint64_t)0; i0 < 192; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp48;
+      in >> __tmp_in_tmp48;
     }
     Arr1DIdxRowM(tmp48, 192, i0) = (party == SERVER) ? __tmp_in_tmp48 : 0;
   }
@@ -2829,7 +2830,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp49;
   for (uint64_t i0 = (uint64_t)0; i0 < 192; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp49;
+      in >> __tmp_in_tmp49;
     }
     Arr1DIdxRowM(tmp49, 192, i0) = (party == SERVER) ? __tmp_in_tmp49 : 0;
   }
@@ -2843,7 +2844,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
       for (uint64_t i2 = (uint64_t)0; i2 < 192; i2++) {
         for (uint64_t i3 = (uint64_t)0; i3 < 128; i3++) {
           if ((party == SERVER)) {
-            cin >> __tmp_in_tmp50;
+            in >> __tmp_in_tmp50;
           }
           Arr4DIdxRowM(tmp50, 1, 1, 192, 128, i0, i1, i2, i3) =
               (party == SERVER) ? __tmp_in_tmp50 : 0;
@@ -2858,7 +2859,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp51;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp51;
+      in >> __tmp_in_tmp51;
     }
     Arr1DIdxRowM(tmp51, 128, i0) = (party == SERVER) ? __tmp_in_tmp51 : 0;
   }
@@ -2869,7 +2870,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp52;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp52;
+      in >> __tmp_in_tmp52;
     }
     Arr1DIdxRowM(tmp52, 128, i0) = (party == SERVER) ? __tmp_in_tmp52 : 0;
   }
@@ -2880,7 +2881,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp53;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp53;
+      in >> __tmp_in_tmp53;
     }
     Arr1DIdxRowM(tmp53, 128, i0) = (party == SERVER) ? __tmp_in_tmp53 : 0;
   }
@@ -2891,7 +2892,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp54;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp54;
+      in >> __tmp_in_tmp54;
     }
     Arr1DIdxRowM(tmp54, 128, i0) = (party == SERVER) ? __tmp_in_tmp54 : 0;
   }
@@ -2905,7 +2906,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
       for (uint64_t i2 = (uint64_t)0; i2 < 128; i2++) {
         for (uint64_t i3 = (uint64_t)0; i3 < 32; i3++) {
           if ((party == SERVER)) {
-            cin >> __tmp_in_tmp55;
+            in >> __tmp_in_tmp55;
           }
           Arr4DIdxRowM(tmp55, 3, 3, 128, 32, i0, i1, i2, i3) =
               (party == SERVER) ? __tmp_in_tmp55 : 0;
@@ -2920,7 +2921,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp56;
   for (uint64_t i0 = (uint64_t)0; i0 < 224; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp56;
+      in >> __tmp_in_tmp56;
     }
     Arr1DIdxRowM(tmp56, 224, i0) = (party == SERVER) ? __tmp_in_tmp56 : 0;
   }
@@ -2931,7 +2932,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp57;
   for (uint64_t i0 = (uint64_t)0; i0 < 224; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp57;
+      in >> __tmp_in_tmp57;
     }
     Arr1DIdxRowM(tmp57, 224, i0) = (party == SERVER) ? __tmp_in_tmp57 : 0;
   }
@@ -2942,7 +2943,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp58;
   for (uint64_t i0 = (uint64_t)0; i0 < 224; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp58;
+      in >> __tmp_in_tmp58;
     }
     Arr1DIdxRowM(tmp58, 224, i0) = (party == SERVER) ? __tmp_in_tmp58 : 0;
   }
@@ -2953,7 +2954,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp59;
   for (uint64_t i0 = (uint64_t)0; i0 < 224; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp59;
+      in >> __tmp_in_tmp59;
     }
     Arr1DIdxRowM(tmp59, 224, i0) = (party == SERVER) ? __tmp_in_tmp59 : 0;
   }
@@ -2967,7 +2968,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
       for (uint64_t i2 = (uint64_t)0; i2 < 224; i2++) {
         for (uint64_t i3 = (uint64_t)0; i3 < 128; i3++) {
           if ((party == SERVER)) {
-            cin >> __tmp_in_tmp60;
+            in >> __tmp_in_tmp60;
           }
           Arr4DIdxRowM(tmp60, 1, 1, 224, 128, i0, i1, i2, i3) =
               (party == SERVER) ? __tmp_in_tmp60 : 0;
@@ -2982,7 +2983,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp61;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp61;
+      in >> __tmp_in_tmp61;
     }
     Arr1DIdxRowM(tmp61, 128, i0) = (party == SERVER) ? __tmp_in_tmp61 : 0;
   }
@@ -2993,7 +2994,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp62;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp62;
+      in >> __tmp_in_tmp62;
     }
     Arr1DIdxRowM(tmp62, 128, i0) = (party == SERVER) ? __tmp_in_tmp62 : 0;
   }
@@ -3004,7 +3005,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp63;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp63;
+      in >> __tmp_in_tmp63;
     }
     Arr1DIdxRowM(tmp63, 128, i0) = (party == SERVER) ? __tmp_in_tmp63 : 0;
   }
@@ -3015,7 +3016,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp64;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp64;
+      in >> __tmp_in_tmp64;
     }
     Arr1DIdxRowM(tmp64, 128, i0) = (party == SERVER) ? __tmp_in_tmp64 : 0;
   }
@@ -3029,7 +3030,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
       for (uint64_t i2 = (uint64_t)0; i2 < 128; i2++) {
         for (uint64_t i3 = (uint64_t)0; i3 < 32; i3++) {
           if ((party == SERVER)) {
-            cin >> __tmp_in_tmp65;
+            in >> __tmp_in_tmp65;
           }
           Arr4DIdxRowM(tmp65, 3, 3, 128, 32, i0, i1, i2, i3) =
               (party == SERVER) ? __tmp_in_tmp65 : 0;
@@ -3044,7 +3045,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp66;
   for (uint64_t i0 = (uint64_t)0; i0 < 256; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp66;
+      in >> __tmp_in_tmp66;
     }
     Arr1DIdxRowM(tmp66, 256, i0) = (party == SERVER) ? __tmp_in_tmp66 : 0;
   }
@@ -3055,7 +3056,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp67;
   for (uint64_t i0 = (uint64_t)0; i0 < 256; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp67;
+      in >> __tmp_in_tmp67;
     }
     Arr1DIdxRowM(tmp67, 256, i0) = (party == SERVER) ? __tmp_in_tmp67 : 0;
   }
@@ -3066,7 +3067,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp68;
   for (uint64_t i0 = (uint64_t)0; i0 < 256; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp68;
+      in >> __tmp_in_tmp68;
     }
     Arr1DIdxRowM(tmp68, 256, i0) = (party == SERVER) ? __tmp_in_tmp68 : 0;
   }
@@ -3077,7 +3078,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp69;
   for (uint64_t i0 = (uint64_t)0; i0 < 256; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp69;
+      in >> __tmp_in_tmp69;
     }
     Arr1DIdxRowM(tmp69, 256, i0) = (party == SERVER) ? __tmp_in_tmp69 : 0;
   }
@@ -3091,7 +3092,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
       for (uint64_t i2 = (uint64_t)0; i2 < 256; i2++) {
         for (uint64_t i3 = (uint64_t)0; i3 < 128; i3++) {
           if ((party == SERVER)) {
-            cin >> __tmp_in_tmp70;
+            in >> __tmp_in_tmp70;
           }
           Arr4DIdxRowM(tmp70, 1, 1, 256, 128, i0, i1, i2, i3) =
               (party == SERVER) ? __tmp_in_tmp70 : 0;
@@ -3106,7 +3107,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp71;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp71;
+      in >> __tmp_in_tmp71;
     }
     Arr1DIdxRowM(tmp71, 128, i0) = (party == SERVER) ? __tmp_in_tmp71 : 0;
   }
@@ -3117,7 +3118,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp72;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp72;
+      in >> __tmp_in_tmp72;
     }
     Arr1DIdxRowM(tmp72, 128, i0) = (party == SERVER) ? __tmp_in_tmp72 : 0;
   }
@@ -3128,7 +3129,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp73;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp73;
+      in >> __tmp_in_tmp73;
     }
     Arr1DIdxRowM(tmp73, 128, i0) = (party == SERVER) ? __tmp_in_tmp73 : 0;
   }
@@ -3139,7 +3140,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp74;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp74;
+      in >> __tmp_in_tmp74;
     }
     Arr1DIdxRowM(tmp74, 128, i0) = (party == SERVER) ? __tmp_in_tmp74 : 0;
   }
@@ -3153,7 +3154,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
       for (uint64_t i2 = (uint64_t)0; i2 < 128; i2++) {
         for (uint64_t i3 = (uint64_t)0; i3 < 128; i3++) {
           if ((party == SERVER)) {
-            cin >> __tmp_in_tmp75;
+            in >> __tmp_in_tmp75;
           }
           Arr4DIdxRowM(tmp75, 1, 1, 128, 128, i0, i1, i2, i3) =
               (party == SERVER) ? __tmp_in_tmp75 : 0;
@@ -3168,7 +3169,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp76;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp76;
+      in >> __tmp_in_tmp76;
     }
     Arr1DIdxRowM(tmp76, 128, i0) = (party == SERVER) ? __tmp_in_tmp76 : 0;
   }
@@ -3179,7 +3180,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp77;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp77;
+      in >> __tmp_in_tmp77;
     }
     Arr1DIdxRowM(tmp77, 128, i0) = (party == SERVER) ? __tmp_in_tmp77 : 0;
   }
@@ -3190,7 +3191,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp78;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp78;
+      in >> __tmp_in_tmp78;
     }
     Arr1DIdxRowM(tmp78, 128, i0) = (party == SERVER) ? __tmp_in_tmp78 : 0;
   }
@@ -3201,7 +3202,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp79;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp79;
+      in >> __tmp_in_tmp79;
     }
     Arr1DIdxRowM(tmp79, 128, i0) = (party == SERVER) ? __tmp_in_tmp79 : 0;
   }
@@ -3215,7 +3216,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
       for (uint64_t i2 = (uint64_t)0; i2 < 128; i2++) {
         for (uint64_t i3 = (uint64_t)0; i3 < 32; i3++) {
           if ((party == SERVER)) {
-            cin >> __tmp_in_tmp80;
+            in >> __tmp_in_tmp80;
           }
           Arr4DIdxRowM(tmp80, 3, 3, 128, 32, i0, i1, i2, i3) =
               (party == SERVER) ? __tmp_in_tmp80 : 0;
@@ -3230,7 +3231,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp81;
   for (uint64_t i0 = (uint64_t)0; i0 < 160; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp81;
+      in >> __tmp_in_tmp81;
     }
     Arr1DIdxRowM(tmp81, 160, i0) = (party == SERVER) ? __tmp_in_tmp81 : 0;
   }
@@ -3241,7 +3242,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp82;
   for (uint64_t i0 = (uint64_t)0; i0 < 160; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp82;
+      in >> __tmp_in_tmp82;
     }
     Arr1DIdxRowM(tmp82, 160, i0) = (party == SERVER) ? __tmp_in_tmp82 : 0;
   }
@@ -3252,7 +3253,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp83;
   for (uint64_t i0 = (uint64_t)0; i0 < 160; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp83;
+      in >> __tmp_in_tmp83;
     }
     Arr1DIdxRowM(tmp83, 160, i0) = (party == SERVER) ? __tmp_in_tmp83 : 0;
   }
@@ -3263,7 +3264,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp84;
   for (uint64_t i0 = (uint64_t)0; i0 < 160; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp84;
+      in >> __tmp_in_tmp84;
     }
     Arr1DIdxRowM(tmp84, 160, i0) = (party == SERVER) ? __tmp_in_tmp84 : 0;
   }
@@ -3277,7 +3278,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
       for (uint64_t i2 = (uint64_t)0; i2 < 160; i2++) {
         for (uint64_t i3 = (uint64_t)0; i3 < 128; i3++) {
           if ((party == SERVER)) {
-            cin >> __tmp_in_tmp85;
+            in >> __tmp_in_tmp85;
           }
           Arr4DIdxRowM(tmp85, 1, 1, 160, 128, i0, i1, i2, i3) =
               (party == SERVER) ? __tmp_in_tmp85 : 0;
@@ -3292,7 +3293,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp86;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp86;
+      in >> __tmp_in_tmp86;
     }
     Arr1DIdxRowM(tmp86, 128, i0) = (party == SERVER) ? __tmp_in_tmp86 : 0;
   }
@@ -3303,7 +3304,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp87;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp87;
+      in >> __tmp_in_tmp87;
     }
     Arr1DIdxRowM(tmp87, 128, i0) = (party == SERVER) ? __tmp_in_tmp87 : 0;
   }
@@ -3314,7 +3315,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp88;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp88;
+      in >> __tmp_in_tmp88;
     }
     Arr1DIdxRowM(tmp88, 128, i0) = (party == SERVER) ? __tmp_in_tmp88 : 0;
   }
@@ -3325,7 +3326,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp89;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp89;
+      in >> __tmp_in_tmp89;
     }
     Arr1DIdxRowM(tmp89, 128, i0) = (party == SERVER) ? __tmp_in_tmp89 : 0;
   }
@@ -3339,7 +3340,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
       for (uint64_t i2 = (uint64_t)0; i2 < 128; i2++) {
         for (uint64_t i3 = (uint64_t)0; i3 < 32; i3++) {
           if ((party == SERVER)) {
-            cin >> __tmp_in_tmp90;
+            in >> __tmp_in_tmp90;
           }
           Arr4DIdxRowM(tmp90, 3, 3, 128, 32, i0, i1, i2, i3) =
               (party == SERVER) ? __tmp_in_tmp90 : 0;
@@ -3354,7 +3355,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp91;
   for (uint64_t i0 = (uint64_t)0; i0 < 192; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp91;
+      in >> __tmp_in_tmp91;
     }
     Arr1DIdxRowM(tmp91, 192, i0) = (party == SERVER) ? __tmp_in_tmp91 : 0;
   }
@@ -3365,7 +3366,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp92;
   for (uint64_t i0 = (uint64_t)0; i0 < 192; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp92;
+      in >> __tmp_in_tmp92;
     }
     Arr1DIdxRowM(tmp92, 192, i0) = (party == SERVER) ? __tmp_in_tmp92 : 0;
   }
@@ -3376,7 +3377,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp93;
   for (uint64_t i0 = (uint64_t)0; i0 < 192; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp93;
+      in >> __tmp_in_tmp93;
     }
     Arr1DIdxRowM(tmp93, 192, i0) = (party == SERVER) ? __tmp_in_tmp93 : 0;
   }
@@ -3387,7 +3388,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp94;
   for (uint64_t i0 = (uint64_t)0; i0 < 192; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp94;
+      in >> __tmp_in_tmp94;
     }
     Arr1DIdxRowM(tmp94, 192, i0) = (party == SERVER) ? __tmp_in_tmp94 : 0;
   }
@@ -3401,7 +3402,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
       for (uint64_t i2 = (uint64_t)0; i2 < 192; i2++) {
         for (uint64_t i3 = (uint64_t)0; i3 < 128; i3++) {
           if ((party == SERVER)) {
-            cin >> __tmp_in_tmp95;
+            in >> __tmp_in_tmp95;
           }
           Arr4DIdxRowM(tmp95, 1, 1, 192, 128, i0, i1, i2, i3) =
               (party == SERVER) ? __tmp_in_tmp95 : 0;
@@ -3416,7 +3417,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp96;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp96;
+      in >> __tmp_in_tmp96;
     }
     Arr1DIdxRowM(tmp96, 128, i0) = (party == SERVER) ? __tmp_in_tmp96 : 0;
   }
@@ -3427,7 +3428,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp97;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp97;
+      in >> __tmp_in_tmp97;
     }
     Arr1DIdxRowM(tmp97, 128, i0) = (party == SERVER) ? __tmp_in_tmp97 : 0;
   }
@@ -3438,7 +3439,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp98;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp98;
+      in >> __tmp_in_tmp98;
     }
     Arr1DIdxRowM(tmp98, 128, i0) = (party == SERVER) ? __tmp_in_tmp98 : 0;
   }
@@ -3449,7 +3450,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp99;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp99;
+      in >> __tmp_in_tmp99;
     }
     Arr1DIdxRowM(tmp99, 128, i0) = (party == SERVER) ? __tmp_in_tmp99 : 0;
   }
@@ -3463,7 +3464,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
       for (uint64_t i2 = (uint64_t)0; i2 < 128; i2++) {
         for (uint64_t i3 = (uint64_t)0; i3 < 32; i3++) {
           if ((party == SERVER)) {
-            cin >> __tmp_in_tmp100;
+            in >> __tmp_in_tmp100;
           }
           Arr4DIdxRowM(tmp100, 3, 3, 128, 32, i0, i1, i2, i3) =
               (party == SERVER) ? __tmp_in_tmp100 : 0;
@@ -3478,7 +3479,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp101;
   for (uint64_t i0 = (uint64_t)0; i0 < 224; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp101;
+      in >> __tmp_in_tmp101;
     }
     Arr1DIdxRowM(tmp101, 224, i0) = (party == SERVER) ? __tmp_in_tmp101 : 0;
   }
@@ -3489,7 +3490,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp102;
   for (uint64_t i0 = (uint64_t)0; i0 < 224; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp102;
+      in >> __tmp_in_tmp102;
     }
     Arr1DIdxRowM(tmp102, 224, i0) = (party == SERVER) ? __tmp_in_tmp102 : 0;
   }
@@ -3500,7 +3501,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp103;
   for (uint64_t i0 = (uint64_t)0; i0 < 224; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp103;
+      in >> __tmp_in_tmp103;
     }
     Arr1DIdxRowM(tmp103, 224, i0) = (party == SERVER) ? __tmp_in_tmp103 : 0;
   }
@@ -3511,7 +3512,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp104;
   for (uint64_t i0 = (uint64_t)0; i0 < 224; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp104;
+      in >> __tmp_in_tmp104;
     }
     Arr1DIdxRowM(tmp104, 224, i0) = (party == SERVER) ? __tmp_in_tmp104 : 0;
   }
@@ -3525,7 +3526,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
       for (uint64_t i2 = (uint64_t)0; i2 < 224; i2++) {
         for (uint64_t i3 = (uint64_t)0; i3 < 128; i3++) {
           if ((party == SERVER)) {
-            cin >> __tmp_in_tmp105;
+            in >> __tmp_in_tmp105;
           }
           Arr4DIdxRowM(tmp105, 1, 1, 224, 128, i0, i1, i2, i3) =
               (party == SERVER) ? __tmp_in_tmp105 : 0;
@@ -3540,7 +3541,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp106;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp106;
+      in >> __tmp_in_tmp106;
     }
     Arr1DIdxRowM(tmp106, 128, i0) = (party == SERVER) ? __tmp_in_tmp106 : 0;
   }
@@ -3551,7 +3552,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp107;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp107;
+      in >> __tmp_in_tmp107;
     }
     Arr1DIdxRowM(tmp107, 128, i0) = (party == SERVER) ? __tmp_in_tmp107 : 0;
   }
@@ -3562,7 +3563,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp108;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp108;
+      in >> __tmp_in_tmp108;
     }
     Arr1DIdxRowM(tmp108, 128, i0) = (party == SERVER) ? __tmp_in_tmp108 : 0;
   }
@@ -3573,7 +3574,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp109;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp109;
+      in >> __tmp_in_tmp109;
     }
     Arr1DIdxRowM(tmp109, 128, i0) = (party == SERVER) ? __tmp_in_tmp109 : 0;
   }
@@ -3587,7 +3588,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
       for (uint64_t i2 = (uint64_t)0; i2 < 128; i2++) {
         for (uint64_t i3 = (uint64_t)0; i3 < 32; i3++) {
           if ((party == SERVER)) {
-            cin >> __tmp_in_tmp110;
+            in >> __tmp_in_tmp110;
           }
           Arr4DIdxRowM(tmp110, 3, 3, 128, 32, i0, i1, i2, i3) =
               (party == SERVER) ? __tmp_in_tmp110 : 0;
@@ -3602,7 +3603,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp111;
   for (uint64_t i0 = (uint64_t)0; i0 < 256; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp111;
+      in >> __tmp_in_tmp111;
     }
     Arr1DIdxRowM(tmp111, 256, i0) = (party == SERVER) ? __tmp_in_tmp111 : 0;
   }
@@ -3613,7 +3614,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp112;
   for (uint64_t i0 = (uint64_t)0; i0 < 256; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp112;
+      in >> __tmp_in_tmp112;
     }
     Arr1DIdxRowM(tmp112, 256, i0) = (party == SERVER) ? __tmp_in_tmp112 : 0;
   }
@@ -3624,7 +3625,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp113;
   for (uint64_t i0 = (uint64_t)0; i0 < 256; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp113;
+      in >> __tmp_in_tmp113;
     }
     Arr1DIdxRowM(tmp113, 256, i0) = (party == SERVER) ? __tmp_in_tmp113 : 0;
   }
@@ -3635,7 +3636,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp114;
   for (uint64_t i0 = (uint64_t)0; i0 < 256; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp114;
+      in >> __tmp_in_tmp114;
     }
     Arr1DIdxRowM(tmp114, 256, i0) = (party == SERVER) ? __tmp_in_tmp114 : 0;
   }
@@ -3649,7 +3650,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
       for (uint64_t i2 = (uint64_t)0; i2 < 256; i2++) {
         for (uint64_t i3 = (uint64_t)0; i3 < 128; i3++) {
           if ((party == SERVER)) {
-            cin >> __tmp_in_tmp115;
+            in >> __tmp_in_tmp115;
           }
           Arr4DIdxRowM(tmp115, 1, 1, 256, 128, i0, i1, i2, i3) =
               (party == SERVER) ? __tmp_in_tmp115 : 0;
@@ -3664,7 +3665,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp116;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp116;
+      in >> __tmp_in_tmp116;
     }
     Arr1DIdxRowM(tmp116, 128, i0) = (party == SERVER) ? __tmp_in_tmp116 : 0;
   }
@@ -3675,7 +3676,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp117;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp117;
+      in >> __tmp_in_tmp117;
     }
     Arr1DIdxRowM(tmp117, 128, i0) = (party == SERVER) ? __tmp_in_tmp117 : 0;
   }
@@ -3686,7 +3687,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp118;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp118;
+      in >> __tmp_in_tmp118;
     }
     Arr1DIdxRowM(tmp118, 128, i0) = (party == SERVER) ? __tmp_in_tmp118 : 0;
   }
@@ -3697,7 +3698,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp119;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp119;
+      in >> __tmp_in_tmp119;
     }
     Arr1DIdxRowM(tmp119, 128, i0) = (party == SERVER) ? __tmp_in_tmp119 : 0;
   }
@@ -3711,7 +3712,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
       for (uint64_t i2 = (uint64_t)0; i2 < 128; i2++) {
         for (uint64_t i3 = (uint64_t)0; i3 < 32; i3++) {
           if ((party == SERVER)) {
-            cin >> __tmp_in_tmp120;
+            in >> __tmp_in_tmp120;
           }
           Arr4DIdxRowM(tmp120, 3, 3, 128, 32, i0, i1, i2, i3) =
               (party == SERVER) ? __tmp_in_tmp120 : 0;
@@ -3726,7 +3727,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp121;
   for (uint64_t i0 = (uint64_t)0; i0 < 288; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp121;
+      in >> __tmp_in_tmp121;
     }
     Arr1DIdxRowM(tmp121, 288, i0) = (party == SERVER) ? __tmp_in_tmp121 : 0;
   }
@@ -3737,7 +3738,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp122;
   for (uint64_t i0 = (uint64_t)0; i0 < 288; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp122;
+      in >> __tmp_in_tmp122;
     }
     Arr1DIdxRowM(tmp122, 288, i0) = (party == SERVER) ? __tmp_in_tmp122 : 0;
   }
@@ -3748,7 +3749,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp123;
   for (uint64_t i0 = (uint64_t)0; i0 < 288; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp123;
+      in >> __tmp_in_tmp123;
     }
     Arr1DIdxRowM(tmp123, 288, i0) = (party == SERVER) ? __tmp_in_tmp123 : 0;
   }
@@ -3759,7 +3760,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp124;
   for (uint64_t i0 = (uint64_t)0; i0 < 288; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp124;
+      in >> __tmp_in_tmp124;
     }
     Arr1DIdxRowM(tmp124, 288, i0) = (party == SERVER) ? __tmp_in_tmp124 : 0;
   }
@@ -3773,7 +3774,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
       for (uint64_t i2 = (uint64_t)0; i2 < 288; i2++) {
         for (uint64_t i3 = (uint64_t)0; i3 < 128; i3++) {
           if ((party == SERVER)) {
-            cin >> __tmp_in_tmp125;
+            in >> __tmp_in_tmp125;
           }
           Arr4DIdxRowM(tmp125, 1, 1, 288, 128, i0, i1, i2, i3) =
               (party == SERVER) ? __tmp_in_tmp125 : 0;
@@ -3788,7 +3789,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp126;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp126;
+      in >> __tmp_in_tmp126;
     }
     Arr1DIdxRowM(tmp126, 128, i0) = (party == SERVER) ? __tmp_in_tmp126 : 0;
   }
@@ -3799,7 +3800,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp127;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp127;
+      in >> __tmp_in_tmp127;
     }
     Arr1DIdxRowM(tmp127, 128, i0) = (party == SERVER) ? __tmp_in_tmp127 : 0;
   }
@@ -3810,7 +3811,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp128;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp128;
+      in >> __tmp_in_tmp128;
     }
     Arr1DIdxRowM(tmp128, 128, i0) = (party == SERVER) ? __tmp_in_tmp128 : 0;
   }
@@ -3821,7 +3822,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp129;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp129;
+      in >> __tmp_in_tmp129;
     }
     Arr1DIdxRowM(tmp129, 128, i0) = (party == SERVER) ? __tmp_in_tmp129 : 0;
   }
@@ -3835,7 +3836,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
       for (uint64_t i2 = (uint64_t)0; i2 < 128; i2++) {
         for (uint64_t i3 = (uint64_t)0; i3 < 32; i3++) {
           if ((party == SERVER)) {
-            cin >> __tmp_in_tmp130;
+            in >> __tmp_in_tmp130;
           }
           Arr4DIdxRowM(tmp130, 3, 3, 128, 32, i0, i1, i2, i3) =
               (party == SERVER) ? __tmp_in_tmp130 : 0;
@@ -3850,7 +3851,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp131;
   for (uint64_t i0 = (uint64_t)0; i0 < 320; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp131;
+      in >> __tmp_in_tmp131;
     }
     Arr1DIdxRowM(tmp131, 320, i0) = (party == SERVER) ? __tmp_in_tmp131 : 0;
   }
@@ -3861,7 +3862,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp132;
   for (uint64_t i0 = (uint64_t)0; i0 < 320; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp132;
+      in >> __tmp_in_tmp132;
     }
     Arr1DIdxRowM(tmp132, 320, i0) = (party == SERVER) ? __tmp_in_tmp132 : 0;
   }
@@ -3872,7 +3873,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp133;
   for (uint64_t i0 = (uint64_t)0; i0 < 320; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp133;
+      in >> __tmp_in_tmp133;
     }
     Arr1DIdxRowM(tmp133, 320, i0) = (party == SERVER) ? __tmp_in_tmp133 : 0;
   }
@@ -3883,7 +3884,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp134;
   for (uint64_t i0 = (uint64_t)0; i0 < 320; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp134;
+      in >> __tmp_in_tmp134;
     }
     Arr1DIdxRowM(tmp134, 320, i0) = (party == SERVER) ? __tmp_in_tmp134 : 0;
   }
@@ -3897,7 +3898,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
       for (uint64_t i2 = (uint64_t)0; i2 < 320; i2++) {
         for (uint64_t i3 = (uint64_t)0; i3 < 128; i3++) {
           if ((party == SERVER)) {
-            cin >> __tmp_in_tmp135;
+            in >> __tmp_in_tmp135;
           }
           Arr4DIdxRowM(tmp135, 1, 1, 320, 128, i0, i1, i2, i3) =
               (party == SERVER) ? __tmp_in_tmp135 : 0;
@@ -3912,7 +3913,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp136;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp136;
+      in >> __tmp_in_tmp136;
     }
     Arr1DIdxRowM(tmp136, 128, i0) = (party == SERVER) ? __tmp_in_tmp136 : 0;
   }
@@ -3923,7 +3924,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp137;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp137;
+      in >> __tmp_in_tmp137;
     }
     Arr1DIdxRowM(tmp137, 128, i0) = (party == SERVER) ? __tmp_in_tmp137 : 0;
   }
@@ -3934,7 +3935,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp138;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp138;
+      in >> __tmp_in_tmp138;
     }
     Arr1DIdxRowM(tmp138, 128, i0) = (party == SERVER) ? __tmp_in_tmp138 : 0;
   }
@@ -3945,7 +3946,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp139;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp139;
+      in >> __tmp_in_tmp139;
     }
     Arr1DIdxRowM(tmp139, 128, i0) = (party == SERVER) ? __tmp_in_tmp139 : 0;
   }
@@ -3959,7 +3960,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
       for (uint64_t i2 = (uint64_t)0; i2 < 128; i2++) {
         for (uint64_t i3 = (uint64_t)0; i3 < 32; i3++) {
           if ((party == SERVER)) {
-            cin >> __tmp_in_tmp140;
+            in >> __tmp_in_tmp140;
           }
           Arr4DIdxRowM(tmp140, 3, 3, 128, 32, i0, i1, i2, i3) =
               (party == SERVER) ? __tmp_in_tmp140 : 0;
@@ -3974,7 +3975,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp141;
   for (uint64_t i0 = (uint64_t)0; i0 < 352; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp141;
+      in >> __tmp_in_tmp141;
     }
     Arr1DIdxRowM(tmp141, 352, i0) = (party == SERVER) ? __tmp_in_tmp141 : 0;
   }
@@ -3985,7 +3986,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp142;
   for (uint64_t i0 = (uint64_t)0; i0 < 352; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp142;
+      in >> __tmp_in_tmp142;
     }
     Arr1DIdxRowM(tmp142, 352, i0) = (party == SERVER) ? __tmp_in_tmp142 : 0;
   }
@@ -3996,7 +3997,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp143;
   for (uint64_t i0 = (uint64_t)0; i0 < 352; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp143;
+      in >> __tmp_in_tmp143;
     }
     Arr1DIdxRowM(tmp143, 352, i0) = (party == SERVER) ? __tmp_in_tmp143 : 0;
   }
@@ -4007,7 +4008,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp144;
   for (uint64_t i0 = (uint64_t)0; i0 < 352; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp144;
+      in >> __tmp_in_tmp144;
     }
     Arr1DIdxRowM(tmp144, 352, i0) = (party == SERVER) ? __tmp_in_tmp144 : 0;
   }
@@ -4021,7 +4022,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
       for (uint64_t i2 = (uint64_t)0; i2 < 352; i2++) {
         for (uint64_t i3 = (uint64_t)0; i3 < 128; i3++) {
           if ((party == SERVER)) {
-            cin >> __tmp_in_tmp145;
+            in >> __tmp_in_tmp145;
           }
           Arr4DIdxRowM(tmp145, 1, 1, 352, 128, i0, i1, i2, i3) =
               (party == SERVER) ? __tmp_in_tmp145 : 0;
@@ -4036,7 +4037,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp146;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp146;
+      in >> __tmp_in_tmp146;
     }
     Arr1DIdxRowM(tmp146, 128, i0) = (party == SERVER) ? __tmp_in_tmp146 : 0;
   }
@@ -4047,7 +4048,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp147;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp147;
+      in >> __tmp_in_tmp147;
     }
     Arr1DIdxRowM(tmp147, 128, i0) = (party == SERVER) ? __tmp_in_tmp147 : 0;
   }
@@ -4058,7 +4059,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp148;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp148;
+      in >> __tmp_in_tmp148;
     }
     Arr1DIdxRowM(tmp148, 128, i0) = (party == SERVER) ? __tmp_in_tmp148 : 0;
   }
@@ -4069,7 +4070,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp149;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp149;
+      in >> __tmp_in_tmp149;
     }
     Arr1DIdxRowM(tmp149, 128, i0) = (party == SERVER) ? __tmp_in_tmp149 : 0;
   }
@@ -4083,7 +4084,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
       for (uint64_t i2 = (uint64_t)0; i2 < 128; i2++) {
         for (uint64_t i3 = (uint64_t)0; i3 < 32; i3++) {
           if ((party == SERVER)) {
-            cin >> __tmp_in_tmp150;
+            in >> __tmp_in_tmp150;
           }
           Arr4DIdxRowM(tmp150, 3, 3, 128, 32, i0, i1, i2, i3) =
               (party == SERVER) ? __tmp_in_tmp150 : 0;
@@ -4098,7 +4099,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp151;
   for (uint64_t i0 = (uint64_t)0; i0 < 384; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp151;
+      in >> __tmp_in_tmp151;
     }
     Arr1DIdxRowM(tmp151, 384, i0) = (party == SERVER) ? __tmp_in_tmp151 : 0;
   }
@@ -4109,7 +4110,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp152;
   for (uint64_t i0 = (uint64_t)0; i0 < 384; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp152;
+      in >> __tmp_in_tmp152;
     }
     Arr1DIdxRowM(tmp152, 384, i0) = (party == SERVER) ? __tmp_in_tmp152 : 0;
   }
@@ -4120,7 +4121,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp153;
   for (uint64_t i0 = (uint64_t)0; i0 < 384; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp153;
+      in >> __tmp_in_tmp153;
     }
     Arr1DIdxRowM(tmp153, 384, i0) = (party == SERVER) ? __tmp_in_tmp153 : 0;
   }
@@ -4131,7 +4132,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp154;
   for (uint64_t i0 = (uint64_t)0; i0 < 384; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp154;
+      in >> __tmp_in_tmp154;
     }
     Arr1DIdxRowM(tmp154, 384, i0) = (party == SERVER) ? __tmp_in_tmp154 : 0;
   }
@@ -4145,7 +4146,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
       for (uint64_t i2 = (uint64_t)0; i2 < 384; i2++) {
         for (uint64_t i3 = (uint64_t)0; i3 < 128; i3++) {
           if ((party == SERVER)) {
-            cin >> __tmp_in_tmp155;
+            in >> __tmp_in_tmp155;
           }
           Arr4DIdxRowM(tmp155, 1, 1, 384, 128, i0, i1, i2, i3) =
               (party == SERVER) ? __tmp_in_tmp155 : 0;
@@ -4160,7 +4161,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp156;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp156;
+      in >> __tmp_in_tmp156;
     }
     Arr1DIdxRowM(tmp156, 128, i0) = (party == SERVER) ? __tmp_in_tmp156 : 0;
   }
@@ -4171,7 +4172,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp157;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp157;
+      in >> __tmp_in_tmp157;
     }
     Arr1DIdxRowM(tmp157, 128, i0) = (party == SERVER) ? __tmp_in_tmp157 : 0;
   }
@@ -4182,7 +4183,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp158;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp158;
+      in >> __tmp_in_tmp158;
     }
     Arr1DIdxRowM(tmp158, 128, i0) = (party == SERVER) ? __tmp_in_tmp158 : 0;
   }
@@ -4193,7 +4194,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp159;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp159;
+      in >> __tmp_in_tmp159;
     }
     Arr1DIdxRowM(tmp159, 128, i0) = (party == SERVER) ? __tmp_in_tmp159 : 0;
   }
@@ -4207,7 +4208,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
       for (uint64_t i2 = (uint64_t)0; i2 < 128; i2++) {
         for (uint64_t i3 = (uint64_t)0; i3 < 32; i3++) {
           if ((party == SERVER)) {
-            cin >> __tmp_in_tmp160;
+            in >> __tmp_in_tmp160;
           }
           Arr4DIdxRowM(tmp160, 3, 3, 128, 32, i0, i1, i2, i3) =
               (party == SERVER) ? __tmp_in_tmp160 : 0;
@@ -4222,7 +4223,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp161;
   for (uint64_t i0 = (uint64_t)0; i0 < 416; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp161;
+      in >> __tmp_in_tmp161;
     }
     Arr1DIdxRowM(tmp161, 416, i0) = (party == SERVER) ? __tmp_in_tmp161 : 0;
   }
@@ -4233,7 +4234,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp162;
   for (uint64_t i0 = (uint64_t)0; i0 < 416; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp162;
+      in >> __tmp_in_tmp162;
     }
     Arr1DIdxRowM(tmp162, 416, i0) = (party == SERVER) ? __tmp_in_tmp162 : 0;
   }
@@ -4244,7 +4245,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp163;
   for (uint64_t i0 = (uint64_t)0; i0 < 416; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp163;
+      in >> __tmp_in_tmp163;
     }
     Arr1DIdxRowM(tmp163, 416, i0) = (party == SERVER) ? __tmp_in_tmp163 : 0;
   }
@@ -4255,7 +4256,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp164;
   for (uint64_t i0 = (uint64_t)0; i0 < 416; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp164;
+      in >> __tmp_in_tmp164;
     }
     Arr1DIdxRowM(tmp164, 416, i0) = (party == SERVER) ? __tmp_in_tmp164 : 0;
   }
@@ -4269,7 +4270,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
       for (uint64_t i2 = (uint64_t)0; i2 < 416; i2++) {
         for (uint64_t i3 = (uint64_t)0; i3 < 128; i3++) {
           if ((party == SERVER)) {
-            cin >> __tmp_in_tmp165;
+            in >> __tmp_in_tmp165;
           }
           Arr4DIdxRowM(tmp165, 1, 1, 416, 128, i0, i1, i2, i3) =
               (party == SERVER) ? __tmp_in_tmp165 : 0;
@@ -4284,7 +4285,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp166;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp166;
+      in >> __tmp_in_tmp166;
     }
     Arr1DIdxRowM(tmp166, 128, i0) = (party == SERVER) ? __tmp_in_tmp166 : 0;
   }
@@ -4295,7 +4296,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp167;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp167;
+      in >> __tmp_in_tmp167;
     }
     Arr1DIdxRowM(tmp167, 128, i0) = (party == SERVER) ? __tmp_in_tmp167 : 0;
   }
@@ -4306,7 +4307,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp168;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp168;
+      in >> __tmp_in_tmp168;
     }
     Arr1DIdxRowM(tmp168, 128, i0) = (party == SERVER) ? __tmp_in_tmp168 : 0;
   }
@@ -4317,7 +4318,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp169;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp169;
+      in >> __tmp_in_tmp169;
     }
     Arr1DIdxRowM(tmp169, 128, i0) = (party == SERVER) ? __tmp_in_tmp169 : 0;
   }
@@ -4331,7 +4332,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
       for (uint64_t i2 = (uint64_t)0; i2 < 128; i2++) {
         for (uint64_t i3 = (uint64_t)0; i3 < 32; i3++) {
           if ((party == SERVER)) {
-            cin >> __tmp_in_tmp170;
+            in >> __tmp_in_tmp170;
           }
           Arr4DIdxRowM(tmp170, 3, 3, 128, 32, i0, i1, i2, i3) =
               (party == SERVER) ? __tmp_in_tmp170 : 0;
@@ -4346,7 +4347,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp171;
   for (uint64_t i0 = (uint64_t)0; i0 < 448; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp171;
+      in >> __tmp_in_tmp171;
     }
     Arr1DIdxRowM(tmp171, 448, i0) = (party == SERVER) ? __tmp_in_tmp171 : 0;
   }
@@ -4357,7 +4358,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp172;
   for (uint64_t i0 = (uint64_t)0; i0 < 448; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp172;
+      in >> __tmp_in_tmp172;
     }
     Arr1DIdxRowM(tmp172, 448, i0) = (party == SERVER) ? __tmp_in_tmp172 : 0;
   }
@@ -4368,7 +4369,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp173;
   for (uint64_t i0 = (uint64_t)0; i0 < 448; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp173;
+      in >> __tmp_in_tmp173;
     }
     Arr1DIdxRowM(tmp173, 448, i0) = (party == SERVER) ? __tmp_in_tmp173 : 0;
   }
@@ -4379,7 +4380,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp174;
   for (uint64_t i0 = (uint64_t)0; i0 < 448; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp174;
+      in >> __tmp_in_tmp174;
     }
     Arr1DIdxRowM(tmp174, 448, i0) = (party == SERVER) ? __tmp_in_tmp174 : 0;
   }
@@ -4393,7 +4394,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
       for (uint64_t i2 = (uint64_t)0; i2 < 448; i2++) {
         for (uint64_t i3 = (uint64_t)0; i3 < 128; i3++) {
           if ((party == SERVER)) {
-            cin >> __tmp_in_tmp175;
+            in >> __tmp_in_tmp175;
           }
           Arr4DIdxRowM(tmp175, 1, 1, 448, 128, i0, i1, i2, i3) =
               (party == SERVER) ? __tmp_in_tmp175 : 0;
@@ -4408,7 +4409,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp176;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp176;
+      in >> __tmp_in_tmp176;
     }
     Arr1DIdxRowM(tmp176, 128, i0) = (party == SERVER) ? __tmp_in_tmp176 : 0;
   }
@@ -4419,7 +4420,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp177;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp177;
+      in >> __tmp_in_tmp177;
     }
     Arr1DIdxRowM(tmp177, 128, i0) = (party == SERVER) ? __tmp_in_tmp177 : 0;
   }
@@ -4430,7 +4431,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp178;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp178;
+      in >> __tmp_in_tmp178;
     }
     Arr1DIdxRowM(tmp178, 128, i0) = (party == SERVER) ? __tmp_in_tmp178 : 0;
   }
@@ -4441,7 +4442,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp179;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp179;
+      in >> __tmp_in_tmp179;
     }
     Arr1DIdxRowM(tmp179, 128, i0) = (party == SERVER) ? __tmp_in_tmp179 : 0;
   }
@@ -4455,7 +4456,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
       for (uint64_t i2 = (uint64_t)0; i2 < 128; i2++) {
         for (uint64_t i3 = (uint64_t)0; i3 < 32; i3++) {
           if ((party == SERVER)) {
-            cin >> __tmp_in_tmp180;
+            in >> __tmp_in_tmp180;
           }
           Arr4DIdxRowM(tmp180, 3, 3, 128, 32, i0, i1, i2, i3) =
               (party == SERVER) ? __tmp_in_tmp180 : 0;
@@ -4470,7 +4471,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp181;
   for (uint64_t i0 = (uint64_t)0; i0 < 480; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp181;
+      in >> __tmp_in_tmp181;
     }
     Arr1DIdxRowM(tmp181, 480, i0) = (party == SERVER) ? __tmp_in_tmp181 : 0;
   }
@@ -4481,7 +4482,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp182;
   for (uint64_t i0 = (uint64_t)0; i0 < 480; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp182;
+      in >> __tmp_in_tmp182;
     }
     Arr1DIdxRowM(tmp182, 480, i0) = (party == SERVER) ? __tmp_in_tmp182 : 0;
   }
@@ -4492,7 +4493,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp183;
   for (uint64_t i0 = (uint64_t)0; i0 < 480; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp183;
+      in >> __tmp_in_tmp183;
     }
     Arr1DIdxRowM(tmp183, 480, i0) = (party == SERVER) ? __tmp_in_tmp183 : 0;
   }
@@ -4503,7 +4504,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp184;
   for (uint64_t i0 = (uint64_t)0; i0 < 480; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp184;
+      in >> __tmp_in_tmp184;
     }
     Arr1DIdxRowM(tmp184, 480, i0) = (party == SERVER) ? __tmp_in_tmp184 : 0;
   }
@@ -4517,7 +4518,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
       for (uint64_t i2 = (uint64_t)0; i2 < 480; i2++) {
         for (uint64_t i3 = (uint64_t)0; i3 < 128; i3++) {
           if ((party == SERVER)) {
-            cin >> __tmp_in_tmp185;
+            in >> __tmp_in_tmp185;
           }
           Arr4DIdxRowM(tmp185, 1, 1, 480, 128, i0, i1, i2, i3) =
               (party == SERVER) ? __tmp_in_tmp185 : 0;
@@ -4532,7 +4533,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp186;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp186;
+      in >> __tmp_in_tmp186;
     }
     Arr1DIdxRowM(tmp186, 128, i0) = (party == SERVER) ? __tmp_in_tmp186 : 0;
   }
@@ -4543,7 +4544,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp187;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp187;
+      in >> __tmp_in_tmp187;
     }
     Arr1DIdxRowM(tmp187, 128, i0) = (party == SERVER) ? __tmp_in_tmp187 : 0;
   }
@@ -4554,7 +4555,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp188;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp188;
+      in >> __tmp_in_tmp188;
     }
     Arr1DIdxRowM(tmp188, 128, i0) = (party == SERVER) ? __tmp_in_tmp188 : 0;
   }
@@ -4565,7 +4566,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp189;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp189;
+      in >> __tmp_in_tmp189;
     }
     Arr1DIdxRowM(tmp189, 128, i0) = (party == SERVER) ? __tmp_in_tmp189 : 0;
   }
@@ -4579,7 +4580,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
       for (uint64_t i2 = (uint64_t)0; i2 < 128; i2++) {
         for (uint64_t i3 = (uint64_t)0; i3 < 32; i3++) {
           if ((party == SERVER)) {
-            cin >> __tmp_in_tmp190;
+            in >> __tmp_in_tmp190;
           }
           Arr4DIdxRowM(tmp190, 3, 3, 128, 32, i0, i1, i2, i3) =
               (party == SERVER) ? __tmp_in_tmp190 : 0;
@@ -4594,7 +4595,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp191;
   for (uint64_t i0 = (uint64_t)0; i0 < 512; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp191;
+      in >> __tmp_in_tmp191;
     }
     Arr1DIdxRowM(tmp191, 512, i0) = (party == SERVER) ? __tmp_in_tmp191 : 0;
   }
@@ -4605,7 +4606,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp192;
   for (uint64_t i0 = (uint64_t)0; i0 < 512; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp192;
+      in >> __tmp_in_tmp192;
     }
     Arr1DIdxRowM(tmp192, 512, i0) = (party == SERVER) ? __tmp_in_tmp192 : 0;
   }
@@ -4616,7 +4617,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp193;
   for (uint64_t i0 = (uint64_t)0; i0 < 512; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp193;
+      in >> __tmp_in_tmp193;
     }
     Arr1DIdxRowM(tmp193, 512, i0) = (party == SERVER) ? __tmp_in_tmp193 : 0;
   }
@@ -4627,7 +4628,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp194;
   for (uint64_t i0 = (uint64_t)0; i0 < 512; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp194;
+      in >> __tmp_in_tmp194;
     }
     Arr1DIdxRowM(tmp194, 512, i0) = (party == SERVER) ? __tmp_in_tmp194 : 0;
   }
@@ -4641,7 +4642,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
       for (uint64_t i2 = (uint64_t)0; i2 < 512; i2++) {
         for (uint64_t i3 = (uint64_t)0; i3 < 256; i3++) {
           if ((party == SERVER)) {
-            cin >> __tmp_in_tmp195;
+            in >> __tmp_in_tmp195;
           }
           Arr4DIdxRowM(tmp195, 1, 1, 512, 256, i0, i1, i2, i3) =
               (party == SERVER) ? __tmp_in_tmp195 : 0;
@@ -4656,7 +4657,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp196;
   for (uint64_t i0 = (uint64_t)0; i0 < 256; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp196;
+      in >> __tmp_in_tmp196;
     }
     Arr1DIdxRowM(tmp196, 256, i0) = (party == SERVER) ? __tmp_in_tmp196 : 0;
   }
@@ -4667,7 +4668,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp197;
   for (uint64_t i0 = (uint64_t)0; i0 < 256; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp197;
+      in >> __tmp_in_tmp197;
     }
     Arr1DIdxRowM(tmp197, 256, i0) = (party == SERVER) ? __tmp_in_tmp197 : 0;
   }
@@ -4678,7 +4679,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp198;
   for (uint64_t i0 = (uint64_t)0; i0 < 256; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp198;
+      in >> __tmp_in_tmp198;
     }
     Arr1DIdxRowM(tmp198, 256, i0) = (party == SERVER) ? __tmp_in_tmp198 : 0;
   }
@@ -4689,7 +4690,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp199;
   for (uint64_t i0 = (uint64_t)0; i0 < 256; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp199;
+      in >> __tmp_in_tmp199;
     }
     Arr1DIdxRowM(tmp199, 256, i0) = (party == SERVER) ? __tmp_in_tmp199 : 0;
   }
@@ -4703,7 +4704,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
       for (uint64_t i2 = (uint64_t)0; i2 < 256; i2++) {
         for (uint64_t i3 = (uint64_t)0; i3 < 128; i3++) {
           if ((party == SERVER)) {
-            cin >> __tmp_in_tmp200;
+            in >> __tmp_in_tmp200;
           }
           Arr4DIdxRowM(tmp200, 1, 1, 256, 128, i0, i1, i2, i3) =
               (party == SERVER) ? __tmp_in_tmp200 : 0;
@@ -4718,7 +4719,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp201;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp201;
+      in >> __tmp_in_tmp201;
     }
     Arr1DIdxRowM(tmp201, 128, i0) = (party == SERVER) ? __tmp_in_tmp201 : 0;
   }
@@ -4729,7 +4730,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp202;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp202;
+      in >> __tmp_in_tmp202;
     }
     Arr1DIdxRowM(tmp202, 128, i0) = (party == SERVER) ? __tmp_in_tmp202 : 0;
   }
@@ -4740,7 +4741,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp203;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp203;
+      in >> __tmp_in_tmp203;
     }
     Arr1DIdxRowM(tmp203, 128, i0) = (party == SERVER) ? __tmp_in_tmp203 : 0;
   }
@@ -4751,7 +4752,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp204;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp204;
+      in >> __tmp_in_tmp204;
     }
     Arr1DIdxRowM(tmp204, 128, i0) = (party == SERVER) ? __tmp_in_tmp204 : 0;
   }
@@ -4765,7 +4766,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
       for (uint64_t i2 = (uint64_t)0; i2 < 128; i2++) {
         for (uint64_t i3 = (uint64_t)0; i3 < 32; i3++) {
           if ((party == SERVER)) {
-            cin >> __tmp_in_tmp205;
+            in >> __tmp_in_tmp205;
           }
           Arr4DIdxRowM(tmp205, 3, 3, 128, 32, i0, i1, i2, i3) =
               (party == SERVER) ? __tmp_in_tmp205 : 0;
@@ -4780,7 +4781,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp206;
   for (uint64_t i0 = (uint64_t)0; i0 < 288; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp206;
+      in >> __tmp_in_tmp206;
     }
     Arr1DIdxRowM(tmp206, 288, i0) = (party == SERVER) ? __tmp_in_tmp206 : 0;
   }
@@ -4791,7 +4792,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp207;
   for (uint64_t i0 = (uint64_t)0; i0 < 288; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp207;
+      in >> __tmp_in_tmp207;
     }
     Arr1DIdxRowM(tmp207, 288, i0) = (party == SERVER) ? __tmp_in_tmp207 : 0;
   }
@@ -4802,7 +4803,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp208;
   for (uint64_t i0 = (uint64_t)0; i0 < 288; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp208;
+      in >> __tmp_in_tmp208;
     }
     Arr1DIdxRowM(tmp208, 288, i0) = (party == SERVER) ? __tmp_in_tmp208 : 0;
   }
@@ -4813,7 +4814,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp209;
   for (uint64_t i0 = (uint64_t)0; i0 < 288; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp209;
+      in >> __tmp_in_tmp209;
     }
     Arr1DIdxRowM(tmp209, 288, i0) = (party == SERVER) ? __tmp_in_tmp209 : 0;
   }
@@ -4827,7 +4828,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
       for (uint64_t i2 = (uint64_t)0; i2 < 288; i2++) {
         for (uint64_t i3 = (uint64_t)0; i3 < 128; i3++) {
           if ((party == SERVER)) {
-            cin >> __tmp_in_tmp210;
+            in >> __tmp_in_tmp210;
           }
           Arr4DIdxRowM(tmp210, 1, 1, 288, 128, i0, i1, i2, i3) =
               (party == SERVER) ? __tmp_in_tmp210 : 0;
@@ -4842,7 +4843,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp211;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp211;
+      in >> __tmp_in_tmp211;
     }
     Arr1DIdxRowM(tmp211, 128, i0) = (party == SERVER) ? __tmp_in_tmp211 : 0;
   }
@@ -4853,7 +4854,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp212;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp212;
+      in >> __tmp_in_tmp212;
     }
     Arr1DIdxRowM(tmp212, 128, i0) = (party == SERVER) ? __tmp_in_tmp212 : 0;
   }
@@ -4864,7 +4865,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp213;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp213;
+      in >> __tmp_in_tmp213;
     }
     Arr1DIdxRowM(tmp213, 128, i0) = (party == SERVER) ? __tmp_in_tmp213 : 0;
   }
@@ -4875,7 +4876,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp214;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp214;
+      in >> __tmp_in_tmp214;
     }
     Arr1DIdxRowM(tmp214, 128, i0) = (party == SERVER) ? __tmp_in_tmp214 : 0;
   }
@@ -4889,7 +4890,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
       for (uint64_t i2 = (uint64_t)0; i2 < 128; i2++) {
         for (uint64_t i3 = (uint64_t)0; i3 < 32; i3++) {
           if ((party == SERVER)) {
-            cin >> __tmp_in_tmp215;
+            in >> __tmp_in_tmp215;
           }
           Arr4DIdxRowM(tmp215, 3, 3, 128, 32, i0, i1, i2, i3) =
               (party == SERVER) ? __tmp_in_tmp215 : 0;
@@ -4904,7 +4905,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp216;
   for (uint64_t i0 = (uint64_t)0; i0 < 320; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp216;
+      in >> __tmp_in_tmp216;
     }
     Arr1DIdxRowM(tmp216, 320, i0) = (party == SERVER) ? __tmp_in_tmp216 : 0;
   }
@@ -4915,7 +4916,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp217;
   for (uint64_t i0 = (uint64_t)0; i0 < 320; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp217;
+      in >> __tmp_in_tmp217;
     }
     Arr1DIdxRowM(tmp217, 320, i0) = (party == SERVER) ? __tmp_in_tmp217 : 0;
   }
@@ -4926,7 +4927,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp218;
   for (uint64_t i0 = (uint64_t)0; i0 < 320; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp218;
+      in >> __tmp_in_tmp218;
     }
     Arr1DIdxRowM(tmp218, 320, i0) = (party == SERVER) ? __tmp_in_tmp218 : 0;
   }
@@ -4937,7 +4938,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp219;
   for (uint64_t i0 = (uint64_t)0; i0 < 320; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp219;
+      in >> __tmp_in_tmp219;
     }
     Arr1DIdxRowM(tmp219, 320, i0) = (party == SERVER) ? __tmp_in_tmp219 : 0;
   }
@@ -4951,7 +4952,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
       for (uint64_t i2 = (uint64_t)0; i2 < 320; i2++) {
         for (uint64_t i3 = (uint64_t)0; i3 < 128; i3++) {
           if ((party == SERVER)) {
-            cin >> __tmp_in_tmp220;
+            in >> __tmp_in_tmp220;
           }
           Arr4DIdxRowM(tmp220, 1, 1, 320, 128, i0, i1, i2, i3) =
               (party == SERVER) ? __tmp_in_tmp220 : 0;
@@ -4966,7 +4967,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp221;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp221;
+      in >> __tmp_in_tmp221;
     }
     Arr1DIdxRowM(tmp221, 128, i0) = (party == SERVER) ? __tmp_in_tmp221 : 0;
   }
@@ -4977,7 +4978,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp222;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp222;
+      in >> __tmp_in_tmp222;
     }
     Arr1DIdxRowM(tmp222, 128, i0) = (party == SERVER) ? __tmp_in_tmp222 : 0;
   }
@@ -4988,7 +4989,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp223;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp223;
+      in >> __tmp_in_tmp223;
     }
     Arr1DIdxRowM(tmp223, 128, i0) = (party == SERVER) ? __tmp_in_tmp223 : 0;
   }
@@ -4999,7 +5000,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp224;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp224;
+      in >> __tmp_in_tmp224;
     }
     Arr1DIdxRowM(tmp224, 128, i0) = (party == SERVER) ? __tmp_in_tmp224 : 0;
   }
@@ -5013,7 +5014,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
       for (uint64_t i2 = (uint64_t)0; i2 < 128; i2++) {
         for (uint64_t i3 = (uint64_t)0; i3 < 32; i3++) {
           if ((party == SERVER)) {
-            cin >> __tmp_in_tmp225;
+            in >> __tmp_in_tmp225;
           }
           Arr4DIdxRowM(tmp225, 3, 3, 128, 32, i0, i1, i2, i3) =
               (party == SERVER) ? __tmp_in_tmp225 : 0;
@@ -5028,7 +5029,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp226;
   for (uint64_t i0 = (uint64_t)0; i0 < 352; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp226;
+      in >> __tmp_in_tmp226;
     }
     Arr1DIdxRowM(tmp226, 352, i0) = (party == SERVER) ? __tmp_in_tmp226 : 0;
   }
@@ -5039,7 +5040,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp227;
   for (uint64_t i0 = (uint64_t)0; i0 < 352; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp227;
+      in >> __tmp_in_tmp227;
     }
     Arr1DIdxRowM(tmp227, 352, i0) = (party == SERVER) ? __tmp_in_tmp227 : 0;
   }
@@ -5050,7 +5051,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp228;
   for (uint64_t i0 = (uint64_t)0; i0 < 352; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp228;
+      in >> __tmp_in_tmp228;
     }
     Arr1DIdxRowM(tmp228, 352, i0) = (party == SERVER) ? __tmp_in_tmp228 : 0;
   }
@@ -5061,7 +5062,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp229;
   for (uint64_t i0 = (uint64_t)0; i0 < 352; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp229;
+      in >> __tmp_in_tmp229;
     }
     Arr1DIdxRowM(tmp229, 352, i0) = (party == SERVER) ? __tmp_in_tmp229 : 0;
   }
@@ -5075,7 +5076,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
       for (uint64_t i2 = (uint64_t)0; i2 < 352; i2++) {
         for (uint64_t i3 = (uint64_t)0; i3 < 128; i3++) {
           if ((party == SERVER)) {
-            cin >> __tmp_in_tmp230;
+            in >> __tmp_in_tmp230;
           }
           Arr4DIdxRowM(tmp230, 1, 1, 352, 128, i0, i1, i2, i3) =
               (party == SERVER) ? __tmp_in_tmp230 : 0;
@@ -5090,7 +5091,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp231;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp231;
+      in >> __tmp_in_tmp231;
     }
     Arr1DIdxRowM(tmp231, 128, i0) = (party == SERVER) ? __tmp_in_tmp231 : 0;
   }
@@ -5101,7 +5102,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp232;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp232;
+      in >> __tmp_in_tmp232;
     }
     Arr1DIdxRowM(tmp232, 128, i0) = (party == SERVER) ? __tmp_in_tmp232 : 0;
   }
@@ -5112,7 +5113,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp233;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp233;
+      in >> __tmp_in_tmp233;
     }
     Arr1DIdxRowM(tmp233, 128, i0) = (party == SERVER) ? __tmp_in_tmp233 : 0;
   }
@@ -5123,7 +5124,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp234;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp234;
+      in >> __tmp_in_tmp234;
     }
     Arr1DIdxRowM(tmp234, 128, i0) = (party == SERVER) ? __tmp_in_tmp234 : 0;
   }
@@ -5137,7 +5138,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
       for (uint64_t i2 = (uint64_t)0; i2 < 128; i2++) {
         for (uint64_t i3 = (uint64_t)0; i3 < 32; i3++) {
           if ((party == SERVER)) {
-            cin >> __tmp_in_tmp235;
+            in >> __tmp_in_tmp235;
           }
           Arr4DIdxRowM(tmp235, 3, 3, 128, 32, i0, i1, i2, i3) =
               (party == SERVER) ? __tmp_in_tmp235 : 0;
@@ -5152,7 +5153,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp236;
   for (uint64_t i0 = (uint64_t)0; i0 < 384; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp236;
+      in >> __tmp_in_tmp236;
     }
     Arr1DIdxRowM(tmp236, 384, i0) = (party == SERVER) ? __tmp_in_tmp236 : 0;
   }
@@ -5163,7 +5164,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp237;
   for (uint64_t i0 = (uint64_t)0; i0 < 384; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp237;
+      in >> __tmp_in_tmp237;
     }
     Arr1DIdxRowM(tmp237, 384, i0) = (party == SERVER) ? __tmp_in_tmp237 : 0;
   }
@@ -5174,7 +5175,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp238;
   for (uint64_t i0 = (uint64_t)0; i0 < 384; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp238;
+      in >> __tmp_in_tmp238;
     }
     Arr1DIdxRowM(tmp238, 384, i0) = (party == SERVER) ? __tmp_in_tmp238 : 0;
   }
@@ -5185,7 +5186,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp239;
   for (uint64_t i0 = (uint64_t)0; i0 < 384; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp239;
+      in >> __tmp_in_tmp239;
     }
     Arr1DIdxRowM(tmp239, 384, i0) = (party == SERVER) ? __tmp_in_tmp239 : 0;
   }
@@ -5199,7 +5200,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
       for (uint64_t i2 = (uint64_t)0; i2 < 384; i2++) {
         for (uint64_t i3 = (uint64_t)0; i3 < 128; i3++) {
           if ((party == SERVER)) {
-            cin >> __tmp_in_tmp240;
+            in >> __tmp_in_tmp240;
           }
           Arr4DIdxRowM(tmp240, 1, 1, 384, 128, i0, i1, i2, i3) =
               (party == SERVER) ? __tmp_in_tmp240 : 0;
@@ -5214,7 +5215,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp241;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp241;
+      in >> __tmp_in_tmp241;
     }
     Arr1DIdxRowM(tmp241, 128, i0) = (party == SERVER) ? __tmp_in_tmp241 : 0;
   }
@@ -5225,7 +5226,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp242;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp242;
+      in >> __tmp_in_tmp242;
     }
     Arr1DIdxRowM(tmp242, 128, i0) = (party == SERVER) ? __tmp_in_tmp242 : 0;
   }
@@ -5236,7 +5237,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp243;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp243;
+      in >> __tmp_in_tmp243;
     }
     Arr1DIdxRowM(tmp243, 128, i0) = (party == SERVER) ? __tmp_in_tmp243 : 0;
   }
@@ -5247,7 +5248,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp244;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp244;
+      in >> __tmp_in_tmp244;
     }
     Arr1DIdxRowM(tmp244, 128, i0) = (party == SERVER) ? __tmp_in_tmp244 : 0;
   }
@@ -5261,7 +5262,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
       for (uint64_t i2 = (uint64_t)0; i2 < 128; i2++) {
         for (uint64_t i3 = (uint64_t)0; i3 < 32; i3++) {
           if ((party == SERVER)) {
-            cin >> __tmp_in_tmp245;
+            in >> __tmp_in_tmp245;
           }
           Arr4DIdxRowM(tmp245, 3, 3, 128, 32, i0, i1, i2, i3) =
               (party == SERVER) ? __tmp_in_tmp245 : 0;
@@ -5276,7 +5277,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp246;
   for (uint64_t i0 = (uint64_t)0; i0 < 416; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp246;
+      in >> __tmp_in_tmp246;
     }
     Arr1DIdxRowM(tmp246, 416, i0) = (party == SERVER) ? __tmp_in_tmp246 : 0;
   }
@@ -5287,7 +5288,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp247;
   for (uint64_t i0 = (uint64_t)0; i0 < 416; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp247;
+      in >> __tmp_in_tmp247;
     }
     Arr1DIdxRowM(tmp247, 416, i0) = (party == SERVER) ? __tmp_in_tmp247 : 0;
   }
@@ -5298,7 +5299,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp248;
   for (uint64_t i0 = (uint64_t)0; i0 < 416; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp248;
+      in >> __tmp_in_tmp248;
     }
     Arr1DIdxRowM(tmp248, 416, i0) = (party == SERVER) ? __tmp_in_tmp248 : 0;
   }
@@ -5309,7 +5310,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp249;
   for (uint64_t i0 = (uint64_t)0; i0 < 416; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp249;
+      in >> __tmp_in_tmp249;
     }
     Arr1DIdxRowM(tmp249, 416, i0) = (party == SERVER) ? __tmp_in_tmp249 : 0;
   }
@@ -5323,7 +5324,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
       for (uint64_t i2 = (uint64_t)0; i2 < 416; i2++) {
         for (uint64_t i3 = (uint64_t)0; i3 < 128; i3++) {
           if ((party == SERVER)) {
-            cin >> __tmp_in_tmp250;
+            in >> __tmp_in_tmp250;
           }
           Arr4DIdxRowM(tmp250, 1, 1, 416, 128, i0, i1, i2, i3) =
               (party == SERVER) ? __tmp_in_tmp250 : 0;
@@ -5338,7 +5339,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp251;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp251;
+      in >> __tmp_in_tmp251;
     }
     Arr1DIdxRowM(tmp251, 128, i0) = (party == SERVER) ? __tmp_in_tmp251 : 0;
   }
@@ -5349,7 +5350,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp252;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp252;
+      in >> __tmp_in_tmp252;
     }
     Arr1DIdxRowM(tmp252, 128, i0) = (party == SERVER) ? __tmp_in_tmp252 : 0;
   }
@@ -5360,7 +5361,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp253;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp253;
+      in >> __tmp_in_tmp253;
     }
     Arr1DIdxRowM(tmp253, 128, i0) = (party == SERVER) ? __tmp_in_tmp253 : 0;
   }
@@ -5371,7 +5372,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp254;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp254;
+      in >> __tmp_in_tmp254;
     }
     Arr1DIdxRowM(tmp254, 128, i0) = (party == SERVER) ? __tmp_in_tmp254 : 0;
   }
@@ -5385,7 +5386,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
       for (uint64_t i2 = (uint64_t)0; i2 < 128; i2++) {
         for (uint64_t i3 = (uint64_t)0; i3 < 32; i3++) {
           if ((party == SERVER)) {
-            cin >> __tmp_in_tmp255;
+            in >> __tmp_in_tmp255;
           }
           Arr4DIdxRowM(tmp255, 3, 3, 128, 32, i0, i1, i2, i3) =
               (party == SERVER) ? __tmp_in_tmp255 : 0;
@@ -5400,7 +5401,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp256;
   for (uint64_t i0 = (uint64_t)0; i0 < 448; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp256;
+      in >> __tmp_in_tmp256;
     }
     Arr1DIdxRowM(tmp256, 448, i0) = (party == SERVER) ? __tmp_in_tmp256 : 0;
   }
@@ -5411,7 +5412,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp257;
   for (uint64_t i0 = (uint64_t)0; i0 < 448; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp257;
+      in >> __tmp_in_tmp257;
     }
     Arr1DIdxRowM(tmp257, 448, i0) = (party == SERVER) ? __tmp_in_tmp257 : 0;
   }
@@ -5422,7 +5423,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp258;
   for (uint64_t i0 = (uint64_t)0; i0 < 448; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp258;
+      in >> __tmp_in_tmp258;
     }
     Arr1DIdxRowM(tmp258, 448, i0) = (party == SERVER) ? __tmp_in_tmp258 : 0;
   }
@@ -5433,7 +5434,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp259;
   for (uint64_t i0 = (uint64_t)0; i0 < 448; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp259;
+      in >> __tmp_in_tmp259;
     }
     Arr1DIdxRowM(tmp259, 448, i0) = (party == SERVER) ? __tmp_in_tmp259 : 0;
   }
@@ -5447,7 +5448,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
       for (uint64_t i2 = (uint64_t)0; i2 < 448; i2++) {
         for (uint64_t i3 = (uint64_t)0; i3 < 128; i3++) {
           if ((party == SERVER)) {
-            cin >> __tmp_in_tmp260;
+            in >> __tmp_in_tmp260;
           }
           Arr4DIdxRowM(tmp260, 1, 1, 448, 128, i0, i1, i2, i3) =
               (party == SERVER) ? __tmp_in_tmp260 : 0;
@@ -5462,7 +5463,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp261;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp261;
+      in >> __tmp_in_tmp261;
     }
     Arr1DIdxRowM(tmp261, 128, i0) = (party == SERVER) ? __tmp_in_tmp261 : 0;
   }
@@ -5473,7 +5474,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp262;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp262;
+      in >> __tmp_in_tmp262;
     }
     Arr1DIdxRowM(tmp262, 128, i0) = (party == SERVER) ? __tmp_in_tmp262 : 0;
   }
@@ -5484,7 +5485,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp263;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp263;
+      in >> __tmp_in_tmp263;
     }
     Arr1DIdxRowM(tmp263, 128, i0) = (party == SERVER) ? __tmp_in_tmp263 : 0;
   }
@@ -5495,7 +5496,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp264;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp264;
+      in >> __tmp_in_tmp264;
     }
     Arr1DIdxRowM(tmp264, 128, i0) = (party == SERVER) ? __tmp_in_tmp264 : 0;
   }
@@ -5509,7 +5510,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
       for (uint64_t i2 = (uint64_t)0; i2 < 128; i2++) {
         for (uint64_t i3 = (uint64_t)0; i3 < 32; i3++) {
           if ((party == SERVER)) {
-            cin >> __tmp_in_tmp265;
+            in >> __tmp_in_tmp265;
           }
           Arr4DIdxRowM(tmp265, 3, 3, 128, 32, i0, i1, i2, i3) =
               (party == SERVER) ? __tmp_in_tmp265 : 0;
@@ -5524,7 +5525,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp266;
   for (uint64_t i0 = (uint64_t)0; i0 < 480; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp266;
+      in >> __tmp_in_tmp266;
     }
     Arr1DIdxRowM(tmp266, 480, i0) = (party == SERVER) ? __tmp_in_tmp266 : 0;
   }
@@ -5535,7 +5536,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp267;
   for (uint64_t i0 = (uint64_t)0; i0 < 480; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp267;
+      in >> __tmp_in_tmp267;
     }
     Arr1DIdxRowM(tmp267, 480, i0) = (party == SERVER) ? __tmp_in_tmp267 : 0;
   }
@@ -5546,7 +5547,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp268;
   for (uint64_t i0 = (uint64_t)0; i0 < 480; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp268;
+      in >> __tmp_in_tmp268;
     }
     Arr1DIdxRowM(tmp268, 480, i0) = (party == SERVER) ? __tmp_in_tmp268 : 0;
   }
@@ -5557,7 +5558,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp269;
   for (uint64_t i0 = (uint64_t)0; i0 < 480; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp269;
+      in >> __tmp_in_tmp269;
     }
     Arr1DIdxRowM(tmp269, 480, i0) = (party == SERVER) ? __tmp_in_tmp269 : 0;
   }
@@ -5571,7 +5572,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
       for (uint64_t i2 = (uint64_t)0; i2 < 480; i2++) {
         for (uint64_t i3 = (uint64_t)0; i3 < 128; i3++) {
           if ((party == SERVER)) {
-            cin >> __tmp_in_tmp270;
+            in >> __tmp_in_tmp270;
           }
           Arr4DIdxRowM(tmp270, 1, 1, 480, 128, i0, i1, i2, i3) =
               (party == SERVER) ? __tmp_in_tmp270 : 0;
@@ -5586,7 +5587,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp271;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp271;
+      in >> __tmp_in_tmp271;
     }
     Arr1DIdxRowM(tmp271, 128, i0) = (party == SERVER) ? __tmp_in_tmp271 : 0;
   }
@@ -5597,7 +5598,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp272;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp272;
+      in >> __tmp_in_tmp272;
     }
     Arr1DIdxRowM(tmp272, 128, i0) = (party == SERVER) ? __tmp_in_tmp272 : 0;
   }
@@ -5608,7 +5609,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp273;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp273;
+      in >> __tmp_in_tmp273;
     }
     Arr1DIdxRowM(tmp273, 128, i0) = (party == SERVER) ? __tmp_in_tmp273 : 0;
   }
@@ -5619,7 +5620,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp274;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp274;
+      in >> __tmp_in_tmp274;
     }
     Arr1DIdxRowM(tmp274, 128, i0) = (party == SERVER) ? __tmp_in_tmp274 : 0;
   }
@@ -5633,7 +5634,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
       for (uint64_t i2 = (uint64_t)0; i2 < 128; i2++) {
         for (uint64_t i3 = (uint64_t)0; i3 < 32; i3++) {
           if ((party == SERVER)) {
-            cin >> __tmp_in_tmp275;
+            in >> __tmp_in_tmp275;
           }
           Arr4DIdxRowM(tmp275, 3, 3, 128, 32, i0, i1, i2, i3) =
               (party == SERVER) ? __tmp_in_tmp275 : 0;
@@ -5648,7 +5649,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp276;
   for (uint64_t i0 = (uint64_t)0; i0 < 512; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp276;
+      in >> __tmp_in_tmp276;
     }
     Arr1DIdxRowM(tmp276, 512, i0) = (party == SERVER) ? __tmp_in_tmp276 : 0;
   }
@@ -5659,7 +5660,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp277;
   for (uint64_t i0 = (uint64_t)0; i0 < 512; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp277;
+      in >> __tmp_in_tmp277;
     }
     Arr1DIdxRowM(tmp277, 512, i0) = (party == SERVER) ? __tmp_in_tmp277 : 0;
   }
@@ -5670,7 +5671,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp278;
   for (uint64_t i0 = (uint64_t)0; i0 < 512; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp278;
+      in >> __tmp_in_tmp278;
     }
     Arr1DIdxRowM(tmp278, 512, i0) = (party == SERVER) ? __tmp_in_tmp278 : 0;
   }
@@ -5681,7 +5682,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp279;
   for (uint64_t i0 = (uint64_t)0; i0 < 512; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp279;
+      in >> __tmp_in_tmp279;
     }
     Arr1DIdxRowM(tmp279, 512, i0) = (party == SERVER) ? __tmp_in_tmp279 : 0;
   }
@@ -5695,7 +5696,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
       for (uint64_t i2 = (uint64_t)0; i2 < 512; i2++) {
         for (uint64_t i3 = (uint64_t)0; i3 < 128; i3++) {
           if ((party == SERVER)) {
-            cin >> __tmp_in_tmp280;
+            in >> __tmp_in_tmp280;
           }
           Arr4DIdxRowM(tmp280, 1, 1, 512, 128, i0, i1, i2, i3) =
               (party == SERVER) ? __tmp_in_tmp280 : 0;
@@ -5710,7 +5711,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp281;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp281;
+      in >> __tmp_in_tmp281;
     }
     Arr1DIdxRowM(tmp281, 128, i0) = (party == SERVER) ? __tmp_in_tmp281 : 0;
   }
@@ -5721,7 +5722,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp282;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp282;
+      in >> __tmp_in_tmp282;
     }
     Arr1DIdxRowM(tmp282, 128, i0) = (party == SERVER) ? __tmp_in_tmp282 : 0;
   }
@@ -5732,7 +5733,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp283;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp283;
+      in >> __tmp_in_tmp283;
     }
     Arr1DIdxRowM(tmp283, 128, i0) = (party == SERVER) ? __tmp_in_tmp283 : 0;
   }
@@ -5743,7 +5744,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp284;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp284;
+      in >> __tmp_in_tmp284;
     }
     Arr1DIdxRowM(tmp284, 128, i0) = (party == SERVER) ? __tmp_in_tmp284 : 0;
   }
@@ -5757,7 +5758,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
       for (uint64_t i2 = (uint64_t)0; i2 < 128; i2++) {
         for (uint64_t i3 = (uint64_t)0; i3 < 32; i3++) {
           if ((party == SERVER)) {
-            cin >> __tmp_in_tmp285;
+            in >> __tmp_in_tmp285;
           }
           Arr4DIdxRowM(tmp285, 3, 3, 128, 32, i0, i1, i2, i3) =
               (party == SERVER) ? __tmp_in_tmp285 : 0;
@@ -5772,7 +5773,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp286;
   for (uint64_t i0 = (uint64_t)0; i0 < 544; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp286;
+      in >> __tmp_in_tmp286;
     }
     Arr1DIdxRowM(tmp286, 544, i0) = (party == SERVER) ? __tmp_in_tmp286 : 0;
   }
@@ -5783,7 +5784,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp287;
   for (uint64_t i0 = (uint64_t)0; i0 < 544; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp287;
+      in >> __tmp_in_tmp287;
     }
     Arr1DIdxRowM(tmp287, 544, i0) = (party == SERVER) ? __tmp_in_tmp287 : 0;
   }
@@ -5794,7 +5795,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp288;
   for (uint64_t i0 = (uint64_t)0; i0 < 544; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp288;
+      in >> __tmp_in_tmp288;
     }
     Arr1DIdxRowM(tmp288, 544, i0) = (party == SERVER) ? __tmp_in_tmp288 : 0;
   }
@@ -5805,7 +5806,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp289;
   for (uint64_t i0 = (uint64_t)0; i0 < 544; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp289;
+      in >> __tmp_in_tmp289;
     }
     Arr1DIdxRowM(tmp289, 544, i0) = (party == SERVER) ? __tmp_in_tmp289 : 0;
   }
@@ -5819,7 +5820,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
       for (uint64_t i2 = (uint64_t)0; i2 < 544; i2++) {
         for (uint64_t i3 = (uint64_t)0; i3 < 128; i3++) {
           if ((party == SERVER)) {
-            cin >> __tmp_in_tmp290;
+            in >> __tmp_in_tmp290;
           }
           Arr4DIdxRowM(tmp290, 1, 1, 544, 128, i0, i1, i2, i3) =
               (party == SERVER) ? __tmp_in_tmp290 : 0;
@@ -5834,7 +5835,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp291;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp291;
+      in >> __tmp_in_tmp291;
     }
     Arr1DIdxRowM(tmp291, 128, i0) = (party == SERVER) ? __tmp_in_tmp291 : 0;
   }
@@ -5845,7 +5846,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp292;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp292;
+      in >> __tmp_in_tmp292;
     }
     Arr1DIdxRowM(tmp292, 128, i0) = (party == SERVER) ? __tmp_in_tmp292 : 0;
   }
@@ -5856,7 +5857,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp293;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp293;
+      in >> __tmp_in_tmp293;
     }
     Arr1DIdxRowM(tmp293, 128, i0) = (party == SERVER) ? __tmp_in_tmp293 : 0;
   }
@@ -5867,7 +5868,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp294;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp294;
+      in >> __tmp_in_tmp294;
     }
     Arr1DIdxRowM(tmp294, 128, i0) = (party == SERVER) ? __tmp_in_tmp294 : 0;
   }
@@ -5881,7 +5882,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
       for (uint64_t i2 = (uint64_t)0; i2 < 128; i2++) {
         for (uint64_t i3 = (uint64_t)0; i3 < 32; i3++) {
           if ((party == SERVER)) {
-            cin >> __tmp_in_tmp295;
+            in >> __tmp_in_tmp295;
           }
           Arr4DIdxRowM(tmp295, 3, 3, 128, 32, i0, i1, i2, i3) =
               (party == SERVER) ? __tmp_in_tmp295 : 0;
@@ -5896,7 +5897,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp296;
   for (uint64_t i0 = (uint64_t)0; i0 < 576; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp296;
+      in >> __tmp_in_tmp296;
     }
     Arr1DIdxRowM(tmp296, 576, i0) = (party == SERVER) ? __tmp_in_tmp296 : 0;
   }
@@ -5907,7 +5908,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp297;
   for (uint64_t i0 = (uint64_t)0; i0 < 576; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp297;
+      in >> __tmp_in_tmp297;
     }
     Arr1DIdxRowM(tmp297, 576, i0) = (party == SERVER) ? __tmp_in_tmp297 : 0;
   }
@@ -5918,7 +5919,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp298;
   for (uint64_t i0 = (uint64_t)0; i0 < 576; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp298;
+      in >> __tmp_in_tmp298;
     }
     Arr1DIdxRowM(tmp298, 576, i0) = (party == SERVER) ? __tmp_in_tmp298 : 0;
   }
@@ -5929,7 +5930,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp299;
   for (uint64_t i0 = (uint64_t)0; i0 < 576; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp299;
+      in >> __tmp_in_tmp299;
     }
     Arr1DIdxRowM(tmp299, 576, i0) = (party == SERVER) ? __tmp_in_tmp299 : 0;
   }
@@ -5943,7 +5944,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
       for (uint64_t i2 = (uint64_t)0; i2 < 576; i2++) {
         for (uint64_t i3 = (uint64_t)0; i3 < 128; i3++) {
           if ((party == SERVER)) {
-            cin >> __tmp_in_tmp300;
+            in >> __tmp_in_tmp300;
           }
           Arr4DIdxRowM(tmp300, 1, 1, 576, 128, i0, i1, i2, i3) =
               (party == SERVER) ? __tmp_in_tmp300 : 0;
@@ -5958,7 +5959,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp301;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp301;
+      in >> __tmp_in_tmp301;
     }
     Arr1DIdxRowM(tmp301, 128, i0) = (party == SERVER) ? __tmp_in_tmp301 : 0;
   }
@@ -5969,7 +5970,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp302;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp302;
+      in >> __tmp_in_tmp302;
     }
     Arr1DIdxRowM(tmp302, 128, i0) = (party == SERVER) ? __tmp_in_tmp302 : 0;
   }
@@ -5980,7 +5981,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp303;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp303;
+      in >> __tmp_in_tmp303;
     }
     Arr1DIdxRowM(tmp303, 128, i0) = (party == SERVER) ? __tmp_in_tmp303 : 0;
   }
@@ -5991,7 +5992,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp304;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp304;
+      in >> __tmp_in_tmp304;
     }
     Arr1DIdxRowM(tmp304, 128, i0) = (party == SERVER) ? __tmp_in_tmp304 : 0;
   }
@@ -6005,7 +6006,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
       for (uint64_t i2 = (uint64_t)0; i2 < 128; i2++) {
         for (uint64_t i3 = (uint64_t)0; i3 < 32; i3++) {
           if ((party == SERVER)) {
-            cin >> __tmp_in_tmp305;
+            in >> __tmp_in_tmp305;
           }
           Arr4DIdxRowM(tmp305, 3, 3, 128, 32, i0, i1, i2, i3) =
               (party == SERVER) ? __tmp_in_tmp305 : 0;
@@ -6020,7 +6021,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp306;
   for (uint64_t i0 = (uint64_t)0; i0 < 608; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp306;
+      in >> __tmp_in_tmp306;
     }
     Arr1DIdxRowM(tmp306, 608, i0) = (party == SERVER) ? __tmp_in_tmp306 : 0;
   }
@@ -6031,7 +6032,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp307;
   for (uint64_t i0 = (uint64_t)0; i0 < 608; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp307;
+      in >> __tmp_in_tmp307;
     }
     Arr1DIdxRowM(tmp307, 608, i0) = (party == SERVER) ? __tmp_in_tmp307 : 0;
   }
@@ -6042,7 +6043,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp308;
   for (uint64_t i0 = (uint64_t)0; i0 < 608; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp308;
+      in >> __tmp_in_tmp308;
     }
     Arr1DIdxRowM(tmp308, 608, i0) = (party == SERVER) ? __tmp_in_tmp308 : 0;
   }
@@ -6053,7 +6054,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp309;
   for (uint64_t i0 = (uint64_t)0; i0 < 608; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp309;
+      in >> __tmp_in_tmp309;
     }
     Arr1DIdxRowM(tmp309, 608, i0) = (party == SERVER) ? __tmp_in_tmp309 : 0;
   }
@@ -6067,7 +6068,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
       for (uint64_t i2 = (uint64_t)0; i2 < 608; i2++) {
         for (uint64_t i3 = (uint64_t)0; i3 < 128; i3++) {
           if ((party == SERVER)) {
-            cin >> __tmp_in_tmp310;
+            in >> __tmp_in_tmp310;
           }
           Arr4DIdxRowM(tmp310, 1, 1, 608, 128, i0, i1, i2, i3) =
               (party == SERVER) ? __tmp_in_tmp310 : 0;
@@ -6082,7 +6083,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp311;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp311;
+      in >> __tmp_in_tmp311;
     }
     Arr1DIdxRowM(tmp311, 128, i0) = (party == SERVER) ? __tmp_in_tmp311 : 0;
   }
@@ -6093,7 +6094,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp312;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp312;
+      in >> __tmp_in_tmp312;
     }
     Arr1DIdxRowM(tmp312, 128, i0) = (party == SERVER) ? __tmp_in_tmp312 : 0;
   }
@@ -6104,7 +6105,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp313;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp313;
+      in >> __tmp_in_tmp313;
     }
     Arr1DIdxRowM(tmp313, 128, i0) = (party == SERVER) ? __tmp_in_tmp313 : 0;
   }
@@ -6115,7 +6116,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp314;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp314;
+      in >> __tmp_in_tmp314;
     }
     Arr1DIdxRowM(tmp314, 128, i0) = (party == SERVER) ? __tmp_in_tmp314 : 0;
   }
@@ -6129,7 +6130,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
       for (uint64_t i2 = (uint64_t)0; i2 < 128; i2++) {
         for (uint64_t i3 = (uint64_t)0; i3 < 32; i3++) {
           if ((party == SERVER)) {
-            cin >> __tmp_in_tmp315;
+            in >> __tmp_in_tmp315;
           }
           Arr4DIdxRowM(tmp315, 3, 3, 128, 32, i0, i1, i2, i3) =
               (party == SERVER) ? __tmp_in_tmp315 : 0;
@@ -6144,7 +6145,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp316;
   for (uint64_t i0 = (uint64_t)0; i0 < 640; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp316;
+      in >> __tmp_in_tmp316;
     }
     Arr1DIdxRowM(tmp316, 640, i0) = (party == SERVER) ? __tmp_in_tmp316 : 0;
   }
@@ -6155,7 +6156,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp317;
   for (uint64_t i0 = (uint64_t)0; i0 < 640; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp317;
+      in >> __tmp_in_tmp317;
     }
     Arr1DIdxRowM(tmp317, 640, i0) = (party == SERVER) ? __tmp_in_tmp317 : 0;
   }
@@ -6166,7 +6167,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp318;
   for (uint64_t i0 = (uint64_t)0; i0 < 640; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp318;
+      in >> __tmp_in_tmp318;
     }
     Arr1DIdxRowM(tmp318, 640, i0) = (party == SERVER) ? __tmp_in_tmp318 : 0;
   }
@@ -6177,7 +6178,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp319;
   for (uint64_t i0 = (uint64_t)0; i0 < 640; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp319;
+      in >> __tmp_in_tmp319;
     }
     Arr1DIdxRowM(tmp319, 640, i0) = (party == SERVER) ? __tmp_in_tmp319 : 0;
   }
@@ -6191,7 +6192,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
       for (uint64_t i2 = (uint64_t)0; i2 < 640; i2++) {
         for (uint64_t i3 = (uint64_t)0; i3 < 128; i3++) {
           if ((party == SERVER)) {
-            cin >> __tmp_in_tmp320;
+            in >> __tmp_in_tmp320;
           }
           Arr4DIdxRowM(tmp320, 1, 1, 640, 128, i0, i1, i2, i3) =
               (party == SERVER) ? __tmp_in_tmp320 : 0;
@@ -6206,7 +6207,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp321;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp321;
+      in >> __tmp_in_tmp321;
     }
     Arr1DIdxRowM(tmp321, 128, i0) = (party == SERVER) ? __tmp_in_tmp321 : 0;
   }
@@ -6217,7 +6218,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp322;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp322;
+      in >> __tmp_in_tmp322;
     }
     Arr1DIdxRowM(tmp322, 128, i0) = (party == SERVER) ? __tmp_in_tmp322 : 0;
   }
@@ -6228,7 +6229,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp323;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp323;
+      in >> __tmp_in_tmp323;
     }
     Arr1DIdxRowM(tmp323, 128, i0) = (party == SERVER) ? __tmp_in_tmp323 : 0;
   }
@@ -6239,7 +6240,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp324;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp324;
+      in >> __tmp_in_tmp324;
     }
     Arr1DIdxRowM(tmp324, 128, i0) = (party == SERVER) ? __tmp_in_tmp324 : 0;
   }
@@ -6253,7 +6254,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
       for (uint64_t i2 = (uint64_t)0; i2 < 128; i2++) {
         for (uint64_t i3 = (uint64_t)0; i3 < 32; i3++) {
           if ((party == SERVER)) {
-            cin >> __tmp_in_tmp325;
+            in >> __tmp_in_tmp325;
           }
           Arr4DIdxRowM(tmp325, 3, 3, 128, 32, i0, i1, i2, i3) =
               (party == SERVER) ? __tmp_in_tmp325 : 0;
@@ -6268,7 +6269,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp326;
   for (uint64_t i0 = (uint64_t)0; i0 < 672; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp326;
+      in >> __tmp_in_tmp326;
     }
     Arr1DIdxRowM(tmp326, 672, i0) = (party == SERVER) ? __tmp_in_tmp326 : 0;
   }
@@ -6279,7 +6280,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp327;
   for (uint64_t i0 = (uint64_t)0; i0 < 672; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp327;
+      in >> __tmp_in_tmp327;
     }
     Arr1DIdxRowM(tmp327, 672, i0) = (party == SERVER) ? __tmp_in_tmp327 : 0;
   }
@@ -6290,7 +6291,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp328;
   for (uint64_t i0 = (uint64_t)0; i0 < 672; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp328;
+      in >> __tmp_in_tmp328;
     }
     Arr1DIdxRowM(tmp328, 672, i0) = (party == SERVER) ? __tmp_in_tmp328 : 0;
   }
@@ -6301,7 +6302,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp329;
   for (uint64_t i0 = (uint64_t)0; i0 < 672; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp329;
+      in >> __tmp_in_tmp329;
     }
     Arr1DIdxRowM(tmp329, 672, i0) = (party == SERVER) ? __tmp_in_tmp329 : 0;
   }
@@ -6315,7 +6316,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
       for (uint64_t i2 = (uint64_t)0; i2 < 672; i2++) {
         for (uint64_t i3 = (uint64_t)0; i3 < 128; i3++) {
           if ((party == SERVER)) {
-            cin >> __tmp_in_tmp330;
+            in >> __tmp_in_tmp330;
           }
           Arr4DIdxRowM(tmp330, 1, 1, 672, 128, i0, i1, i2, i3) =
               (party == SERVER) ? __tmp_in_tmp330 : 0;
@@ -6330,7 +6331,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp331;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp331;
+      in >> __tmp_in_tmp331;
     }
     Arr1DIdxRowM(tmp331, 128, i0) = (party == SERVER) ? __tmp_in_tmp331 : 0;
   }
@@ -6341,7 +6342,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp332;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp332;
+      in >> __tmp_in_tmp332;
     }
     Arr1DIdxRowM(tmp332, 128, i0) = (party == SERVER) ? __tmp_in_tmp332 : 0;
   }
@@ -6352,7 +6353,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp333;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp333;
+      in >> __tmp_in_tmp333;
     }
     Arr1DIdxRowM(tmp333, 128, i0) = (party == SERVER) ? __tmp_in_tmp333 : 0;
   }
@@ -6363,7 +6364,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp334;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp334;
+      in >> __tmp_in_tmp334;
     }
     Arr1DIdxRowM(tmp334, 128, i0) = (party == SERVER) ? __tmp_in_tmp334 : 0;
   }
@@ -6377,7 +6378,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
       for (uint64_t i2 = (uint64_t)0; i2 < 128; i2++) {
         for (uint64_t i3 = (uint64_t)0; i3 < 32; i3++) {
           if ((party == SERVER)) {
-            cin >> __tmp_in_tmp335;
+            in >> __tmp_in_tmp335;
           }
           Arr4DIdxRowM(tmp335, 3, 3, 128, 32, i0, i1, i2, i3) =
               (party == SERVER) ? __tmp_in_tmp335 : 0;
@@ -6392,7 +6393,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp336;
   for (uint64_t i0 = (uint64_t)0; i0 < 704; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp336;
+      in >> __tmp_in_tmp336;
     }
     Arr1DIdxRowM(tmp336, 704, i0) = (party == SERVER) ? __tmp_in_tmp336 : 0;
   }
@@ -6403,7 +6404,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp337;
   for (uint64_t i0 = (uint64_t)0; i0 < 704; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp337;
+      in >> __tmp_in_tmp337;
     }
     Arr1DIdxRowM(tmp337, 704, i0) = (party == SERVER) ? __tmp_in_tmp337 : 0;
   }
@@ -6414,7 +6415,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp338;
   for (uint64_t i0 = (uint64_t)0; i0 < 704; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp338;
+      in >> __tmp_in_tmp338;
     }
     Arr1DIdxRowM(tmp338, 704, i0) = (party == SERVER) ? __tmp_in_tmp338 : 0;
   }
@@ -6425,7 +6426,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp339;
   for (uint64_t i0 = (uint64_t)0; i0 < 704; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp339;
+      in >> __tmp_in_tmp339;
     }
     Arr1DIdxRowM(tmp339, 704, i0) = (party == SERVER) ? __tmp_in_tmp339 : 0;
   }
@@ -6439,7 +6440,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
       for (uint64_t i2 = (uint64_t)0; i2 < 704; i2++) {
         for (uint64_t i3 = (uint64_t)0; i3 < 128; i3++) {
           if ((party == SERVER)) {
-            cin >> __tmp_in_tmp340;
+            in >> __tmp_in_tmp340;
           }
           Arr4DIdxRowM(tmp340, 1, 1, 704, 128, i0, i1, i2, i3) =
               (party == SERVER) ? __tmp_in_tmp340 : 0;
@@ -6454,7 +6455,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp341;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp341;
+      in >> __tmp_in_tmp341;
     }
     Arr1DIdxRowM(tmp341, 128, i0) = (party == SERVER) ? __tmp_in_tmp341 : 0;
   }
@@ -6465,7 +6466,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp342;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp342;
+      in >> __tmp_in_tmp342;
     }
     Arr1DIdxRowM(tmp342, 128, i0) = (party == SERVER) ? __tmp_in_tmp342 : 0;
   }
@@ -6476,7 +6477,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp343;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp343;
+      in >> __tmp_in_tmp343;
     }
     Arr1DIdxRowM(tmp343, 128, i0) = (party == SERVER) ? __tmp_in_tmp343 : 0;
   }
@@ -6487,7 +6488,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp344;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp344;
+      in >> __tmp_in_tmp344;
     }
     Arr1DIdxRowM(tmp344, 128, i0) = (party == SERVER) ? __tmp_in_tmp344 : 0;
   }
@@ -6501,7 +6502,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
       for (uint64_t i2 = (uint64_t)0; i2 < 128; i2++) {
         for (uint64_t i3 = (uint64_t)0; i3 < 32; i3++) {
           if ((party == SERVER)) {
-            cin >> __tmp_in_tmp345;
+            in >> __tmp_in_tmp345;
           }
           Arr4DIdxRowM(tmp345, 3, 3, 128, 32, i0, i1, i2, i3) =
               (party == SERVER) ? __tmp_in_tmp345 : 0;
@@ -6516,7 +6517,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp346;
   for (uint64_t i0 = (uint64_t)0; i0 < 736; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp346;
+      in >> __tmp_in_tmp346;
     }
     Arr1DIdxRowM(tmp346, 736, i0) = (party == SERVER) ? __tmp_in_tmp346 : 0;
   }
@@ -6527,7 +6528,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp347;
   for (uint64_t i0 = (uint64_t)0; i0 < 736; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp347;
+      in >> __tmp_in_tmp347;
     }
     Arr1DIdxRowM(tmp347, 736, i0) = (party == SERVER) ? __tmp_in_tmp347 : 0;
   }
@@ -6538,7 +6539,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp348;
   for (uint64_t i0 = (uint64_t)0; i0 < 736; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp348;
+      in >> __tmp_in_tmp348;
     }
     Arr1DIdxRowM(tmp348, 736, i0) = (party == SERVER) ? __tmp_in_tmp348 : 0;
   }
@@ -6549,7 +6550,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp349;
   for (uint64_t i0 = (uint64_t)0; i0 < 736; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp349;
+      in >> __tmp_in_tmp349;
     }
     Arr1DIdxRowM(tmp349, 736, i0) = (party == SERVER) ? __tmp_in_tmp349 : 0;
   }
@@ -6563,7 +6564,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
       for (uint64_t i2 = (uint64_t)0; i2 < 736; i2++) {
         for (uint64_t i3 = (uint64_t)0; i3 < 128; i3++) {
           if ((party == SERVER)) {
-            cin >> __tmp_in_tmp350;
+            in >> __tmp_in_tmp350;
           }
           Arr4DIdxRowM(tmp350, 1, 1, 736, 128, i0, i1, i2, i3) =
               (party == SERVER) ? __tmp_in_tmp350 : 0;
@@ -6578,7 +6579,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp351;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp351;
+      in >> __tmp_in_tmp351;
     }
     Arr1DIdxRowM(tmp351, 128, i0) = (party == SERVER) ? __tmp_in_tmp351 : 0;
   }
@@ -6589,7 +6590,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp352;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp352;
+      in >> __tmp_in_tmp352;
     }
     Arr1DIdxRowM(tmp352, 128, i0) = (party == SERVER) ? __tmp_in_tmp352 : 0;
   }
@@ -6600,7 +6601,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp353;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp353;
+      in >> __tmp_in_tmp353;
     }
     Arr1DIdxRowM(tmp353, 128, i0) = (party == SERVER) ? __tmp_in_tmp353 : 0;
   }
@@ -6611,7 +6612,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp354;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp354;
+      in >> __tmp_in_tmp354;
     }
     Arr1DIdxRowM(tmp354, 128, i0) = (party == SERVER) ? __tmp_in_tmp354 : 0;
   }
@@ -6625,7 +6626,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
       for (uint64_t i2 = (uint64_t)0; i2 < 128; i2++) {
         for (uint64_t i3 = (uint64_t)0; i3 < 32; i3++) {
           if ((party == SERVER)) {
-            cin >> __tmp_in_tmp355;
+            in >> __tmp_in_tmp355;
           }
           Arr4DIdxRowM(tmp355, 3, 3, 128, 32, i0, i1, i2, i3) =
               (party == SERVER) ? __tmp_in_tmp355 : 0;
@@ -6640,7 +6641,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp356;
   for (uint64_t i0 = (uint64_t)0; i0 < 768; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp356;
+      in >> __tmp_in_tmp356;
     }
     Arr1DIdxRowM(tmp356, 768, i0) = (party == SERVER) ? __tmp_in_tmp356 : 0;
   }
@@ -6651,7 +6652,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp357;
   for (uint64_t i0 = (uint64_t)0; i0 < 768; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp357;
+      in >> __tmp_in_tmp357;
     }
     Arr1DIdxRowM(tmp357, 768, i0) = (party == SERVER) ? __tmp_in_tmp357 : 0;
   }
@@ -6662,7 +6663,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp358;
   for (uint64_t i0 = (uint64_t)0; i0 < 768; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp358;
+      in >> __tmp_in_tmp358;
     }
     Arr1DIdxRowM(tmp358, 768, i0) = (party == SERVER) ? __tmp_in_tmp358 : 0;
   }
@@ -6673,7 +6674,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp359;
   for (uint64_t i0 = (uint64_t)0; i0 < 768; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp359;
+      in >> __tmp_in_tmp359;
     }
     Arr1DIdxRowM(tmp359, 768, i0) = (party == SERVER) ? __tmp_in_tmp359 : 0;
   }
@@ -6687,7 +6688,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
       for (uint64_t i2 = (uint64_t)0; i2 < 768; i2++) {
         for (uint64_t i3 = (uint64_t)0; i3 < 128; i3++) {
           if ((party == SERVER)) {
-            cin >> __tmp_in_tmp360;
+            in >> __tmp_in_tmp360;
           }
           Arr4DIdxRowM(tmp360, 1, 1, 768, 128, i0, i1, i2, i3) =
               (party == SERVER) ? __tmp_in_tmp360 : 0;
@@ -6702,7 +6703,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp361;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp361;
+      in >> __tmp_in_tmp361;
     }
     Arr1DIdxRowM(tmp361, 128, i0) = (party == SERVER) ? __tmp_in_tmp361 : 0;
   }
@@ -6713,7 +6714,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp362;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp362;
+      in >> __tmp_in_tmp362;
     }
     Arr1DIdxRowM(tmp362, 128, i0) = (party == SERVER) ? __tmp_in_tmp362 : 0;
   }
@@ -6724,7 +6725,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp363;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp363;
+      in >> __tmp_in_tmp363;
     }
     Arr1DIdxRowM(tmp363, 128, i0) = (party == SERVER) ? __tmp_in_tmp363 : 0;
   }
@@ -6735,7 +6736,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp364;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp364;
+      in >> __tmp_in_tmp364;
     }
     Arr1DIdxRowM(tmp364, 128, i0) = (party == SERVER) ? __tmp_in_tmp364 : 0;
   }
@@ -6749,7 +6750,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
       for (uint64_t i2 = (uint64_t)0; i2 < 128; i2++) {
         for (uint64_t i3 = (uint64_t)0; i3 < 32; i3++) {
           if ((party == SERVER)) {
-            cin >> __tmp_in_tmp365;
+            in >> __tmp_in_tmp365;
           }
           Arr4DIdxRowM(tmp365, 3, 3, 128, 32, i0, i1, i2, i3) =
               (party == SERVER) ? __tmp_in_tmp365 : 0;
@@ -6764,7 +6765,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp366;
   for (uint64_t i0 = (uint64_t)0; i0 < 800; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp366;
+      in >> __tmp_in_tmp366;
     }
     Arr1DIdxRowM(tmp366, 800, i0) = (party == SERVER) ? __tmp_in_tmp366 : 0;
   }
@@ -6775,7 +6776,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp367;
   for (uint64_t i0 = (uint64_t)0; i0 < 800; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp367;
+      in >> __tmp_in_tmp367;
     }
     Arr1DIdxRowM(tmp367, 800, i0) = (party == SERVER) ? __tmp_in_tmp367 : 0;
   }
@@ -6786,7 +6787,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp368;
   for (uint64_t i0 = (uint64_t)0; i0 < 800; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp368;
+      in >> __tmp_in_tmp368;
     }
     Arr1DIdxRowM(tmp368, 800, i0) = (party == SERVER) ? __tmp_in_tmp368 : 0;
   }
@@ -6797,7 +6798,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp369;
   for (uint64_t i0 = (uint64_t)0; i0 < 800; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp369;
+      in >> __tmp_in_tmp369;
     }
     Arr1DIdxRowM(tmp369, 800, i0) = (party == SERVER) ? __tmp_in_tmp369 : 0;
   }
@@ -6811,7 +6812,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
       for (uint64_t i2 = (uint64_t)0; i2 < 800; i2++) {
         for (uint64_t i3 = (uint64_t)0; i3 < 128; i3++) {
           if ((party == SERVER)) {
-            cin >> __tmp_in_tmp370;
+            in >> __tmp_in_tmp370;
           }
           Arr4DIdxRowM(tmp370, 1, 1, 800, 128, i0, i1, i2, i3) =
               (party == SERVER) ? __tmp_in_tmp370 : 0;
@@ -6826,7 +6827,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp371;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp371;
+      in >> __tmp_in_tmp371;
     }
     Arr1DIdxRowM(tmp371, 128, i0) = (party == SERVER) ? __tmp_in_tmp371 : 0;
   }
@@ -6837,7 +6838,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp372;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp372;
+      in >> __tmp_in_tmp372;
     }
     Arr1DIdxRowM(tmp372, 128, i0) = (party == SERVER) ? __tmp_in_tmp372 : 0;
   }
@@ -6848,7 +6849,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp373;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp373;
+      in >> __tmp_in_tmp373;
     }
     Arr1DIdxRowM(tmp373, 128, i0) = (party == SERVER) ? __tmp_in_tmp373 : 0;
   }
@@ -6859,7 +6860,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp374;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp374;
+      in >> __tmp_in_tmp374;
     }
     Arr1DIdxRowM(tmp374, 128, i0) = (party == SERVER) ? __tmp_in_tmp374 : 0;
   }
@@ -6873,7 +6874,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
       for (uint64_t i2 = (uint64_t)0; i2 < 128; i2++) {
         for (uint64_t i3 = (uint64_t)0; i3 < 32; i3++) {
           if ((party == SERVER)) {
-            cin >> __tmp_in_tmp375;
+            in >> __tmp_in_tmp375;
           }
           Arr4DIdxRowM(tmp375, 3, 3, 128, 32, i0, i1, i2, i3) =
               (party == SERVER) ? __tmp_in_tmp375 : 0;
@@ -6888,7 +6889,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp376;
   for (uint64_t i0 = (uint64_t)0; i0 < 832; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp376;
+      in >> __tmp_in_tmp376;
     }
     Arr1DIdxRowM(tmp376, 832, i0) = (party == SERVER) ? __tmp_in_tmp376 : 0;
   }
@@ -6899,7 +6900,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp377;
   for (uint64_t i0 = (uint64_t)0; i0 < 832; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp377;
+      in >> __tmp_in_tmp377;
     }
     Arr1DIdxRowM(tmp377, 832, i0) = (party == SERVER) ? __tmp_in_tmp377 : 0;
   }
@@ -6910,7 +6911,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp378;
   for (uint64_t i0 = (uint64_t)0; i0 < 832; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp378;
+      in >> __tmp_in_tmp378;
     }
     Arr1DIdxRowM(tmp378, 832, i0) = (party == SERVER) ? __tmp_in_tmp378 : 0;
   }
@@ -6921,7 +6922,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp379;
   for (uint64_t i0 = (uint64_t)0; i0 < 832; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp379;
+      in >> __tmp_in_tmp379;
     }
     Arr1DIdxRowM(tmp379, 832, i0) = (party == SERVER) ? __tmp_in_tmp379 : 0;
   }
@@ -6935,7 +6936,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
       for (uint64_t i2 = (uint64_t)0; i2 < 832; i2++) {
         for (uint64_t i3 = (uint64_t)0; i3 < 128; i3++) {
           if ((party == SERVER)) {
-            cin >> __tmp_in_tmp380;
+            in >> __tmp_in_tmp380;
           }
           Arr4DIdxRowM(tmp380, 1, 1, 832, 128, i0, i1, i2, i3) =
               (party == SERVER) ? __tmp_in_tmp380 : 0;
@@ -6950,7 +6951,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp381;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp381;
+      in >> __tmp_in_tmp381;
     }
     Arr1DIdxRowM(tmp381, 128, i0) = (party == SERVER) ? __tmp_in_tmp381 : 0;
   }
@@ -6961,7 +6962,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp382;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp382;
+      in >> __tmp_in_tmp382;
     }
     Arr1DIdxRowM(tmp382, 128, i0) = (party == SERVER) ? __tmp_in_tmp382 : 0;
   }
@@ -6972,7 +6973,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp383;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp383;
+      in >> __tmp_in_tmp383;
     }
     Arr1DIdxRowM(tmp383, 128, i0) = (party == SERVER) ? __tmp_in_tmp383 : 0;
   }
@@ -6983,7 +6984,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp384;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp384;
+      in >> __tmp_in_tmp384;
     }
     Arr1DIdxRowM(tmp384, 128, i0) = (party == SERVER) ? __tmp_in_tmp384 : 0;
   }
@@ -6997,7 +6998,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
       for (uint64_t i2 = (uint64_t)0; i2 < 128; i2++) {
         for (uint64_t i3 = (uint64_t)0; i3 < 32; i3++) {
           if ((party == SERVER)) {
-            cin >> __tmp_in_tmp385;
+            in >> __tmp_in_tmp385;
           }
           Arr4DIdxRowM(tmp385, 3, 3, 128, 32, i0, i1, i2, i3) =
               (party == SERVER) ? __tmp_in_tmp385 : 0;
@@ -7012,7 +7013,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp386;
   for (uint64_t i0 = (uint64_t)0; i0 < 864; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp386;
+      in >> __tmp_in_tmp386;
     }
     Arr1DIdxRowM(tmp386, 864, i0) = (party == SERVER) ? __tmp_in_tmp386 : 0;
   }
@@ -7023,7 +7024,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp387;
   for (uint64_t i0 = (uint64_t)0; i0 < 864; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp387;
+      in >> __tmp_in_tmp387;
     }
     Arr1DIdxRowM(tmp387, 864, i0) = (party == SERVER) ? __tmp_in_tmp387 : 0;
   }
@@ -7034,7 +7035,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp388;
   for (uint64_t i0 = (uint64_t)0; i0 < 864; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp388;
+      in >> __tmp_in_tmp388;
     }
     Arr1DIdxRowM(tmp388, 864, i0) = (party == SERVER) ? __tmp_in_tmp388 : 0;
   }
@@ -7045,7 +7046,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp389;
   for (uint64_t i0 = (uint64_t)0; i0 < 864; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp389;
+      in >> __tmp_in_tmp389;
     }
     Arr1DIdxRowM(tmp389, 864, i0) = (party == SERVER) ? __tmp_in_tmp389 : 0;
   }
@@ -7059,7 +7060,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
       for (uint64_t i2 = (uint64_t)0; i2 < 864; i2++) {
         for (uint64_t i3 = (uint64_t)0; i3 < 128; i3++) {
           if ((party == SERVER)) {
-            cin >> __tmp_in_tmp390;
+            in >> __tmp_in_tmp390;
           }
           Arr4DIdxRowM(tmp390, 1, 1, 864, 128, i0, i1, i2, i3) =
               (party == SERVER) ? __tmp_in_tmp390 : 0;
@@ -7074,7 +7075,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp391;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp391;
+      in >> __tmp_in_tmp391;
     }
     Arr1DIdxRowM(tmp391, 128, i0) = (party == SERVER) ? __tmp_in_tmp391 : 0;
   }
@@ -7085,7 +7086,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp392;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp392;
+      in >> __tmp_in_tmp392;
     }
     Arr1DIdxRowM(tmp392, 128, i0) = (party == SERVER) ? __tmp_in_tmp392 : 0;
   }
@@ -7096,7 +7097,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp393;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp393;
+      in >> __tmp_in_tmp393;
     }
     Arr1DIdxRowM(tmp393, 128, i0) = (party == SERVER) ? __tmp_in_tmp393 : 0;
   }
@@ -7107,7 +7108,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp394;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp394;
+      in >> __tmp_in_tmp394;
     }
     Arr1DIdxRowM(tmp394, 128, i0) = (party == SERVER) ? __tmp_in_tmp394 : 0;
   }
@@ -7121,7 +7122,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
       for (uint64_t i2 = (uint64_t)0; i2 < 128; i2++) {
         for (uint64_t i3 = (uint64_t)0; i3 < 32; i3++) {
           if ((party == SERVER)) {
-            cin >> __tmp_in_tmp395;
+            in >> __tmp_in_tmp395;
           }
           Arr4DIdxRowM(tmp395, 3, 3, 128, 32, i0, i1, i2, i3) =
               (party == SERVER) ? __tmp_in_tmp395 : 0;
@@ -7136,7 +7137,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp396;
   for (uint64_t i0 = (uint64_t)0; i0 < 896; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp396;
+      in >> __tmp_in_tmp396;
     }
     Arr1DIdxRowM(tmp396, 896, i0) = (party == SERVER) ? __tmp_in_tmp396 : 0;
   }
@@ -7147,7 +7148,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp397;
   for (uint64_t i0 = (uint64_t)0; i0 < 896; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp397;
+      in >> __tmp_in_tmp397;
     }
     Arr1DIdxRowM(tmp397, 896, i0) = (party == SERVER) ? __tmp_in_tmp397 : 0;
   }
@@ -7158,7 +7159,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp398;
   for (uint64_t i0 = (uint64_t)0; i0 < 896; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp398;
+      in >> __tmp_in_tmp398;
     }
     Arr1DIdxRowM(tmp398, 896, i0) = (party == SERVER) ? __tmp_in_tmp398 : 0;
   }
@@ -7169,7 +7170,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp399;
   for (uint64_t i0 = (uint64_t)0; i0 < 896; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp399;
+      in >> __tmp_in_tmp399;
     }
     Arr1DIdxRowM(tmp399, 896, i0) = (party == SERVER) ? __tmp_in_tmp399 : 0;
   }
@@ -7183,7 +7184,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
       for (uint64_t i2 = (uint64_t)0; i2 < 896; i2++) {
         for (uint64_t i3 = (uint64_t)0; i3 < 128; i3++) {
           if ((party == SERVER)) {
-            cin >> __tmp_in_tmp400;
+            in >> __tmp_in_tmp400;
           }
           Arr4DIdxRowM(tmp400, 1, 1, 896, 128, i0, i1, i2, i3) =
               (party == SERVER) ? __tmp_in_tmp400 : 0;
@@ -7198,7 +7199,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp401;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp401;
+      in >> __tmp_in_tmp401;
     }
     Arr1DIdxRowM(tmp401, 128, i0) = (party == SERVER) ? __tmp_in_tmp401 : 0;
   }
@@ -7209,7 +7210,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp402;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp402;
+      in >> __tmp_in_tmp402;
     }
     Arr1DIdxRowM(tmp402, 128, i0) = (party == SERVER) ? __tmp_in_tmp402 : 0;
   }
@@ -7220,7 +7221,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp403;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp403;
+      in >> __tmp_in_tmp403;
     }
     Arr1DIdxRowM(tmp403, 128, i0) = (party == SERVER) ? __tmp_in_tmp403 : 0;
   }
@@ -7231,7 +7232,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp404;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp404;
+      in >> __tmp_in_tmp404;
     }
     Arr1DIdxRowM(tmp404, 128, i0) = (party == SERVER) ? __tmp_in_tmp404 : 0;
   }
@@ -7245,7 +7246,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
       for (uint64_t i2 = (uint64_t)0; i2 < 128; i2++) {
         for (uint64_t i3 = (uint64_t)0; i3 < 32; i3++) {
           if ((party == SERVER)) {
-            cin >> __tmp_in_tmp405;
+            in >> __tmp_in_tmp405;
           }
           Arr4DIdxRowM(tmp405, 3, 3, 128, 32, i0, i1, i2, i3) =
               (party == SERVER) ? __tmp_in_tmp405 : 0;
@@ -7260,7 +7261,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp406;
   for (uint64_t i0 = (uint64_t)0; i0 < 928; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp406;
+      in >> __tmp_in_tmp406;
     }
     Arr1DIdxRowM(tmp406, 928, i0) = (party == SERVER) ? __tmp_in_tmp406 : 0;
   }
@@ -7271,7 +7272,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp407;
   for (uint64_t i0 = (uint64_t)0; i0 < 928; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp407;
+      in >> __tmp_in_tmp407;
     }
     Arr1DIdxRowM(tmp407, 928, i0) = (party == SERVER) ? __tmp_in_tmp407 : 0;
   }
@@ -7282,7 +7283,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp408;
   for (uint64_t i0 = (uint64_t)0; i0 < 928; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp408;
+      in >> __tmp_in_tmp408;
     }
     Arr1DIdxRowM(tmp408, 928, i0) = (party == SERVER) ? __tmp_in_tmp408 : 0;
   }
@@ -7293,7 +7294,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp409;
   for (uint64_t i0 = (uint64_t)0; i0 < 928; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp409;
+      in >> __tmp_in_tmp409;
     }
     Arr1DIdxRowM(tmp409, 928, i0) = (party == SERVER) ? __tmp_in_tmp409 : 0;
   }
@@ -7307,7 +7308,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
       for (uint64_t i2 = (uint64_t)0; i2 < 928; i2++) {
         for (uint64_t i3 = (uint64_t)0; i3 < 128; i3++) {
           if ((party == SERVER)) {
-            cin >> __tmp_in_tmp410;
+            in >> __tmp_in_tmp410;
           }
           Arr4DIdxRowM(tmp410, 1, 1, 928, 128, i0, i1, i2, i3) =
               (party == SERVER) ? __tmp_in_tmp410 : 0;
@@ -7322,7 +7323,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp411;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp411;
+      in >> __tmp_in_tmp411;
     }
     Arr1DIdxRowM(tmp411, 128, i0) = (party == SERVER) ? __tmp_in_tmp411 : 0;
   }
@@ -7333,7 +7334,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp412;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp412;
+      in >> __tmp_in_tmp412;
     }
     Arr1DIdxRowM(tmp412, 128, i0) = (party == SERVER) ? __tmp_in_tmp412 : 0;
   }
@@ -7344,7 +7345,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp413;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp413;
+      in >> __tmp_in_tmp413;
     }
     Arr1DIdxRowM(tmp413, 128, i0) = (party == SERVER) ? __tmp_in_tmp413 : 0;
   }
@@ -7355,7 +7356,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp414;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp414;
+      in >> __tmp_in_tmp414;
     }
     Arr1DIdxRowM(tmp414, 128, i0) = (party == SERVER) ? __tmp_in_tmp414 : 0;
   }
@@ -7369,7 +7370,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
       for (uint64_t i2 = (uint64_t)0; i2 < 128; i2++) {
         for (uint64_t i3 = (uint64_t)0; i3 < 32; i3++) {
           if ((party == SERVER)) {
-            cin >> __tmp_in_tmp415;
+            in >> __tmp_in_tmp415;
           }
           Arr4DIdxRowM(tmp415, 3, 3, 128, 32, i0, i1, i2, i3) =
               (party == SERVER) ? __tmp_in_tmp415 : 0;
@@ -7384,7 +7385,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp416;
   for (uint64_t i0 = (uint64_t)0; i0 < 960; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp416;
+      in >> __tmp_in_tmp416;
     }
     Arr1DIdxRowM(tmp416, 960, i0) = (party == SERVER) ? __tmp_in_tmp416 : 0;
   }
@@ -7395,7 +7396,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp417;
   for (uint64_t i0 = (uint64_t)0; i0 < 960; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp417;
+      in >> __tmp_in_tmp417;
     }
     Arr1DIdxRowM(tmp417, 960, i0) = (party == SERVER) ? __tmp_in_tmp417 : 0;
   }
@@ -7406,7 +7407,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp418;
   for (uint64_t i0 = (uint64_t)0; i0 < 960; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp418;
+      in >> __tmp_in_tmp418;
     }
     Arr1DIdxRowM(tmp418, 960, i0) = (party == SERVER) ? __tmp_in_tmp418 : 0;
   }
@@ -7417,7 +7418,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp419;
   for (uint64_t i0 = (uint64_t)0; i0 < 960; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp419;
+      in >> __tmp_in_tmp419;
     }
     Arr1DIdxRowM(tmp419, 960, i0) = (party == SERVER) ? __tmp_in_tmp419 : 0;
   }
@@ -7431,7 +7432,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
       for (uint64_t i2 = (uint64_t)0; i2 < 960; i2++) {
         for (uint64_t i3 = (uint64_t)0; i3 < 128; i3++) {
           if ((party == SERVER)) {
-            cin >> __tmp_in_tmp420;
+            in >> __tmp_in_tmp420;
           }
           Arr4DIdxRowM(tmp420, 1, 1, 960, 128, i0, i1, i2, i3) =
               (party == SERVER) ? __tmp_in_tmp420 : 0;
@@ -7446,7 +7447,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp421;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp421;
+      in >> __tmp_in_tmp421;
     }
     Arr1DIdxRowM(tmp421, 128, i0) = (party == SERVER) ? __tmp_in_tmp421 : 0;
   }
@@ -7457,7 +7458,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp422;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp422;
+      in >> __tmp_in_tmp422;
     }
     Arr1DIdxRowM(tmp422, 128, i0) = (party == SERVER) ? __tmp_in_tmp422 : 0;
   }
@@ -7468,7 +7469,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp423;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp423;
+      in >> __tmp_in_tmp423;
     }
     Arr1DIdxRowM(tmp423, 128, i0) = (party == SERVER) ? __tmp_in_tmp423 : 0;
   }
@@ -7479,7 +7480,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp424;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp424;
+      in >> __tmp_in_tmp424;
     }
     Arr1DIdxRowM(tmp424, 128, i0) = (party == SERVER) ? __tmp_in_tmp424 : 0;
   }
@@ -7493,7 +7494,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
       for (uint64_t i2 = (uint64_t)0; i2 < 128; i2++) {
         for (uint64_t i3 = (uint64_t)0; i3 < 32; i3++) {
           if ((party == SERVER)) {
-            cin >> __tmp_in_tmp425;
+            in >> __tmp_in_tmp425;
           }
           Arr4DIdxRowM(tmp425, 3, 3, 128, 32, i0, i1, i2, i3) =
               (party == SERVER) ? __tmp_in_tmp425 : 0;
@@ -7508,7 +7509,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp426;
   for (uint64_t i0 = (uint64_t)0; i0 < 992; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp426;
+      in >> __tmp_in_tmp426;
     }
     Arr1DIdxRowM(tmp426, 992, i0) = (party == SERVER) ? __tmp_in_tmp426 : 0;
   }
@@ -7519,7 +7520,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp427;
   for (uint64_t i0 = (uint64_t)0; i0 < 992; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp427;
+      in >> __tmp_in_tmp427;
     }
     Arr1DIdxRowM(tmp427, 992, i0) = (party == SERVER) ? __tmp_in_tmp427 : 0;
   }
@@ -7530,7 +7531,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp428;
   for (uint64_t i0 = (uint64_t)0; i0 < 992; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp428;
+      in >> __tmp_in_tmp428;
     }
     Arr1DIdxRowM(tmp428, 992, i0) = (party == SERVER) ? __tmp_in_tmp428 : 0;
   }
@@ -7541,7 +7542,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp429;
   for (uint64_t i0 = (uint64_t)0; i0 < 992; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp429;
+      in >> __tmp_in_tmp429;
     }
     Arr1DIdxRowM(tmp429, 992, i0) = (party == SERVER) ? __tmp_in_tmp429 : 0;
   }
@@ -7555,7 +7556,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
       for (uint64_t i2 = (uint64_t)0; i2 < 992; i2++) {
         for (uint64_t i3 = (uint64_t)0; i3 < 128; i3++) {
           if ((party == SERVER)) {
-            cin >> __tmp_in_tmp430;
+            in >> __tmp_in_tmp430;
           }
           Arr4DIdxRowM(tmp430, 1, 1, 992, 128, i0, i1, i2, i3) =
               (party == SERVER) ? __tmp_in_tmp430 : 0;
@@ -7570,7 +7571,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp431;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp431;
+      in >> __tmp_in_tmp431;
     }
     Arr1DIdxRowM(tmp431, 128, i0) = (party == SERVER) ? __tmp_in_tmp431 : 0;
   }
@@ -7581,7 +7582,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp432;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp432;
+      in >> __tmp_in_tmp432;
     }
     Arr1DIdxRowM(tmp432, 128, i0) = (party == SERVER) ? __tmp_in_tmp432 : 0;
   }
@@ -7592,7 +7593,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp433;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp433;
+      in >> __tmp_in_tmp433;
     }
     Arr1DIdxRowM(tmp433, 128, i0) = (party == SERVER) ? __tmp_in_tmp433 : 0;
   }
@@ -7603,7 +7604,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp434;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp434;
+      in >> __tmp_in_tmp434;
     }
     Arr1DIdxRowM(tmp434, 128, i0) = (party == SERVER) ? __tmp_in_tmp434 : 0;
   }
@@ -7617,7 +7618,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
       for (uint64_t i2 = (uint64_t)0; i2 < 128; i2++) {
         for (uint64_t i3 = (uint64_t)0; i3 < 32; i3++) {
           if ((party == SERVER)) {
-            cin >> __tmp_in_tmp435;
+            in >> __tmp_in_tmp435;
           }
           Arr4DIdxRowM(tmp435, 3, 3, 128, 32, i0, i1, i2, i3) =
               (party == SERVER) ? __tmp_in_tmp435 : 0;
@@ -7632,7 +7633,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp436;
   for (uint64_t i0 = (uint64_t)0; i0 < 1024; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp436;
+      in >> __tmp_in_tmp436;
     }
     Arr1DIdxRowM(tmp436, 1024, i0) = (party == SERVER) ? __tmp_in_tmp436 : 0;
   }
@@ -7643,7 +7644,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp437;
   for (uint64_t i0 = (uint64_t)0; i0 < 1024; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp437;
+      in >> __tmp_in_tmp437;
     }
     Arr1DIdxRowM(tmp437, 1024, i0) = (party == SERVER) ? __tmp_in_tmp437 : 0;
   }
@@ -7654,7 +7655,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp438;
   for (uint64_t i0 = (uint64_t)0; i0 < 1024; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp438;
+      in >> __tmp_in_tmp438;
     }
     Arr1DIdxRowM(tmp438, 1024, i0) = (party == SERVER) ? __tmp_in_tmp438 : 0;
   }
@@ -7665,7 +7666,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp439;
   for (uint64_t i0 = (uint64_t)0; i0 < 1024; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp439;
+      in >> __tmp_in_tmp439;
     }
     Arr1DIdxRowM(tmp439, 1024, i0) = (party == SERVER) ? __tmp_in_tmp439 : 0;
   }
@@ -7679,7 +7680,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
       for (uint64_t i2 = (uint64_t)0; i2 < 1024; i2++) {
         for (uint64_t i3 = (uint64_t)0; i3 < 512; i3++) {
           if ((party == SERVER)) {
-            cin >> __tmp_in_tmp440;
+            in >> __tmp_in_tmp440;
           }
           Arr4DIdxRowM(tmp440, 1, 1, 1024, 512, i0, i1, i2, i3) =
               (party == SERVER) ? __tmp_in_tmp440 : 0;
@@ -7694,7 +7695,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp441;
   for (uint64_t i0 = (uint64_t)0; i0 < 512; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp441;
+      in >> __tmp_in_tmp441;
     }
     Arr1DIdxRowM(tmp441, 512, i0) = (party == SERVER) ? __tmp_in_tmp441 : 0;
   }
@@ -7705,7 +7706,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp442;
   for (uint64_t i0 = (uint64_t)0; i0 < 512; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp442;
+      in >> __tmp_in_tmp442;
     }
     Arr1DIdxRowM(tmp442, 512, i0) = (party == SERVER) ? __tmp_in_tmp442 : 0;
   }
@@ -7716,7 +7717,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp443;
   for (uint64_t i0 = (uint64_t)0; i0 < 512; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp443;
+      in >> __tmp_in_tmp443;
     }
     Arr1DIdxRowM(tmp443, 512, i0) = (party == SERVER) ? __tmp_in_tmp443 : 0;
   }
@@ -7727,7 +7728,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp444;
   for (uint64_t i0 = (uint64_t)0; i0 < 512; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp444;
+      in >> __tmp_in_tmp444;
     }
     Arr1DIdxRowM(tmp444, 512, i0) = (party == SERVER) ? __tmp_in_tmp444 : 0;
   }
@@ -7741,7 +7742,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
       for (uint64_t i2 = (uint64_t)0; i2 < 512; i2++) {
         for (uint64_t i3 = (uint64_t)0; i3 < 128; i3++) {
           if ((party == SERVER)) {
-            cin >> __tmp_in_tmp445;
+            in >> __tmp_in_tmp445;
           }
           Arr4DIdxRowM(tmp445, 1, 1, 512, 128, i0, i1, i2, i3) =
               (party == SERVER) ? __tmp_in_tmp445 : 0;
@@ -7756,7 +7757,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp446;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp446;
+      in >> __tmp_in_tmp446;
     }
     Arr1DIdxRowM(tmp446, 128, i0) = (party == SERVER) ? __tmp_in_tmp446 : 0;
   }
@@ -7767,7 +7768,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp447;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp447;
+      in >> __tmp_in_tmp447;
     }
     Arr1DIdxRowM(tmp447, 128, i0) = (party == SERVER) ? __tmp_in_tmp447 : 0;
   }
@@ -7778,7 +7779,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp448;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp448;
+      in >> __tmp_in_tmp448;
     }
     Arr1DIdxRowM(tmp448, 128, i0) = (party == SERVER) ? __tmp_in_tmp448 : 0;
   }
@@ -7789,7 +7790,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp449;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp449;
+      in >> __tmp_in_tmp449;
     }
     Arr1DIdxRowM(tmp449, 128, i0) = (party == SERVER) ? __tmp_in_tmp449 : 0;
   }
@@ -7803,7 +7804,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
       for (uint64_t i2 = (uint64_t)0; i2 < 128; i2++) {
         for (uint64_t i3 = (uint64_t)0; i3 < 32; i3++) {
           if ((party == SERVER)) {
-            cin >> __tmp_in_tmp450;
+            in >> __tmp_in_tmp450;
           }
           Arr4DIdxRowM(tmp450, 3, 3, 128, 32, i0, i1, i2, i3) =
               (party == SERVER) ? __tmp_in_tmp450 : 0;
@@ -7818,7 +7819,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp451;
   for (uint64_t i0 = (uint64_t)0; i0 < 544; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp451;
+      in >> __tmp_in_tmp451;
     }
     Arr1DIdxRowM(tmp451, 544, i0) = (party == SERVER) ? __tmp_in_tmp451 : 0;
   }
@@ -7829,7 +7830,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp452;
   for (uint64_t i0 = (uint64_t)0; i0 < 544; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp452;
+      in >> __tmp_in_tmp452;
     }
     Arr1DIdxRowM(tmp452, 544, i0) = (party == SERVER) ? __tmp_in_tmp452 : 0;
   }
@@ -7840,7 +7841,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp453;
   for (uint64_t i0 = (uint64_t)0; i0 < 544; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp453;
+      in >> __tmp_in_tmp453;
     }
     Arr1DIdxRowM(tmp453, 544, i0) = (party == SERVER) ? __tmp_in_tmp453 : 0;
   }
@@ -7851,7 +7852,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp454;
   for (uint64_t i0 = (uint64_t)0; i0 < 544; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp454;
+      in >> __tmp_in_tmp454;
     }
     Arr1DIdxRowM(tmp454, 544, i0) = (party == SERVER) ? __tmp_in_tmp454 : 0;
   }
@@ -7865,7 +7866,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
       for (uint64_t i2 = (uint64_t)0; i2 < 544; i2++) {
         for (uint64_t i3 = (uint64_t)0; i3 < 128; i3++) {
           if ((party == SERVER)) {
-            cin >> __tmp_in_tmp455;
+            in >> __tmp_in_tmp455;
           }
           Arr4DIdxRowM(tmp455, 1, 1, 544, 128, i0, i1, i2, i3) =
               (party == SERVER) ? __tmp_in_tmp455 : 0;
@@ -7880,7 +7881,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp456;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp456;
+      in >> __tmp_in_tmp456;
     }
     Arr1DIdxRowM(tmp456, 128, i0) = (party == SERVER) ? __tmp_in_tmp456 : 0;
   }
@@ -7891,7 +7892,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp457;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp457;
+      in >> __tmp_in_tmp457;
     }
     Arr1DIdxRowM(tmp457, 128, i0) = (party == SERVER) ? __tmp_in_tmp457 : 0;
   }
@@ -7902,7 +7903,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp458;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp458;
+      in >> __tmp_in_tmp458;
     }
     Arr1DIdxRowM(tmp458, 128, i0) = (party == SERVER) ? __tmp_in_tmp458 : 0;
   }
@@ -7913,7 +7914,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp459;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp459;
+      in >> __tmp_in_tmp459;
     }
     Arr1DIdxRowM(tmp459, 128, i0) = (party == SERVER) ? __tmp_in_tmp459 : 0;
   }
@@ -7927,7 +7928,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
       for (uint64_t i2 = (uint64_t)0; i2 < 128; i2++) {
         for (uint64_t i3 = (uint64_t)0; i3 < 32; i3++) {
           if ((party == SERVER)) {
-            cin >> __tmp_in_tmp460;
+            in >> __tmp_in_tmp460;
           }
           Arr4DIdxRowM(tmp460, 3, 3, 128, 32, i0, i1, i2, i3) =
               (party == SERVER) ? __tmp_in_tmp460 : 0;
@@ -7942,7 +7943,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp461;
   for (uint64_t i0 = (uint64_t)0; i0 < 576; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp461;
+      in >> __tmp_in_tmp461;
     }
     Arr1DIdxRowM(tmp461, 576, i0) = (party == SERVER) ? __tmp_in_tmp461 : 0;
   }
@@ -7953,7 +7954,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp462;
   for (uint64_t i0 = (uint64_t)0; i0 < 576; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp462;
+      in >> __tmp_in_tmp462;
     }
     Arr1DIdxRowM(tmp462, 576, i0) = (party == SERVER) ? __tmp_in_tmp462 : 0;
   }
@@ -7964,7 +7965,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp463;
   for (uint64_t i0 = (uint64_t)0; i0 < 576; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp463;
+      in >> __tmp_in_tmp463;
     }
     Arr1DIdxRowM(tmp463, 576, i0) = (party == SERVER) ? __tmp_in_tmp463 : 0;
   }
@@ -7975,7 +7976,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp464;
   for (uint64_t i0 = (uint64_t)0; i0 < 576; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp464;
+      in >> __tmp_in_tmp464;
     }
     Arr1DIdxRowM(tmp464, 576, i0) = (party == SERVER) ? __tmp_in_tmp464 : 0;
   }
@@ -7989,7 +7990,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
       for (uint64_t i2 = (uint64_t)0; i2 < 576; i2++) {
         for (uint64_t i3 = (uint64_t)0; i3 < 128; i3++) {
           if ((party == SERVER)) {
-            cin >> __tmp_in_tmp465;
+            in >> __tmp_in_tmp465;
           }
           Arr4DIdxRowM(tmp465, 1, 1, 576, 128, i0, i1, i2, i3) =
               (party == SERVER) ? __tmp_in_tmp465 : 0;
@@ -8004,7 +8005,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp466;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp466;
+      in >> __tmp_in_tmp466;
     }
     Arr1DIdxRowM(tmp466, 128, i0) = (party == SERVER) ? __tmp_in_tmp466 : 0;
   }
@@ -8015,7 +8016,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp467;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp467;
+      in >> __tmp_in_tmp467;
     }
     Arr1DIdxRowM(tmp467, 128, i0) = (party == SERVER) ? __tmp_in_tmp467 : 0;
   }
@@ -8026,7 +8027,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp468;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp468;
+      in >> __tmp_in_tmp468;
     }
     Arr1DIdxRowM(tmp468, 128, i0) = (party == SERVER) ? __tmp_in_tmp468 : 0;
   }
@@ -8037,7 +8038,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp469;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp469;
+      in >> __tmp_in_tmp469;
     }
     Arr1DIdxRowM(tmp469, 128, i0) = (party == SERVER) ? __tmp_in_tmp469 : 0;
   }
@@ -8051,7 +8052,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
       for (uint64_t i2 = (uint64_t)0; i2 < 128; i2++) {
         for (uint64_t i3 = (uint64_t)0; i3 < 32; i3++) {
           if ((party == SERVER)) {
-            cin >> __tmp_in_tmp470;
+            in >> __tmp_in_tmp470;
           }
           Arr4DIdxRowM(tmp470, 3, 3, 128, 32, i0, i1, i2, i3) =
               (party == SERVER) ? __tmp_in_tmp470 : 0;
@@ -8066,7 +8067,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp471;
   for (uint64_t i0 = (uint64_t)0; i0 < 608; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp471;
+      in >> __tmp_in_tmp471;
     }
     Arr1DIdxRowM(tmp471, 608, i0) = (party == SERVER) ? __tmp_in_tmp471 : 0;
   }
@@ -8077,7 +8078,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp472;
   for (uint64_t i0 = (uint64_t)0; i0 < 608; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp472;
+      in >> __tmp_in_tmp472;
     }
     Arr1DIdxRowM(tmp472, 608, i0) = (party == SERVER) ? __tmp_in_tmp472 : 0;
   }
@@ -8088,7 +8089,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp473;
   for (uint64_t i0 = (uint64_t)0; i0 < 608; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp473;
+      in >> __tmp_in_tmp473;
     }
     Arr1DIdxRowM(tmp473, 608, i0) = (party == SERVER) ? __tmp_in_tmp473 : 0;
   }
@@ -8099,7 +8100,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp474;
   for (uint64_t i0 = (uint64_t)0; i0 < 608; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp474;
+      in >> __tmp_in_tmp474;
     }
     Arr1DIdxRowM(tmp474, 608, i0) = (party == SERVER) ? __tmp_in_tmp474 : 0;
   }
@@ -8113,7 +8114,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
       for (uint64_t i2 = (uint64_t)0; i2 < 608; i2++) {
         for (uint64_t i3 = (uint64_t)0; i3 < 128; i3++) {
           if ((party == SERVER)) {
-            cin >> __tmp_in_tmp475;
+            in >> __tmp_in_tmp475;
           }
           Arr4DIdxRowM(tmp475, 1, 1, 608, 128, i0, i1, i2, i3) =
               (party == SERVER) ? __tmp_in_tmp475 : 0;
@@ -8128,7 +8129,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp476;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp476;
+      in >> __tmp_in_tmp476;
     }
     Arr1DIdxRowM(tmp476, 128, i0) = (party == SERVER) ? __tmp_in_tmp476 : 0;
   }
@@ -8139,7 +8140,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp477;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp477;
+      in >> __tmp_in_tmp477;
     }
     Arr1DIdxRowM(tmp477, 128, i0) = (party == SERVER) ? __tmp_in_tmp477 : 0;
   }
@@ -8150,7 +8151,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp478;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp478;
+      in >> __tmp_in_tmp478;
     }
     Arr1DIdxRowM(tmp478, 128, i0) = (party == SERVER) ? __tmp_in_tmp478 : 0;
   }
@@ -8161,7 +8162,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp479;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp479;
+      in >> __tmp_in_tmp479;
     }
     Arr1DIdxRowM(tmp479, 128, i0) = (party == SERVER) ? __tmp_in_tmp479 : 0;
   }
@@ -8175,7 +8176,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
       for (uint64_t i2 = (uint64_t)0; i2 < 128; i2++) {
         for (uint64_t i3 = (uint64_t)0; i3 < 32; i3++) {
           if ((party == SERVER)) {
-            cin >> __tmp_in_tmp480;
+            in >> __tmp_in_tmp480;
           }
           Arr4DIdxRowM(tmp480, 3, 3, 128, 32, i0, i1, i2, i3) =
               (party == SERVER) ? __tmp_in_tmp480 : 0;
@@ -8190,7 +8191,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp481;
   for (uint64_t i0 = (uint64_t)0; i0 < 640; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp481;
+      in >> __tmp_in_tmp481;
     }
     Arr1DIdxRowM(tmp481, 640, i0) = (party == SERVER) ? __tmp_in_tmp481 : 0;
   }
@@ -8201,7 +8202,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp482;
   for (uint64_t i0 = (uint64_t)0; i0 < 640; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp482;
+      in >> __tmp_in_tmp482;
     }
     Arr1DIdxRowM(tmp482, 640, i0) = (party == SERVER) ? __tmp_in_tmp482 : 0;
   }
@@ -8212,7 +8213,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp483;
   for (uint64_t i0 = (uint64_t)0; i0 < 640; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp483;
+      in >> __tmp_in_tmp483;
     }
     Arr1DIdxRowM(tmp483, 640, i0) = (party == SERVER) ? __tmp_in_tmp483 : 0;
   }
@@ -8223,7 +8224,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp484;
   for (uint64_t i0 = (uint64_t)0; i0 < 640; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp484;
+      in >> __tmp_in_tmp484;
     }
     Arr1DIdxRowM(tmp484, 640, i0) = (party == SERVER) ? __tmp_in_tmp484 : 0;
   }
@@ -8237,7 +8238,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
       for (uint64_t i2 = (uint64_t)0; i2 < 640; i2++) {
         for (uint64_t i3 = (uint64_t)0; i3 < 128; i3++) {
           if ((party == SERVER)) {
-            cin >> __tmp_in_tmp485;
+            in >> __tmp_in_tmp485;
           }
           Arr4DIdxRowM(tmp485, 1, 1, 640, 128, i0, i1, i2, i3) =
               (party == SERVER) ? __tmp_in_tmp485 : 0;
@@ -8252,7 +8253,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp486;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp486;
+      in >> __tmp_in_tmp486;
     }
     Arr1DIdxRowM(tmp486, 128, i0) = (party == SERVER) ? __tmp_in_tmp486 : 0;
   }
@@ -8263,7 +8264,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp487;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp487;
+      in >> __tmp_in_tmp487;
     }
     Arr1DIdxRowM(tmp487, 128, i0) = (party == SERVER) ? __tmp_in_tmp487 : 0;
   }
@@ -8274,7 +8275,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp488;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp488;
+      in >> __tmp_in_tmp488;
     }
     Arr1DIdxRowM(tmp488, 128, i0) = (party == SERVER) ? __tmp_in_tmp488 : 0;
   }
@@ -8285,7 +8286,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp489;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp489;
+      in >> __tmp_in_tmp489;
     }
     Arr1DIdxRowM(tmp489, 128, i0) = (party == SERVER) ? __tmp_in_tmp489 : 0;
   }
@@ -8299,7 +8300,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
       for (uint64_t i2 = (uint64_t)0; i2 < 128; i2++) {
         for (uint64_t i3 = (uint64_t)0; i3 < 32; i3++) {
           if ((party == SERVER)) {
-            cin >> __tmp_in_tmp490;
+            in >> __tmp_in_tmp490;
           }
           Arr4DIdxRowM(tmp490, 3, 3, 128, 32, i0, i1, i2, i3) =
               (party == SERVER) ? __tmp_in_tmp490 : 0;
@@ -8314,7 +8315,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp491;
   for (uint64_t i0 = (uint64_t)0; i0 < 672; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp491;
+      in >> __tmp_in_tmp491;
     }
     Arr1DIdxRowM(tmp491, 672, i0) = (party == SERVER) ? __tmp_in_tmp491 : 0;
   }
@@ -8325,7 +8326,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp492;
   for (uint64_t i0 = (uint64_t)0; i0 < 672; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp492;
+      in >> __tmp_in_tmp492;
     }
     Arr1DIdxRowM(tmp492, 672, i0) = (party == SERVER) ? __tmp_in_tmp492 : 0;
   }
@@ -8336,7 +8337,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp493;
   for (uint64_t i0 = (uint64_t)0; i0 < 672; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp493;
+      in >> __tmp_in_tmp493;
     }
     Arr1DIdxRowM(tmp493, 672, i0) = (party == SERVER) ? __tmp_in_tmp493 : 0;
   }
@@ -8347,7 +8348,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp494;
   for (uint64_t i0 = (uint64_t)0; i0 < 672; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp494;
+      in >> __tmp_in_tmp494;
     }
     Arr1DIdxRowM(tmp494, 672, i0) = (party == SERVER) ? __tmp_in_tmp494 : 0;
   }
@@ -8361,7 +8362,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
       for (uint64_t i2 = (uint64_t)0; i2 < 672; i2++) {
         for (uint64_t i3 = (uint64_t)0; i3 < 128; i3++) {
           if ((party == SERVER)) {
-            cin >> __tmp_in_tmp495;
+            in >> __tmp_in_tmp495;
           }
           Arr4DIdxRowM(tmp495, 1, 1, 672, 128, i0, i1, i2, i3) =
               (party == SERVER) ? __tmp_in_tmp495 : 0;
@@ -8376,7 +8377,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp496;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp496;
+      in >> __tmp_in_tmp496;
     }
     Arr1DIdxRowM(tmp496, 128, i0) = (party == SERVER) ? __tmp_in_tmp496 : 0;
   }
@@ -8387,7 +8388,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp497;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp497;
+      in >> __tmp_in_tmp497;
     }
     Arr1DIdxRowM(tmp497, 128, i0) = (party == SERVER) ? __tmp_in_tmp497 : 0;
   }
@@ -8398,7 +8399,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp498;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp498;
+      in >> __tmp_in_tmp498;
     }
     Arr1DIdxRowM(tmp498, 128, i0) = (party == SERVER) ? __tmp_in_tmp498 : 0;
   }
@@ -8409,7 +8410,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp499;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp499;
+      in >> __tmp_in_tmp499;
     }
     Arr1DIdxRowM(tmp499, 128, i0) = (party == SERVER) ? __tmp_in_tmp499 : 0;
   }
@@ -8423,7 +8424,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
       for (uint64_t i2 = (uint64_t)0; i2 < 128; i2++) {
         for (uint64_t i3 = (uint64_t)0; i3 < 32; i3++) {
           if ((party == SERVER)) {
-            cin >> __tmp_in_tmp500;
+            in >> __tmp_in_tmp500;
           }
           Arr4DIdxRowM(tmp500, 3, 3, 128, 32, i0, i1, i2, i3) =
               (party == SERVER) ? __tmp_in_tmp500 : 0;
@@ -8438,7 +8439,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp501;
   for (uint64_t i0 = (uint64_t)0; i0 < 704; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp501;
+      in >> __tmp_in_tmp501;
     }
     Arr1DIdxRowM(tmp501, 704, i0) = (party == SERVER) ? __tmp_in_tmp501 : 0;
   }
@@ -8449,7 +8450,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp502;
   for (uint64_t i0 = (uint64_t)0; i0 < 704; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp502;
+      in >> __tmp_in_tmp502;
     }
     Arr1DIdxRowM(tmp502, 704, i0) = (party == SERVER) ? __tmp_in_tmp502 : 0;
   }
@@ -8460,7 +8461,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp503;
   for (uint64_t i0 = (uint64_t)0; i0 < 704; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp503;
+      in >> __tmp_in_tmp503;
     }
     Arr1DIdxRowM(tmp503, 704, i0) = (party == SERVER) ? __tmp_in_tmp503 : 0;
   }
@@ -8471,7 +8472,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp504;
   for (uint64_t i0 = (uint64_t)0; i0 < 704; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp504;
+      in >> __tmp_in_tmp504;
     }
     Arr1DIdxRowM(tmp504, 704, i0) = (party == SERVER) ? __tmp_in_tmp504 : 0;
   }
@@ -8485,7 +8486,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
       for (uint64_t i2 = (uint64_t)0; i2 < 704; i2++) {
         for (uint64_t i3 = (uint64_t)0; i3 < 128; i3++) {
           if ((party == SERVER)) {
-            cin >> __tmp_in_tmp505;
+            in >> __tmp_in_tmp505;
           }
           Arr4DIdxRowM(tmp505, 1, 1, 704, 128, i0, i1, i2, i3) =
               (party == SERVER) ? __tmp_in_tmp505 : 0;
@@ -8500,7 +8501,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp506;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp506;
+      in >> __tmp_in_tmp506;
     }
     Arr1DIdxRowM(tmp506, 128, i0) = (party == SERVER) ? __tmp_in_tmp506 : 0;
   }
@@ -8511,7 +8512,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp507;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp507;
+      in >> __tmp_in_tmp507;
     }
     Arr1DIdxRowM(tmp507, 128, i0) = (party == SERVER) ? __tmp_in_tmp507 : 0;
   }
@@ -8522,7 +8523,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp508;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp508;
+      in >> __tmp_in_tmp508;
     }
     Arr1DIdxRowM(tmp508, 128, i0) = (party == SERVER) ? __tmp_in_tmp508 : 0;
   }
@@ -8533,7 +8534,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp509;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp509;
+      in >> __tmp_in_tmp509;
     }
     Arr1DIdxRowM(tmp509, 128, i0) = (party == SERVER) ? __tmp_in_tmp509 : 0;
   }
@@ -8547,7 +8548,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
       for (uint64_t i2 = (uint64_t)0; i2 < 128; i2++) {
         for (uint64_t i3 = (uint64_t)0; i3 < 32; i3++) {
           if ((party == SERVER)) {
-            cin >> __tmp_in_tmp510;
+            in >> __tmp_in_tmp510;
           }
           Arr4DIdxRowM(tmp510, 3, 3, 128, 32, i0, i1, i2, i3) =
               (party == SERVER) ? __tmp_in_tmp510 : 0;
@@ -8562,7 +8563,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp511;
   for (uint64_t i0 = (uint64_t)0; i0 < 736; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp511;
+      in >> __tmp_in_tmp511;
     }
     Arr1DIdxRowM(tmp511, 736, i0) = (party == SERVER) ? __tmp_in_tmp511 : 0;
   }
@@ -8573,7 +8574,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp512;
   for (uint64_t i0 = (uint64_t)0; i0 < 736; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp512;
+      in >> __tmp_in_tmp512;
     }
     Arr1DIdxRowM(tmp512, 736, i0) = (party == SERVER) ? __tmp_in_tmp512 : 0;
   }
@@ -8584,7 +8585,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp513;
   for (uint64_t i0 = (uint64_t)0; i0 < 736; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp513;
+      in >> __tmp_in_tmp513;
     }
     Arr1DIdxRowM(tmp513, 736, i0) = (party == SERVER) ? __tmp_in_tmp513 : 0;
   }
@@ -8595,7 +8596,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp514;
   for (uint64_t i0 = (uint64_t)0; i0 < 736; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp514;
+      in >> __tmp_in_tmp514;
     }
     Arr1DIdxRowM(tmp514, 736, i0) = (party == SERVER) ? __tmp_in_tmp514 : 0;
   }
@@ -8609,7 +8610,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
       for (uint64_t i2 = (uint64_t)0; i2 < 736; i2++) {
         for (uint64_t i3 = (uint64_t)0; i3 < 128; i3++) {
           if ((party == SERVER)) {
-            cin >> __tmp_in_tmp515;
+            in >> __tmp_in_tmp515;
           }
           Arr4DIdxRowM(tmp515, 1, 1, 736, 128, i0, i1, i2, i3) =
               (party == SERVER) ? __tmp_in_tmp515 : 0;
@@ -8624,7 +8625,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp516;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp516;
+      in >> __tmp_in_tmp516;
     }
     Arr1DIdxRowM(tmp516, 128, i0) = (party == SERVER) ? __tmp_in_tmp516 : 0;
   }
@@ -8635,7 +8636,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp517;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp517;
+      in >> __tmp_in_tmp517;
     }
     Arr1DIdxRowM(tmp517, 128, i0) = (party == SERVER) ? __tmp_in_tmp517 : 0;
   }
@@ -8646,7 +8647,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp518;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp518;
+      in >> __tmp_in_tmp518;
     }
     Arr1DIdxRowM(tmp518, 128, i0) = (party == SERVER) ? __tmp_in_tmp518 : 0;
   }
@@ -8657,7 +8658,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp519;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp519;
+      in >> __tmp_in_tmp519;
     }
     Arr1DIdxRowM(tmp519, 128, i0) = (party == SERVER) ? __tmp_in_tmp519 : 0;
   }
@@ -8671,7 +8672,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
       for (uint64_t i2 = (uint64_t)0; i2 < 128; i2++) {
         for (uint64_t i3 = (uint64_t)0; i3 < 32; i3++) {
           if ((party == SERVER)) {
-            cin >> __tmp_in_tmp520;
+            in >> __tmp_in_tmp520;
           }
           Arr4DIdxRowM(tmp520, 3, 3, 128, 32, i0, i1, i2, i3) =
               (party == SERVER) ? __tmp_in_tmp520 : 0;
@@ -8686,7 +8687,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp521;
   for (uint64_t i0 = (uint64_t)0; i0 < 768; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp521;
+      in >> __tmp_in_tmp521;
     }
     Arr1DIdxRowM(tmp521, 768, i0) = (party == SERVER) ? __tmp_in_tmp521 : 0;
   }
@@ -8697,7 +8698,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp522;
   for (uint64_t i0 = (uint64_t)0; i0 < 768; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp522;
+      in >> __tmp_in_tmp522;
     }
     Arr1DIdxRowM(tmp522, 768, i0) = (party == SERVER) ? __tmp_in_tmp522 : 0;
   }
@@ -8708,7 +8709,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp523;
   for (uint64_t i0 = (uint64_t)0; i0 < 768; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp523;
+      in >> __tmp_in_tmp523;
     }
     Arr1DIdxRowM(tmp523, 768, i0) = (party == SERVER) ? __tmp_in_tmp523 : 0;
   }
@@ -8719,7 +8720,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp524;
   for (uint64_t i0 = (uint64_t)0; i0 < 768; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp524;
+      in >> __tmp_in_tmp524;
     }
     Arr1DIdxRowM(tmp524, 768, i0) = (party == SERVER) ? __tmp_in_tmp524 : 0;
   }
@@ -8733,7 +8734,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
       for (uint64_t i2 = (uint64_t)0; i2 < 768; i2++) {
         for (uint64_t i3 = (uint64_t)0; i3 < 128; i3++) {
           if ((party == SERVER)) {
-            cin >> __tmp_in_tmp525;
+            in >> __tmp_in_tmp525;
           }
           Arr4DIdxRowM(tmp525, 1, 1, 768, 128, i0, i1, i2, i3) =
               (party == SERVER) ? __tmp_in_tmp525 : 0;
@@ -8748,7 +8749,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp526;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp526;
+      in >> __tmp_in_tmp526;
     }
     Arr1DIdxRowM(tmp526, 128, i0) = (party == SERVER) ? __tmp_in_tmp526 : 0;
   }
@@ -8759,7 +8760,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp527;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp527;
+      in >> __tmp_in_tmp527;
     }
     Arr1DIdxRowM(tmp527, 128, i0) = (party == SERVER) ? __tmp_in_tmp527 : 0;
   }
@@ -8770,7 +8771,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp528;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp528;
+      in >> __tmp_in_tmp528;
     }
     Arr1DIdxRowM(tmp528, 128, i0) = (party == SERVER) ? __tmp_in_tmp528 : 0;
   }
@@ -8781,7 +8782,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp529;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp529;
+      in >> __tmp_in_tmp529;
     }
     Arr1DIdxRowM(tmp529, 128, i0) = (party == SERVER) ? __tmp_in_tmp529 : 0;
   }
@@ -8795,7 +8796,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
       for (uint64_t i2 = (uint64_t)0; i2 < 128; i2++) {
         for (uint64_t i3 = (uint64_t)0; i3 < 32; i3++) {
           if ((party == SERVER)) {
-            cin >> __tmp_in_tmp530;
+            in >> __tmp_in_tmp530;
           }
           Arr4DIdxRowM(tmp530, 3, 3, 128, 32, i0, i1, i2, i3) =
               (party == SERVER) ? __tmp_in_tmp530 : 0;
@@ -8810,7 +8811,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp531;
   for (uint64_t i0 = (uint64_t)0; i0 < 800; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp531;
+      in >> __tmp_in_tmp531;
     }
     Arr1DIdxRowM(tmp531, 800, i0) = (party == SERVER) ? __tmp_in_tmp531 : 0;
   }
@@ -8821,7 +8822,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp532;
   for (uint64_t i0 = (uint64_t)0; i0 < 800; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp532;
+      in >> __tmp_in_tmp532;
     }
     Arr1DIdxRowM(tmp532, 800, i0) = (party == SERVER) ? __tmp_in_tmp532 : 0;
   }
@@ -8832,7 +8833,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp533;
   for (uint64_t i0 = (uint64_t)0; i0 < 800; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp533;
+      in >> __tmp_in_tmp533;
     }
     Arr1DIdxRowM(tmp533, 800, i0) = (party == SERVER) ? __tmp_in_tmp533 : 0;
   }
@@ -8843,7 +8844,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp534;
   for (uint64_t i0 = (uint64_t)0; i0 < 800; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp534;
+      in >> __tmp_in_tmp534;
     }
     Arr1DIdxRowM(tmp534, 800, i0) = (party == SERVER) ? __tmp_in_tmp534 : 0;
   }
@@ -8857,7 +8858,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
       for (uint64_t i2 = (uint64_t)0; i2 < 800; i2++) {
         for (uint64_t i3 = (uint64_t)0; i3 < 128; i3++) {
           if ((party == SERVER)) {
-            cin >> __tmp_in_tmp535;
+            in >> __tmp_in_tmp535;
           }
           Arr4DIdxRowM(tmp535, 1, 1, 800, 128, i0, i1, i2, i3) =
               (party == SERVER) ? __tmp_in_tmp535 : 0;
@@ -8872,7 +8873,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp536;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp536;
+      in >> __tmp_in_tmp536;
     }
     Arr1DIdxRowM(tmp536, 128, i0) = (party == SERVER) ? __tmp_in_tmp536 : 0;
   }
@@ -8883,7 +8884,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp537;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp537;
+      in >> __tmp_in_tmp537;
     }
     Arr1DIdxRowM(tmp537, 128, i0) = (party == SERVER) ? __tmp_in_tmp537 : 0;
   }
@@ -8894,7 +8895,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp538;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp538;
+      in >> __tmp_in_tmp538;
     }
     Arr1DIdxRowM(tmp538, 128, i0) = (party == SERVER) ? __tmp_in_tmp538 : 0;
   }
@@ -8905,7 +8906,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp539;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp539;
+      in >> __tmp_in_tmp539;
     }
     Arr1DIdxRowM(tmp539, 128, i0) = (party == SERVER) ? __tmp_in_tmp539 : 0;
   }
@@ -8919,7 +8920,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
       for (uint64_t i2 = (uint64_t)0; i2 < 128; i2++) {
         for (uint64_t i3 = (uint64_t)0; i3 < 32; i3++) {
           if ((party == SERVER)) {
-            cin >> __tmp_in_tmp540;
+            in >> __tmp_in_tmp540;
           }
           Arr4DIdxRowM(tmp540, 3, 3, 128, 32, i0, i1, i2, i3) =
               (party == SERVER) ? __tmp_in_tmp540 : 0;
@@ -8934,7 +8935,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp541;
   for (uint64_t i0 = (uint64_t)0; i0 < 832; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp541;
+      in >> __tmp_in_tmp541;
     }
     Arr1DIdxRowM(tmp541, 832, i0) = (party == SERVER) ? __tmp_in_tmp541 : 0;
   }
@@ -8945,7 +8946,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp542;
   for (uint64_t i0 = (uint64_t)0; i0 < 832; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp542;
+      in >> __tmp_in_tmp542;
     }
     Arr1DIdxRowM(tmp542, 832, i0) = (party == SERVER) ? __tmp_in_tmp542 : 0;
   }
@@ -8956,7 +8957,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp543;
   for (uint64_t i0 = (uint64_t)0; i0 < 832; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp543;
+      in >> __tmp_in_tmp543;
     }
     Arr1DIdxRowM(tmp543, 832, i0) = (party == SERVER) ? __tmp_in_tmp543 : 0;
   }
@@ -8967,7 +8968,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp544;
   for (uint64_t i0 = (uint64_t)0; i0 < 832; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp544;
+      in >> __tmp_in_tmp544;
     }
     Arr1DIdxRowM(tmp544, 832, i0) = (party == SERVER) ? __tmp_in_tmp544 : 0;
   }
@@ -8981,7 +8982,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
       for (uint64_t i2 = (uint64_t)0; i2 < 832; i2++) {
         for (uint64_t i3 = (uint64_t)0; i3 < 128; i3++) {
           if ((party == SERVER)) {
-            cin >> __tmp_in_tmp545;
+            in >> __tmp_in_tmp545;
           }
           Arr4DIdxRowM(tmp545, 1, 1, 832, 128, i0, i1, i2, i3) =
               (party == SERVER) ? __tmp_in_tmp545 : 0;
@@ -8996,7 +8997,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp546;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp546;
+      in >> __tmp_in_tmp546;
     }
     Arr1DIdxRowM(tmp546, 128, i0) = (party == SERVER) ? __tmp_in_tmp546 : 0;
   }
@@ -9007,7 +9008,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp547;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp547;
+      in >> __tmp_in_tmp547;
     }
     Arr1DIdxRowM(tmp547, 128, i0) = (party == SERVER) ? __tmp_in_tmp547 : 0;
   }
@@ -9018,7 +9019,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp548;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp548;
+      in >> __tmp_in_tmp548;
     }
     Arr1DIdxRowM(tmp548, 128, i0) = (party == SERVER) ? __tmp_in_tmp548 : 0;
   }
@@ -9029,7 +9030,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp549;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp549;
+      in >> __tmp_in_tmp549;
     }
     Arr1DIdxRowM(tmp549, 128, i0) = (party == SERVER) ? __tmp_in_tmp549 : 0;
   }
@@ -9043,7 +9044,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
       for (uint64_t i2 = (uint64_t)0; i2 < 128; i2++) {
         for (uint64_t i3 = (uint64_t)0; i3 < 32; i3++) {
           if ((party == SERVER)) {
-            cin >> __tmp_in_tmp550;
+            in >> __tmp_in_tmp550;
           }
           Arr4DIdxRowM(tmp550, 3, 3, 128, 32, i0, i1, i2, i3) =
               (party == SERVER) ? __tmp_in_tmp550 : 0;
@@ -9058,7 +9059,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp551;
   for (uint64_t i0 = (uint64_t)0; i0 < 864; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp551;
+      in >> __tmp_in_tmp551;
     }
     Arr1DIdxRowM(tmp551, 864, i0) = (party == SERVER) ? __tmp_in_tmp551 : 0;
   }
@@ -9069,7 +9070,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp552;
   for (uint64_t i0 = (uint64_t)0; i0 < 864; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp552;
+      in >> __tmp_in_tmp552;
     }
     Arr1DIdxRowM(tmp552, 864, i0) = (party == SERVER) ? __tmp_in_tmp552 : 0;
   }
@@ -9080,7 +9081,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp553;
   for (uint64_t i0 = (uint64_t)0; i0 < 864; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp553;
+      in >> __tmp_in_tmp553;
     }
     Arr1DIdxRowM(tmp553, 864, i0) = (party == SERVER) ? __tmp_in_tmp553 : 0;
   }
@@ -9091,7 +9092,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp554;
   for (uint64_t i0 = (uint64_t)0; i0 < 864; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp554;
+      in >> __tmp_in_tmp554;
     }
     Arr1DIdxRowM(tmp554, 864, i0) = (party == SERVER) ? __tmp_in_tmp554 : 0;
   }
@@ -9105,7 +9106,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
       for (uint64_t i2 = (uint64_t)0; i2 < 864; i2++) {
         for (uint64_t i3 = (uint64_t)0; i3 < 128; i3++) {
           if ((party == SERVER)) {
-            cin >> __tmp_in_tmp555;
+            in >> __tmp_in_tmp555;
           }
           Arr4DIdxRowM(tmp555, 1, 1, 864, 128, i0, i1, i2, i3) =
               (party == SERVER) ? __tmp_in_tmp555 : 0;
@@ -9120,7 +9121,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp556;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp556;
+      in >> __tmp_in_tmp556;
     }
     Arr1DIdxRowM(tmp556, 128, i0) = (party == SERVER) ? __tmp_in_tmp556 : 0;
   }
@@ -9131,7 +9132,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp557;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp557;
+      in >> __tmp_in_tmp557;
     }
     Arr1DIdxRowM(tmp557, 128, i0) = (party == SERVER) ? __tmp_in_tmp557 : 0;
   }
@@ -9142,7 +9143,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp558;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp558;
+      in >> __tmp_in_tmp558;
     }
     Arr1DIdxRowM(tmp558, 128, i0) = (party == SERVER) ? __tmp_in_tmp558 : 0;
   }
@@ -9153,7 +9154,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp559;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp559;
+      in >> __tmp_in_tmp559;
     }
     Arr1DIdxRowM(tmp559, 128, i0) = (party == SERVER) ? __tmp_in_tmp559 : 0;
   }
@@ -9167,7 +9168,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
       for (uint64_t i2 = (uint64_t)0; i2 < 128; i2++) {
         for (uint64_t i3 = (uint64_t)0; i3 < 32; i3++) {
           if ((party == SERVER)) {
-            cin >> __tmp_in_tmp560;
+            in >> __tmp_in_tmp560;
           }
           Arr4DIdxRowM(tmp560, 3, 3, 128, 32, i0, i1, i2, i3) =
               (party == SERVER) ? __tmp_in_tmp560 : 0;
@@ -9182,7 +9183,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp561;
   for (uint64_t i0 = (uint64_t)0; i0 < 896; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp561;
+      in >> __tmp_in_tmp561;
     }
     Arr1DIdxRowM(tmp561, 896, i0) = (party == SERVER) ? __tmp_in_tmp561 : 0;
   }
@@ -9193,7 +9194,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp562;
   for (uint64_t i0 = (uint64_t)0; i0 < 896; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp562;
+      in >> __tmp_in_tmp562;
     }
     Arr1DIdxRowM(tmp562, 896, i0) = (party == SERVER) ? __tmp_in_tmp562 : 0;
   }
@@ -9204,7 +9205,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp563;
   for (uint64_t i0 = (uint64_t)0; i0 < 896; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp563;
+      in >> __tmp_in_tmp563;
     }
     Arr1DIdxRowM(tmp563, 896, i0) = (party == SERVER) ? __tmp_in_tmp563 : 0;
   }
@@ -9215,7 +9216,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp564;
   for (uint64_t i0 = (uint64_t)0; i0 < 896; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp564;
+      in >> __tmp_in_tmp564;
     }
     Arr1DIdxRowM(tmp564, 896, i0) = (party == SERVER) ? __tmp_in_tmp564 : 0;
   }
@@ -9229,7 +9230,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
       for (uint64_t i2 = (uint64_t)0; i2 < 896; i2++) {
         for (uint64_t i3 = (uint64_t)0; i3 < 128; i3++) {
           if ((party == SERVER)) {
-            cin >> __tmp_in_tmp565;
+            in >> __tmp_in_tmp565;
           }
           Arr4DIdxRowM(tmp565, 1, 1, 896, 128, i0, i1, i2, i3) =
               (party == SERVER) ? __tmp_in_tmp565 : 0;
@@ -9244,7 +9245,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp566;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp566;
+      in >> __tmp_in_tmp566;
     }
     Arr1DIdxRowM(tmp566, 128, i0) = (party == SERVER) ? __tmp_in_tmp566 : 0;
   }
@@ -9255,7 +9256,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp567;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp567;
+      in >> __tmp_in_tmp567;
     }
     Arr1DIdxRowM(tmp567, 128, i0) = (party == SERVER) ? __tmp_in_tmp567 : 0;
   }
@@ -9266,7 +9267,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp568;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp568;
+      in >> __tmp_in_tmp568;
     }
     Arr1DIdxRowM(tmp568, 128, i0) = (party == SERVER) ? __tmp_in_tmp568 : 0;
   }
@@ -9277,7 +9278,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp569;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp569;
+      in >> __tmp_in_tmp569;
     }
     Arr1DIdxRowM(tmp569, 128, i0) = (party == SERVER) ? __tmp_in_tmp569 : 0;
   }
@@ -9291,7 +9292,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
       for (uint64_t i2 = (uint64_t)0; i2 < 128; i2++) {
         for (uint64_t i3 = (uint64_t)0; i3 < 32; i3++) {
           if ((party == SERVER)) {
-            cin >> __tmp_in_tmp570;
+            in >> __tmp_in_tmp570;
           }
           Arr4DIdxRowM(tmp570, 3, 3, 128, 32, i0, i1, i2, i3) =
               (party == SERVER) ? __tmp_in_tmp570 : 0;
@@ -9306,7 +9307,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp571;
   for (uint64_t i0 = (uint64_t)0; i0 < 928; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp571;
+      in >> __tmp_in_tmp571;
     }
     Arr1DIdxRowM(tmp571, 928, i0) = (party == SERVER) ? __tmp_in_tmp571 : 0;
   }
@@ -9317,7 +9318,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp572;
   for (uint64_t i0 = (uint64_t)0; i0 < 928; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp572;
+      in >> __tmp_in_tmp572;
     }
     Arr1DIdxRowM(tmp572, 928, i0) = (party == SERVER) ? __tmp_in_tmp572 : 0;
   }
@@ -9328,7 +9329,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp573;
   for (uint64_t i0 = (uint64_t)0; i0 < 928; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp573;
+      in >> __tmp_in_tmp573;
     }
     Arr1DIdxRowM(tmp573, 928, i0) = (party == SERVER) ? __tmp_in_tmp573 : 0;
   }
@@ -9339,7 +9340,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp574;
   for (uint64_t i0 = (uint64_t)0; i0 < 928; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp574;
+      in >> __tmp_in_tmp574;
     }
     Arr1DIdxRowM(tmp574, 928, i0) = (party == SERVER) ? __tmp_in_tmp574 : 0;
   }
@@ -9353,7 +9354,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
       for (uint64_t i2 = (uint64_t)0; i2 < 928; i2++) {
         for (uint64_t i3 = (uint64_t)0; i3 < 128; i3++) {
           if ((party == SERVER)) {
-            cin >> __tmp_in_tmp575;
+            in >> __tmp_in_tmp575;
           }
           Arr4DIdxRowM(tmp575, 1, 1, 928, 128, i0, i1, i2, i3) =
               (party == SERVER) ? __tmp_in_tmp575 : 0;
@@ -9368,7 +9369,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp576;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp576;
+      in >> __tmp_in_tmp576;
     }
     Arr1DIdxRowM(tmp576, 128, i0) = (party == SERVER) ? __tmp_in_tmp576 : 0;
   }
@@ -9379,7 +9380,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp577;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp577;
+      in >> __tmp_in_tmp577;
     }
     Arr1DIdxRowM(tmp577, 128, i0) = (party == SERVER) ? __tmp_in_tmp577 : 0;
   }
@@ -9390,7 +9391,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp578;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp578;
+      in >> __tmp_in_tmp578;
     }
     Arr1DIdxRowM(tmp578, 128, i0) = (party == SERVER) ? __tmp_in_tmp578 : 0;
   }
@@ -9401,7 +9402,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp579;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp579;
+      in >> __tmp_in_tmp579;
     }
     Arr1DIdxRowM(tmp579, 128, i0) = (party == SERVER) ? __tmp_in_tmp579 : 0;
   }
@@ -9415,7 +9416,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
       for (uint64_t i2 = (uint64_t)0; i2 < 128; i2++) {
         for (uint64_t i3 = (uint64_t)0; i3 < 32; i3++) {
           if ((party == SERVER)) {
-            cin >> __tmp_in_tmp580;
+            in >> __tmp_in_tmp580;
           }
           Arr4DIdxRowM(tmp580, 3, 3, 128, 32, i0, i1, i2, i3) =
               (party == SERVER) ? __tmp_in_tmp580 : 0;
@@ -9430,7 +9431,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp581;
   for (uint64_t i0 = (uint64_t)0; i0 < 960; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp581;
+      in >> __tmp_in_tmp581;
     }
     Arr1DIdxRowM(tmp581, 960, i0) = (party == SERVER) ? __tmp_in_tmp581 : 0;
   }
@@ -9441,7 +9442,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp582;
   for (uint64_t i0 = (uint64_t)0; i0 < 960; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp582;
+      in >> __tmp_in_tmp582;
     }
     Arr1DIdxRowM(tmp582, 960, i0) = (party == SERVER) ? __tmp_in_tmp582 : 0;
   }
@@ -9452,7 +9453,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp583;
   for (uint64_t i0 = (uint64_t)0; i0 < 960; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp583;
+      in >> __tmp_in_tmp583;
     }
     Arr1DIdxRowM(tmp583, 960, i0) = (party == SERVER) ? __tmp_in_tmp583 : 0;
   }
@@ -9463,7 +9464,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp584;
   for (uint64_t i0 = (uint64_t)0; i0 < 960; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp584;
+      in >> __tmp_in_tmp584;
     }
     Arr1DIdxRowM(tmp584, 960, i0) = (party == SERVER) ? __tmp_in_tmp584 : 0;
   }
@@ -9477,7 +9478,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
       for (uint64_t i2 = (uint64_t)0; i2 < 960; i2++) {
         for (uint64_t i3 = (uint64_t)0; i3 < 128; i3++) {
           if ((party == SERVER)) {
-            cin >> __tmp_in_tmp585;
+            in >> __tmp_in_tmp585;
           }
           Arr4DIdxRowM(tmp585, 1, 1, 960, 128, i0, i1, i2, i3) =
               (party == SERVER) ? __tmp_in_tmp585 : 0;
@@ -9492,7 +9493,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp586;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp586;
+      in >> __tmp_in_tmp586;
     }
     Arr1DIdxRowM(tmp586, 128, i0) = (party == SERVER) ? __tmp_in_tmp586 : 0;
   }
@@ -9503,7 +9504,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp587;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp587;
+      in >> __tmp_in_tmp587;
     }
     Arr1DIdxRowM(tmp587, 128, i0) = (party == SERVER) ? __tmp_in_tmp587 : 0;
   }
@@ -9514,7 +9515,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp588;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp588;
+      in >> __tmp_in_tmp588;
     }
     Arr1DIdxRowM(tmp588, 128, i0) = (party == SERVER) ? __tmp_in_tmp588 : 0;
   }
@@ -9525,7 +9526,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp589;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp589;
+      in >> __tmp_in_tmp589;
     }
     Arr1DIdxRowM(tmp589, 128, i0) = (party == SERVER) ? __tmp_in_tmp589 : 0;
   }
@@ -9539,7 +9540,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
       for (uint64_t i2 = (uint64_t)0; i2 < 128; i2++) {
         for (uint64_t i3 = (uint64_t)0; i3 < 32; i3++) {
           if ((party == SERVER)) {
-            cin >> __tmp_in_tmp590;
+            in >> __tmp_in_tmp590;
           }
           Arr4DIdxRowM(tmp590, 3, 3, 128, 32, i0, i1, i2, i3) =
               (party == SERVER) ? __tmp_in_tmp590 : 0;
@@ -9554,7 +9555,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp591;
   for (uint64_t i0 = (uint64_t)0; i0 < 992; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp591;
+      in >> __tmp_in_tmp591;
     }
     Arr1DIdxRowM(tmp591, 992, i0) = (party == SERVER) ? __tmp_in_tmp591 : 0;
   }
@@ -9565,7 +9566,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp592;
   for (uint64_t i0 = (uint64_t)0; i0 < 992; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp592;
+      in >> __tmp_in_tmp592;
     }
     Arr1DIdxRowM(tmp592, 992, i0) = (party == SERVER) ? __tmp_in_tmp592 : 0;
   }
@@ -9576,7 +9577,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp593;
   for (uint64_t i0 = (uint64_t)0; i0 < 992; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp593;
+      in >> __tmp_in_tmp593;
     }
     Arr1DIdxRowM(tmp593, 992, i0) = (party == SERVER) ? __tmp_in_tmp593 : 0;
   }
@@ -9587,7 +9588,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp594;
   for (uint64_t i0 = (uint64_t)0; i0 < 992; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp594;
+      in >> __tmp_in_tmp594;
     }
     Arr1DIdxRowM(tmp594, 992, i0) = (party == SERVER) ? __tmp_in_tmp594 : 0;
   }
@@ -9601,7 +9602,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
       for (uint64_t i2 = (uint64_t)0; i2 < 992; i2++) {
         for (uint64_t i3 = (uint64_t)0; i3 < 128; i3++) {
           if ((party == SERVER)) {
-            cin >> __tmp_in_tmp595;
+            in >> __tmp_in_tmp595;
           }
           Arr4DIdxRowM(tmp595, 1, 1, 992, 128, i0, i1, i2, i3) =
               (party == SERVER) ? __tmp_in_tmp595 : 0;
@@ -9616,7 +9617,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp596;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp596;
+      in >> __tmp_in_tmp596;
     }
     Arr1DIdxRowM(tmp596, 128, i0) = (party == SERVER) ? __tmp_in_tmp596 : 0;
   }
@@ -9627,7 +9628,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp597;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp597;
+      in >> __tmp_in_tmp597;
     }
     Arr1DIdxRowM(tmp597, 128, i0) = (party == SERVER) ? __tmp_in_tmp597 : 0;
   }
@@ -9638,7 +9639,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp598;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp598;
+      in >> __tmp_in_tmp598;
     }
     Arr1DIdxRowM(tmp598, 128, i0) = (party == SERVER) ? __tmp_in_tmp598 : 0;
   }
@@ -9649,7 +9650,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp599;
   for (uint64_t i0 = (uint64_t)0; i0 < 128; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp599;
+      in >> __tmp_in_tmp599;
     }
     Arr1DIdxRowM(tmp599, 128, i0) = (party == SERVER) ? __tmp_in_tmp599 : 0;
   }
@@ -9663,7 +9664,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
       for (uint64_t i2 = (uint64_t)0; i2 < 128; i2++) {
         for (uint64_t i3 = (uint64_t)0; i3 < 32; i3++) {
           if ((party == SERVER)) {
-            cin >> __tmp_in_tmp600;
+            in >> __tmp_in_tmp600;
           }
           Arr4DIdxRowM(tmp600, 3, 3, 128, 32, i0, i1, i2, i3) =
               (party == SERVER) ? __tmp_in_tmp600 : 0;
@@ -9678,7 +9679,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp601;
   for (uint64_t i0 = (uint64_t)0; i0 < 1024; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp601;
+      in >> __tmp_in_tmp601;
     }
     Arr1DIdxRowM(tmp601, 1024, i0) = (party == SERVER) ? __tmp_in_tmp601 : 0;
   }
@@ -9689,7 +9690,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp602;
   for (uint64_t i0 = (uint64_t)0; i0 < 1024; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp602;
+      in >> __tmp_in_tmp602;
     }
     Arr1DIdxRowM(tmp602, 1024, i0) = (party == SERVER) ? __tmp_in_tmp602 : 0;
   }
@@ -9700,7 +9701,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp603;
   for (uint64_t i0 = (uint64_t)0; i0 < 1024; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp603;
+      in >> __tmp_in_tmp603;
     }
     Arr1DIdxRowM(tmp603, 1024, i0) = (party == SERVER) ? __tmp_in_tmp603 : 0;
   }
@@ -9711,7 +9712,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp604;
   for (uint64_t i0 = (uint64_t)0; i0 < 1024; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp604;
+      in >> __tmp_in_tmp604;
     }
     Arr1DIdxRowM(tmp604, 1024, i0) = (party == SERVER) ? __tmp_in_tmp604 : 0;
   }
@@ -9725,7 +9726,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
       for (uint64_t i2 = (uint64_t)0; i2 < 1024; i2++) {
         for (uint64_t i3 = (uint64_t)0; i3 < 1000; i3++) {
           if ((party == SERVER)) {
-            cin >> __tmp_in_tmp605;
+            in >> __tmp_in_tmp605;
           }
           Arr4DIdxRowM(tmp605, 1, 1, 1024, 1000, i0, i1, i2, i3) =
               (party == SERVER) ? __tmp_in_tmp605 : 0;
@@ -9740,7 +9741,7 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
   uint64_t __tmp_in_tmp606;
   for (uint64_t i0 = (uint64_t)0; i0 < 1000; i0++) {
     if ((party == SERVER)) {
-      cin >> __tmp_in_tmp606;
+      in >> __tmp_in_tmp606;
     }
     Arr1DIdxRowM(tmp606, 1000, i0) = (party == SERVER) ? __tmp_in_tmp606 : 0;
   }
