@@ -12027,4 +12027,5 @@ void run_densenet121_inference(int party_, int port_, const std::string &address
       }
     }
   }
+  finalize();
 }
