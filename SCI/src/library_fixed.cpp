@@ -46,11 +46,6 @@ void initialize() {
   }
 }
 
-void finalize() {
-  delete g_session;
-  g_session = nullptr;
-}
-
 void reconstruct(int64_t *A, int64_t *B, int32_t I, int32_t J, int bwA) {
   reconstruct(I * J, (uint64_t *)A, (uint64_t *)B, bwA);
   for (int i = 0; i < I * J; i++) {

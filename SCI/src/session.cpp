@@ -232,3 +232,8 @@ Session::~Session() {
 } // namespace sci
 
 thread_local sci::Session *g_session = nullptr;
+
+void finalize() {
+  delete g_session;
+  g_session = nullptr;
+}

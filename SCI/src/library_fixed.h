@@ -56,8 +56,6 @@ inline std::vector<int> divide_instances(
 
 void initialize();
 
-void finalize();
-
 void reconstruct(int dim, uint64_t *x, uint64_t *y, int bw_x);
 
 void AdjustScaleShr(uint64_t *A, uint64_t *B, int32_t I, int32_t J, int32_t bwA,

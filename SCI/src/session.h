@@ -242,4 +242,6 @@ class Session {
 
 extern thread_local sci::Session *g_session;
 
+void finalize();
+
 #endif  // SCI_SESSION_H___
