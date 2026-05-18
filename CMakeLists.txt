@@ -52,9 +52,22 @@ macro (add_network_cheetah _name)
   target_compile_definitions(${_name}-cheetah PUBLIC SCI_OT=1 USE_CHEETAH=1)
 endmacro()
 
+macro (add_network_he _name)
+  set(_sources
+      "networks/main_${_name}.cpp"
+      "networks/${_name}_inference.cpp"
+      "networks/network_globals.cpp")
+  add_executable(${_name}-SCI_HE ${_sources})
+  target_link_libraries(${_name}-SCI_HE SCI-HE)
+  target_compile_definitions(${_name}-SCI_HE PUBLIC USE_CHEETAH=0)
+endmacro()
+
 add_network_cheetah(resnet50)
 add_network_cheetah(sqnet)
 add_network_cheetah(densenet121)
+
+add_network_he(sqnet)
+
 add_network_cheetah(short1)
 add_network_cheetah(short2)
 add_network_cheetah(relu1_28_28_1)
