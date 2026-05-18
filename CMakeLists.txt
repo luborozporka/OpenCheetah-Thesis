@@ -53,9 +53,17 @@ macro (add_network_cheetah _name)
 endmacro()
 
 macro (add_network_he _name)
+  # Prefer the SCI-HE-specific inference source file when present,
+  # since DenseNet121's Cheetah implementation differs and hence can't be reused under SCI-HE.
+  # This does not apply to other supported networks, namely sqnet and resnet50.
+  if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/networks/${_name}_he_inference.cpp")
+    set(_infer_src "networks/${_name}_he_inference.cpp")
+  else()
+    set(_infer_src "networks/${_name}_inference.cpp")
+  endif()
   set(_sources
       "networks/main_${_name}.cpp"
-      "networks/${_name}_inference.cpp"
+      "${_infer_src}"
       "networks/network_globals.cpp")
   add_executable(${_name}-SCI_HE ${_sources})
   target_link_libraries(${_name}-SCI_HE SCI-HE)
@@ -68,6 +76,7 @@ add_network_cheetah(densenet121)
 
 add_network_he(sqnet)
 add_network_he(resnet50)
+add_network_he(densenet121)
 
 add_network_cheetah(short1)
 add_network_cheetah(short2)

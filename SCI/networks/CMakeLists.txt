@@ -14,11 +14,13 @@ endmacro()
 
 # Networks
 
-# sqnet-SCI_HE and resnet50-SCI_HE are built from the shared inference source files in networks/{sqnet,resnet50}_inference.cpp
-# (see add_network_he in the root CMakeLists.txt)
+# sqnet-SCI_HE, resnet50-SCI_HE, and densenet121-SCI_HE are built from the inference
+# source files under networks/ (see add_network_he in the root CMakeLists.txt).
+# DenseNet121's Cheetah inference source differs and hence cannot be shared,
+# so the HE build uses a dedicated networks/densenet121_he_inference.cpp.
 
 # add_network_HE(sqnet)
 # add_network_HE(resnet50)
-add_network_HE(densenet121)
+# add_network_HE(densenet121)
 add_network_HE(short1)
 add_network_HE(short2)
