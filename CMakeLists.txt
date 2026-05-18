@@ -90,7 +90,7 @@ add_network_cheetah(mp2)
 add_network_cheetah(mp3)
 add_network_cheetah(mp4)
 
-## Multi-client server
+# Multi-client Cheetah server
 add_executable(server-cheetah
   server/main_server.cpp
   networks/sqnet_inference.cpp
@@ -100,3 +100,14 @@ add_executable(server-cheetah
 target_compile_definitions(server-cheetah PRIVATE ASIO_STANDALONE)
 target_compile_definitions(server-cheetah PUBLIC SCI_OT=1 USE_CHEETAH=1)
 target_link_libraries(server-cheetah gemini SCI-Cheetah Threads::Threads)
+
+# Multi-client SCI-HE server
+add_executable(server-SCI_HE
+  server/main_server.cpp
+  networks/sqnet_inference.cpp
+  networks/resnet50_inference.cpp
+  networks/densenet121_he_inference.cpp
+  networks/network_globals.cpp)
+target_compile_definitions(server-SCI_HE PRIVATE ASIO_STANDALONE)
+target_compile_definitions(server-SCI_HE PUBLIC USE_CHEETAH=0)
+target_link_libraries(server-SCI_HE SCI-HE Threads::Threads)
