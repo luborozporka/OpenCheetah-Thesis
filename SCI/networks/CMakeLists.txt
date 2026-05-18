@@ -14,10 +14,11 @@ endmacro()
 
 # Networks
 
-# sqnet-SCI_HE is built from the shared networks/sqnet_inference.cpp (see add_network_he in the root CMakeLists.txt)
-# add_network_HE(sqnet)
+# sqnet-SCI_HE and resnet50-SCI_HE are built from the shared inference source files in networks/{sqnet,resnet50}_inference.cpp
+# (see add_network_he in the root CMakeLists.txt)
 
-add_network_HE(resnet50)
+# add_network_HE(sqnet)
+# add_network_HE(resnet50)
 add_network_HE(densenet121)
 add_network_HE(short1)
 add_network_HE(short2)

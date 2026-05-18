@@ -67,6 +67,7 @@ add_network_cheetah(sqnet)
 add_network_cheetah(densenet121)
 
 add_network_he(sqnet)
+add_network_he(resnet50)
 
 add_network_cheetah(short1)
 add_network_cheetah(short2)

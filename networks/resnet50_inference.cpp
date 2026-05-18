@@ -13,7 +13,11 @@
 #include "networks/networks.h"
 
 using namespace std;
+
+// FusedBN is a Cheetah-only optimization - gives wrong results under SCI-HE
+#if USE_CHEETAH
 #define USE_FUSED_BN 1
+#endif
 
 // Anonymous namespace so that all 3 supported networks can be linked into
 // server-cheetah without multiple-definition errors on these helpers.
