@@ -277,18 +277,18 @@ void Sqrt(int32_t I, int32_t J, int32_t scale_in, int32_t scale_out,
 #endif
 
 #ifdef SCI_HE
-void Sigmoid(int32_t I, int32_t J, int32_t scale_in, int32_t scale_out,
-             int32_t bwA, int32_t bwB, uint64_t *A, uint64_t *B) {
+inline void Sigmoid(int32_t I, int32_t J, int32_t scale_in, int32_t scale_out,
+                    int32_t bwA, int32_t bwB, uint64_t *A, uint64_t *B) {
   assert(false && "Sigmoid not supported in SCI_HE.");
 }
 
-void TanH(int32_t I, int32_t J, int32_t scale_in, int32_t scale_out,
-          int32_t bwA, int32_t bwB, uint64_t *A, uint64_t *B) {
+inline void TanH(int32_t I, int32_t J, int32_t scale_in, int32_t scale_out,
+                 int32_t bwA, int32_t bwB, uint64_t *A, uint64_t *B) {
   assert(false && "TanH not supported in SCI_HE.");
 }
 
-void Sqrt(int32_t I, int32_t J, int32_t scale_in, int32_t scale_out,
-          int32_t bwA, int32_t bwB, bool inverse, uint64_t *A, uint64_t *B) {
+inline void Sqrt(int32_t I, int32_t J, int32_t scale_in, int32_t scale_out,
+                 int32_t bwA, int32_t bwB, bool inverse, uint64_t *A, uint64_t *B) {
   assert(false && "Sqrt not supported in SCI_HE.");
 }
 #endif
