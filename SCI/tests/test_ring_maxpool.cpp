@@ -42,7 +42,9 @@ thread_local int32_t bitlength = 32;
 sci::NetIO *ioArr[MAX_THREADS];
 sci::OTPack<sci::NetIO> *otpackArr[MAX_THREADS];
 
-void ring_maxpool_thread(int tid, uint64_t *z, uint64_t *x, int lnum_rows, int lnum_cols) {
+void ring_maxpool_thread(int tid, int main_party, uint64_t *z,
+                         uint64_t *x, int lnum_rows, int lnum_cols) {
+  party = main_party;
   MaxPoolProtocol<NetIO, uint64_t> *maxpool_oracle;
   if (tid & 1) {
     maxpool_oracle = new MaxPoolProtocol<NetIO, uint64_t>(
@@ -137,7 +139,8 @@ int main(int argc, char **argv) {
     } else {
       lnum_rows = chunk_size;
     }
-    maxpool_threads[i] = std::thread(ring_maxpool_thread, i, z + offset, x + offset * num_cols, lnum_rows, num_cols);
+    maxpool_threads[i] = std::thread(ring_maxpool_thread, i, party, z + offset,
+                                     x + offset * num_cols, lnum_rows, num_cols);
   }
 
   for (int i = 0; i < num_threads; ++i) {

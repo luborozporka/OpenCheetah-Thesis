@@ -43,7 +43,9 @@ uint64_t mask_x = (bw_x == 64 ? -1 : ((1ULL << bw_x) - 1));
 sci::NetIO *ioArr[MAX_THREADS];
 sci::OTPack<sci::NetIO> *otpackArr[MAX_THREADS];
 
-void relu_thread(int tid, uint64_t *x, uint64_t *y, int num_ops, uint64_t six) {
+void relu_thread(int tid, int main_party, uint64_t *x, 
+                 uint64_t *y, int num_ops, uint64_t six) {
+  party = main_party;
   MathFunctions *math;
   if (tid & 1) {
     math = new MathFunctions(3 - party, ioArr[tid], otpackArr[tid]);
@@ -119,8 +121,8 @@ int main(int argc, char **argv) {
     } else {
       lnum_ops = chunk_size;
     }
-    relu_threads[i] =
-        std::thread(relu_thread, i, x + offset, y + offset, lnum_ops, six);
+    relu_threads[i] = std::thread(relu_thread, i, party, x + offset,
+                                  y + offset, lnum_ops, six);
   }
   for (int i = 0; i < num_threads; ++i) {
     relu_threads[i].join();

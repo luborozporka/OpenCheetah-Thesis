@@ -55,7 +55,8 @@ uint64_t computeULPErr(double calc, double actual, int SCALE) {
   return ulp_err;
 }
 
-void sqrt_thread(int tid, uint64_t *x, uint64_t *y, int num_ops) {
+void sqrt_thread(int tid, int main_party, uint64_t *x, uint64_t *y, int num_ops) {
+  party = main_party;
   MathFunctions *math;
   if (tid & 1) {
     math = new MathFunctions(3 - party, ioArr[tid], otpackArr[tid]);
@@ -138,8 +139,7 @@ int main(int argc, char **argv) {
     } else {
       lnum_ops = chunk_size;
     }
-    sqrt_threads[i] =
-        std::thread(sqrt_thread, i, x + offset, y + offset, lnum_ops);
+    sqrt_threads[i] = std::thread(sqrt_thread, i, party, x + offset, y + offset, lnum_ops);
   }
   for (int i = 0; i < num_threads; ++i) {
     sqrt_threads[i].join();

@@ -41,8 +41,11 @@ int batch_size = 0;
 thread_local string address = "127.0.0.1";
 thread_local int num_threads = 1;
 
-void field_maxpool_thread(int tid, uint64_t *z, uint64_t *x, int lnum_rows,
+void field_maxpool_thread(int tid, int main_party, int main_bitlength,
+                          uint64_t *z, uint64_t *x, int lnum_rows,
                           int lnum_cols) {
+  party = main_party;
+  bitlength = main_bitlength;
   MaxPoolProtocol<NetIO, uint64_t> *maxpool_oracle;
   if (tid & 1) {
     maxpool_oracle = new MaxPoolProtocol<NetIO, uint64_t>(
@@ -136,8 +139,8 @@ int main(int argc, char **argv) {
       lnum_rows = chunk_size;
     }
     maxpool_threads[i] =
-        std::thread(field_maxpool_thread, i, z + offset, x + offset * num_cols,
-                    lnum_rows, num_cols);
+        std::thread(field_maxpool_thread, i, party, bitlength, z + offset,
+                    x + offset * num_cols, lnum_rows, num_cols);
   }
   for (int i = 0; i < num_threads; ++i) {
     maxpool_threads[i].join();

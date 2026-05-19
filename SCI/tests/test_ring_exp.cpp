@@ -54,7 +54,8 @@ uint64_t computeULPErr(double calc, double actual, int SCALE) {
   return ulp_err;
 }
 
-void exp_thread(int tid, uint64_t *x, uint64_t *y, int num_exp) {
+void exp_thread(int tid, int main_party, uint64_t *x, uint64_t *y, int num_exp) {
+  party = main_party;
   MathFunctions *math;
   if (tid & 1) {
     math = new MathFunctions(3 - party, ioArr[tid], otpackArr[tid]);
@@ -136,7 +137,7 @@ int main(int argc, char **argv) {
       lnum_exp = chunk_size;
     }
     exp_threads[i] =
-        std::thread(exp_thread, i, x + offset, y + offset, lnum_exp);
+        std::thread(exp_thread, i, party, x + offset, y + offset, lnum_exp);
   }
   for (int i = 0; i < num_threads; ++i) {
     exp_threads[i].join();

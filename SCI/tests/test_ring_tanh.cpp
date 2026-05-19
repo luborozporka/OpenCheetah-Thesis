@@ -54,7 +54,8 @@ uint64_t computeULPErr(double calc, double actual, int SCALE) {
   return ulp_err;
 }
 
-void tanh_thread(int tid, uint64_t *x, uint64_t *y, int num_ops) {
+void tanh_thread(int tid, int main_party, uint64_t *x, uint64_t *y, int num_ops) {
+  party = main_party;
   MathFunctions *math;
   if (tid & 1) {
     math = new MathFunctions(3 - party, ioArr[tid], otpackArr[tid]);
@@ -124,8 +125,7 @@ int main(int argc, char **argv) {
     } else {
       lnum_ops = chunk_size;
     }
-    tanh_threads[i] =
-        std::thread(tanh_thread, i, x + offset, y + offset, lnum_ops);
+    tanh_threads[i] = std::thread(tanh_thread, i, party, x + offset, y + offset, lnum_ops);
   }
   for (int i = 0; i < num_threads; ++i) {
     tanh_threads[i].join();

@@ -35,7 +35,8 @@ static sci::NetIO *ioArr[MAX_THREADS];
 static sci::OTPack<sci::NetIO> *otpackArr[MAX_THREADS];
 
 thread_local int party = 0;
-int num_relu = 1 << 10, port = 32000;
+int num_relu = 1 << 10;
+thread_local int port = 32000;
 int num_relu_orig = 0;
 int b = 4;
 int batch_size = 0;
@@ -78,7 +79,10 @@ const std::map<std::string, std::vector<int>> layer_sizes{
           50176})},
 };
 
-void field_relu_thread(int tid, uint64_t *z, uint64_t *x, int lnum_relu) {
+void field_relu_thread(int tid, int main_party, int main_bitlength,
+                       uint64_t *z, uint64_t *x, int lnum_relu) {
+  party = main_party;
+  bitlength = main_bitlength;
   ReLUFieldProtocol<NetIO, uint64_t> *relu_oracle;
   if (tid & 1) {
     relu_oracle = new ReLUFieldProtocol<NetIO, uint64_t>(
@@ -197,8 +201,8 @@ int main(int argc, char **argv) {
         } else {
           lnum_relu = chunk_size;
         }
-        relu_threads[i] = std::thread(field_relu_thread, i, z + offset,
-                                      x + offset, lnum_relu);
+        relu_threads[i] = std::thread(field_relu_thread, i, party, bitlength, 
+                                      z + offset, x + offset, lnum_relu);
       }
       for (int i = 0; i < num_threads; ++i) {
         relu_threads[i].join();
@@ -216,8 +220,8 @@ int main(int argc, char **argv) {
       } else {
         lnum_relu = chunk_size;
       }
-      relu_threads[i] =
-          std::thread(field_relu_thread, i, z + offset, x + offset, lnum_relu);
+      relu_threads[i] = std::thread(field_relu_thread, i, party, bitlength,
+                                    z + offset, x + offset, lnum_relu);
     }
     for (int i = 0; i < num_threads; ++i) {
       relu_threads[i].join();
