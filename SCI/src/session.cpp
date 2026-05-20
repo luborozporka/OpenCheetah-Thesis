@@ -3,6 +3,10 @@
 #include <iostream>
 #include <utility>
 
+#if defined(__GLIBC__)
+#include <malloc.h>
+#endif
+
 namespace sci {
 
 double computeAveragePower(uint64_t totalPower, int layerCount, const std::string& layerName) {
@@ -47,7 +51,6 @@ Session::Session(const Config &cfg_) : cfg(cfg_) {
 #ifdef SCI_OT
   lin.multArr[0] = new LinearOT(cfg.party, io.primary, io.otpack);
   lin.mult = lin.multArr[0];
-  lin.truncation = new Truncation(cfg.party, io.primary, io.otpack);
   lin.multUniform =
       new MatMulUniform<sci::NetIO, intType, sci::IKNP<sci::NetIO>>(
           cfg.party, cfg.bitlength, io.primary, io.iknpOT,
@@ -60,7 +63,6 @@ Session::Session(const Config &cfg_) : cfg(cfg_) {
   nl.argmax = new ArgMaxProtocol<sci::NetIO, intType>(
       cfg.party, RING, io.primary, cfg.bitlength, MILL_PARAM, 0, io.otpack,
       nl.relu);
-  lin.math = new MathFunctions(cfg.party, io.primary, io.otpack);
 #endif
 
 #if USE_CHEETAH
@@ -97,8 +99,6 @@ Session::Session(const Config &cfg_) : cfg(cfg_) {
       if (lin.multArr[i] == nullptr) {
         lin.multArr[i] = new LinearOT(3 - cfg.party, io.ioArr[i], io.otpackArr[i]);
       }
-      lin.truncationArr[i] =
-          new Truncation(3 - cfg.party, io.ioArr[i], io.otpackArr[i]);
     } else {
       nl.reluArr[i] = new ReLURingProtocol<sci::NetIO, intType>(
           cfg.party, RING, io.ioArr[i], cfg.bitlength, MILL_PARAM,
@@ -109,8 +109,6 @@ Session::Session(const Config &cfg_) : cfg(cfg_) {
       if (lin.multArr[i] == nullptr) {
         lin.multArr[i] = new LinearOT(cfg.party, io.ioArr[i], io.otpackArr[i]);
       }
-      lin.truncationArr[i] =
-          new Truncation(cfg.party, io.ioArr[i], io.otpackArr[i]);
     }
   }
 #endif
@@ -216,17 +214,12 @@ Session::~Session() {
   delete io.iknpOTRoleReversed;
   delete io.iknpOT;
   for (int i = 0; i < cfg.num_threads; i++) {
-#if !USE_CHEETAH
     delete io.otpackArr[i];
-#endif
     delete io.kkotInstanceArr[i];
     delete io.prgInstanceArr[i];
     delete io.otInstanceArr[i];
     delete io.ioArr[i];
   }
-#if USE_CHEETAH
-  delete io.otpackArr[0];
-#endif
 }
 
 } // namespace sci
@@ -236,4 +229,7 @@ thread_local sci::Session *g_session = nullptr;
 void finalize() {
   delete g_session;
   g_session = nullptr;
+#if defined(__GLIBC__)
+  malloc_trim(0);
+#endif
 }
