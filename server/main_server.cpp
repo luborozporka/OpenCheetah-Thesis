@@ -1,5 +1,7 @@
 #include <asio.hpp>
 
+#include <unistd.h>
+
 #include <atomic>
 #include <cstdint>
 #include <cstring>
@@ -116,7 +118,7 @@ void handle_client(asio::ip::tcp::socket socket) {
     std::cout << "[server] " << peer << " -> " << network_name << " on port "
               << data_port << std::endl;
 
-    g_session_tag = "w" + std::to_string(data_port);
+    g_session_tag = "w" + std::to_string(data_port) + "_pid" + std::to_string(getpid());
 
     std::istringstream weights_in(*weights);
     inference_fn(/*party=*/1, /*port=*/static_cast<int>(data_port),
