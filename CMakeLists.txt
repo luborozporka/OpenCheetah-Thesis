@@ -39,6 +39,9 @@ endif()
 add_subdirectory(SCI)
 include_directories(SCI/src/)
 
+## Energy-aware orchestration
+add_subdirectory(orchestration)
+
 ## demo
 macro (add_network_cheetah _name)
   set(_sources "networks/main_${_name}.cpp")
