@@ -56,6 +56,9 @@ using InferenceFn = void (*)(int, int, const std::string &, int, int32_t, int32_
 std::string g_sqnet_weights;
 std::string g_resnet50_weights;
 std::string g_densenet121_weights;
+int g_control_port = 12345;
+int g_data_port_base = 12346;
+int g_max_sessions = MAX_THREADS;
 
 // Atomic port allocator
 std::atomic<int> g_next_data_port{0};
@@ -89,6 +92,50 @@ struct ActiveSessionGuard {
 void send_response(asio::ip::tcp::socket &socket, Status status, uint32_t data_port) {
   Response resp{status, data_port};
   asio::write(socket, asio::buffer(&resp, sizeof(resp)));
+}
+
+std::string supported_networks() {
+  std::string supports;
+  if (!g_sqnet_weights.empty()) supports += "sqnet,";
+  if (!g_resnet50_weights.empty()) supports += "resnet50,";
+  if (!g_densenet121_weights.empty()) supports += "densenet121,";
+  if (!supports.empty()) supports.pop_back();
+  return supports;
+}
+
+void handle_status(asio::ip::tcp::socket socket) {
+  try {
+    std::ostringstream out;
+    out << "server_id=server-" << getpid() << '\n'
+        << "control_port=" << g_control_port << '\n'
+        << "data_port_base=" << g_data_port_base << '\n'
+        << "active_sessions=" << g_active_sessions.load(std::memory_order_relaxed) << '\n'
+        << "completed_sessions=" << g_completed_sessions.load(std::memory_order_relaxed) << '\n'
+        << "failed_sessions=" << g_failed_sessions.load(std::memory_order_relaxed) << '\n'
+        << "max_active_sessions=" << g_max_sessions << '\n'
+        << "supports=" << supported_networks() << '\n'
+        << "healthy=1\n";
+    const std::string body = out.str();
+    asio::write(socket, asio::buffer(body.data(), body.size()));
+  } catch (const std::exception &e) {
+    std::cerr << "[server] status error: " << e.what() << std::endl;
+  }
+}
+
+void run_status_server(int status_port) {
+  try {
+    asio::io_context io;
+    asio::ip::tcp::acceptor acceptor(io, asio::ip::tcp::endpoint(asio::ip::tcp::v4(), status_port));
+    std::cout << "[server] status listening on " << status_port << std::endl;
+
+    while (true) {
+      asio::ip::tcp::socket socket(io);
+      acceptor.accept(socket);
+      std::thread(handle_status, std::move(socket)).detach();
+    }
+  } catch (const std::exception &e) {
+    std::cerr << "[server] status fatal: " << e.what() << std::endl;
+  }
 }
 
 void handle_client(asio::ip::tcp::socket socket) {
@@ -174,6 +221,8 @@ std::string read_file(const std::string &path) {
 int main(int argc, char **argv) {
   int port = 12345;
   int data_port_base = 0;
+  int status_port = 0;
+  int max_sessions = MAX_THREADS;
   std::string sqnet_weights_path;
   std::string resnet50_weights_path;
   std::string densenet121_weights_path;
@@ -181,6 +230,8 @@ int main(int argc, char **argv) {
   ArgMapping amap;
   amap.arg("p", port, "Control port");
   amap.arg("dp", data_port_base, "Base port for data channels (default: p+1)");
+  amap.arg("sp", status_port, "Read-only status port (default: p+10000)");
+  amap.arg("max_sessions", max_sessions, "Reported safe concurrent session limit");
   amap.arg("sqnet_weights", sqnet_weights_path, "Path to sqnet weights file");
   amap.arg("resnet50_weights", resnet50_weights_path, "Path to resnet50 weights file");
   amap.arg("densenet121_weights", densenet121_weights_path, "Path to densenet121 weights file");
@@ -194,7 +245,11 @@ int main(int argc, char **argv) {
     return 1;
   }
   if (data_port_base == 0) data_port_base = port + 1;
+  if (status_port == 0) status_port = port + 10000;
   g_next_data_port.store(data_port_base);
+  g_control_port = port;
+  g_data_port_base = data_port_base;
+  g_max_sessions = max_sessions;
 
   try {
     if (!sqnet_weights_path.empty()) {
@@ -225,6 +280,7 @@ int main(int argc, char **argv) {
     asio::ip::tcp::acceptor acceptor(io, asio::ip::tcp::endpoint(asio::ip::tcp::v4(), port));
     std::cout << "[server] listening on " << port << " (data ports from "
               << data_port_base << ")" << std::endl;
+    std::thread(run_status_server, status_port).detach();
 
     while (true) {
       asio::ip::tcp::socket socket(io);
