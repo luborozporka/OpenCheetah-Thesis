@@ -12,3 +12,14 @@ target_include_directories(orchestration-common
 target_link_libraries(orchestration-common
   PUBLIC
     Threads::Threads)
+
+add_executable(node-reporter
+  node_reporter.cpp)
+
+target_compile_definitions(node-reporter
+  PRIVATE
+    ASIO_STANDALONE)
+
+target_link_libraries(node-reporter
+  PRIVATE
+    orchestration-common)
