@@ -2,11 +2,14 @@
 
 #include "orchestration/common/protocol.h"
 #include "orchestration/common/time_utils.h"
+#include "orchestration/power_sensor.h"
 
+#include <algorithm>
 #include <cstdint>
 #include <fstream>
 #include <iostream>
 #include <map>
+#include <memory>
 #include <stdexcept>
 #include <string>
 #include <utility>
@@ -21,6 +24,8 @@ struct Config {
   uint16_t control_port = 0;
   uint16_t status_port = 0;
   double idle_power_w = 0.0;
+  std::string power_path;
+  bool allow_no_power_sensor = false;
 };
 
 std::map<std::string, std::string> ParseArgs(int argc, char **argv) {
@@ -60,6 +65,13 @@ double ParseDoubleArg(const std::string &value, const std::string &field_name) {
   return result;
 }
 
+bool ParseBoolArg(const std::string &value, const std::string &field_name) {
+  if (value.empty()) return false;
+  if (value == "1" || value == "true" || value == "yes") return true;
+  if (value == "0" || value == "false" || value == "no") return false;
+  throw std::runtime_error(field_name + " must be 0/1, true/false, or yes/no");
+}
+
 Config ParseConfig(int argc, char **argv) {
   const auto args = ParseArgs(argc, argv);
 
@@ -76,6 +88,8 @@ Config ParseConfig(int argc, char **argv) {
   config.control_port = ParsePort(GetArg(args, "control_port"), "control_port");
   config.status_port = ParsePort(GetArg(args, "status_port"), "status_port");
   config.idle_power_w = ParseDoubleArg(GetArg(args, "idle_power_w"), "idle_power_w");
+  config.power_path = GetArg(args, "power_path");
+  config.allow_no_power_sensor = ParseBoolArg(GetArg(args, "allow_no_power_sensor"), "allow_no_power_sensor");
 
   if (config.node_id.empty()) {
     throw std::runtime_error("node_id is required");
@@ -150,12 +164,22 @@ orchestration::NodeHeartbeat MakeBaseHeartbeat(const Config &config) {
   heartbeat.backend = config.backend;
   heartbeat.control_port = config.control_port;
   heartbeat.status_port = config.status_port;
-  heartbeat.power_available = false;
   heartbeat.idle_power_w = config.idle_power_w;
   heartbeat.mem_available_bytes = ReadMemAvailableBytes();
   heartbeat.healthy = config.node_role == orchestration::NodeRole::kClient;
   heartbeat.timestamp_ms = orchestration::NowMillis();
   return heartbeat;
+}
+
+void ReadPower(const Config &config,
+               orchestration::PowerSensor *sensor,
+               orchestration::NodeHeartbeat *heartbeat) {
+  const orchestration::PowerReading reading = sensor->Read();
+  heartbeat->power_available = reading.available;
+  heartbeat->power_w = reading.power_w;
+  heartbeat->dynamic_power_w = reading.available
+    ? std::max(0.0, reading.power_w - config.idle_power_w)
+    : 0.0;
 }
 
 void PollServerStatus(const Config &config, orchestration::NodeHeartbeat *heartbeat) {
@@ -178,7 +202,8 @@ void PrintUsage(const char *program) {
   std::cerr << "Usage: " << program << " node_id=<id> node_role=server|client "
             << "[server_ip=<ip>] [backend=cheetah|sci-he] "
             << "[control_port=<port>] [status_port=<port>] "
-            << "[idle_power_w=<watts>]" 
+            << "[idle_power_w=<watts>] [power_path=<sysfs-path>] "
+            << "[allow_no_power_sensor=0|1]"
             << std::endl;
 }
 
@@ -187,7 +212,10 @@ void PrintUsage(const char *program) {
 int main(int argc, char **argv) {
   try {
     Config config = ParseConfig(argc, argv);
+    std::unique_ptr<orchestration::PowerSensor> power_sensor =
+        orchestration::CreatePowerSensor(config.power_path, config.allow_no_power_sensor);
     orchestration::NodeHeartbeat heartbeat = MakeBaseHeartbeat(config);
+    ReadPower(config, power_sensor.get(), &heartbeat);
 
     if (config.node_role == orchestration::NodeRole::kServer) {
       try {

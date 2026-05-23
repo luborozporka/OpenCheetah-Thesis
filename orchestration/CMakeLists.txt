@@ -14,7 +14,8 @@ target_link_libraries(orchestration-common
     Threads::Threads)
 
 add_executable(node-reporter
-  node_reporter.cpp)
+  node_reporter.cpp
+  power_sensor.cpp)
 
 target_compile_definitions(node-reporter
   PRIVATE
