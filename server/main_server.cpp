@@ -60,6 +60,32 @@ std::string g_densenet121_weights;
 // Atomic port allocator
 std::atomic<int> g_next_data_port{0};
 
+// Status counters
+std::atomic<int> g_active_sessions{0};
+std::atomic<uint64_t> g_completed_sessions{0};
+std::atomic<uint64_t> g_failed_sessions{0};
+
+struct ActiveSessionGuard {
+  ActiveSessionGuard() { g_active_sessions.fetch_add(1, std::memory_order_relaxed); }
+
+  ActiveSessionGuard(const ActiveSessionGuard &) = delete;
+  ActiveSessionGuard &operator=(const ActiveSessionGuard &) = delete;
+
+  ~ActiveSessionGuard() {
+    if (completed_) {
+      g_completed_sessions.fetch_add(1, std::memory_order_relaxed);
+    } else {
+      g_failed_sessions.fetch_add(1, std::memory_order_relaxed);
+    }
+    g_active_sessions.fetch_sub(1, std::memory_order_relaxed);
+  }
+
+  void mark_completed() { completed_ = true; }
+
+ private:
+  bool completed_ = false;
+};
+
 void send_response(asio::ip::tcp::socket &socket, Status status, uint32_t data_port) {
   Response resp{status, data_port};
   asio::write(socket, asio::buffer(&resp, sizeof(resp)));
@@ -114,6 +140,7 @@ void handle_client(asio::ip::tcp::socket socket) {
     const uint32_t data_port = static_cast<uint32_t>(g_next_data_port.fetch_add(req.num_threads));
     send_response(socket, Status::OK, data_port);
     socket.close();
+    ActiveSessionGuard session_guard;
 
     std::cout << "[server] " << peer << " -> " << network_name << " on port "
               << data_port << std::endl;
@@ -127,6 +154,7 @@ void handle_client(asio::ip::tcp::socket socket) {
 
     std::cout << "[server] " << peer << " done (port " << data_port << ")"
               << std::endl;
+    session_guard.mark_completed();
   } catch (const std::exception &e) {
     std::cerr << "[server] worker error (" << peer << "): " << e.what()
               << std::endl;
