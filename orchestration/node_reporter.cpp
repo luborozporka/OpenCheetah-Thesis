@@ -1,10 +1,12 @@
 #include <asio.hpp>
 
 #include "orchestration/common/protocol.h"
+#include "orchestration/common/protocol_internal.h"
 #include "orchestration/common/time_utils.h"
 #include "orchestration/power_sensor.h"
 
 #include <algorithm>
+#include <chrono>
 #include <cstdint>
 #include <fstream>
 #include <iostream>
@@ -12,6 +14,7 @@
 #include <memory>
 #include <stdexcept>
 #include <string>
+#include <thread>
 #include <utility>
 
 namespace {
@@ -26,6 +29,9 @@ struct Config {
   double idle_power_w = 0.0;
   std::string power_path;
   bool allow_no_power_sensor = false;
+  std::string orchestrator_ip;
+  uint16_t orchestrator_port = 0;
+  int64_t interval_ms = 0;
 };
 
 std::map<std::string, std::string> ParseArgs(int argc, char **argv) {
@@ -48,7 +54,10 @@ std::string GetArg(const std::map<std::string, std::string> &args, const std::st
 
 uint16_t ParsePort(const std::string &value, const std::string &field_name) {
   if (value.empty()) return 0;
-  const int port = std::stoi(value);
+  int64_t port = 0;
+  if (!orchestration::protocol_internal::ParseInt64(value, &port)) {
+    throw std::runtime_error(field_name + " must be an integer");
+  }
   if (port <= 0 || port > 65535) {
     throw std::runtime_error(field_name + " must be in range 1..65535");
   }
@@ -57,18 +66,26 @@ uint16_t ParsePort(const std::string &value, const std::string &field_name) {
 
 double ParseDoubleArg(const std::string &value, const std::string &field_name) {
   if (value.empty()) return 0.0;
-  size_t parsed = 0;
-  const double result = std::stod(value, &parsed);
-  if (parsed != value.size()) {
+  double result = 0.0;
+  if (!orchestration::protocol_internal::ParseDouble(value, &result)) {
     throw std::runtime_error(field_name + " must be a number");
+  }
+  return result;
+}
+
+int64_t ParseInt64Arg(const std::string &value, const std::string &field_name) {
+  if (value.empty()) return 0;
+  int64_t result = 0;
+  if (!orchestration::protocol_internal::ParseInt64(value, &result)) {
+    throw std::runtime_error(field_name + " must be an integer");
   }
   return result;
 }
 
 bool ParseBoolArg(const std::string &value, const std::string &field_name) {
   if (value.empty()) return false;
-  if (value == "1" || value == "true" || value == "yes") return true;
-  if (value == "0" || value == "false" || value == "no") return false;
+  bool result = false;
+  if (orchestration::protocol_internal::ParseBool(value, &result)) return result;
   throw std::runtime_error(field_name + " must be 0/1, true/false, or yes/no");
 }
 
@@ -90,6 +107,9 @@ Config ParseConfig(int argc, char **argv) {
   config.idle_power_w = ParseDoubleArg(GetArg(args, "idle_power_w"), "idle_power_w");
   config.power_path = GetArg(args, "power_path");
   config.allow_no_power_sensor = ParseBoolArg(GetArg(args, "allow_no_power_sensor"), "allow_no_power_sensor");
+  config.orchestrator_ip = GetArg(args, "orchestrator_ip");
+  config.orchestrator_port = ParsePort(GetArg(args, "orchestrator_port"), "orchestrator_port");
+  config.interval_ms = ParseInt64Arg(GetArg(args, "interval_ms"), "interval_ms");
 
   if (config.node_id.empty()) {
     throw std::runtime_error("node_id is required");
@@ -100,6 +120,12 @@ Config ParseConfig(int argc, char **argv) {
       throw std::runtime_error("backend is required for server nodes");
     }
     if (config.status_port == 0) throw std::runtime_error("status_port is required for server nodes");
+  }
+  if (config.interval_ms < 0) {
+    throw std::runtime_error("interval_ms must be non-negative");
+  }
+  if (config.orchestrator_ip.empty() != (config.orchestrator_port == 0)) {
+    throw std::runtime_error("orchestrator_ip and orchestrator_port must be provided together");
   }
 
   return config;
@@ -123,24 +149,43 @@ std::string ReadTcpResponse(const std::string &host, uint16_t port) {
   return response;
 }
 
+void SendTcpMessage(const std::string &host, uint16_t port, const std::string &message) {
+  asio::io_context io;
+  asio::ip::tcp::resolver resolver(io);
+  asio::ip::tcp::socket socket(io);
+  asio::connect(socket, resolver.resolve(host, std::to_string(port)));
+  asio::write(socket, asio::buffer(message.data(), message.size()));
+  socket.shutdown(asio::ip::tcp::socket::shutdown_both);
+}
+
 bool ParseIntField(const orchestration::KeyValueMessage &fields, const std::string &key, int *out) {
   const auto it = fields.find(key);
   if (it == fields.end()) return false;
-  *out = std::stoi(it->second);
+  int64_t value = 0;
+  if (!orchestration::protocol_internal::ParseInt64(it->second, &value)) {
+    throw std::runtime_error("invalid integer status field: " + key);
+  }
+  *out = static_cast<int>(value);
   return true;
 }
 
 bool ParseUint64Field(const orchestration::KeyValueMessage &fields, const std::string &key, uint64_t *out) {
   const auto it = fields.find(key);
   if (it == fields.end()) return false;
-  *out = static_cast<uint64_t>(std::stoull(it->second));
+  uint64_t value = 0;
+  if (!orchestration::protocol_internal::ParseUint64(it->second, &value)) {
+    throw std::runtime_error("invalid unsigned integer status field: " + key);
+  }
+  *out = value;
   return true;
 }
 
 bool ParseBoolField(const orchestration::KeyValueMessage &fields, const std::string &key, bool *out) {
   const auto it = fields.find(key);
   if (it == fields.end()) return false;
-  *out = it->second == "1" || it->second == "true" || it->second == "yes";
+  if (!orchestration::protocol_internal::ParseBool(it->second, out)) {
+    throw std::runtime_error("invalid boolean status field: " + key);
+  }
   return true;
 }
 
@@ -198,12 +243,41 @@ void PollServerStatus(const Config &config, orchestration::NodeHeartbeat *heartb
   }
 }
 
+orchestration::NodeHeartbeat CollectHeartbeat(const Config &config,
+                                              orchestration::PowerSensor *power_sensor) {
+  orchestration::NodeHeartbeat heartbeat = MakeBaseHeartbeat(config);
+  ReadPower(config, power_sensor, &heartbeat);
+
+  if (config.node_role == orchestration::NodeRole::kServer) {
+    try {
+      PollServerStatus(config, &heartbeat);
+    } catch (const std::exception &e) {
+      heartbeat.healthy = false;
+      std::cerr << "[node-reporter] status poll failed: " << e.what() << std::endl;
+    }
+  }
+
+  heartbeat.timestamp_ms = orchestration::NowMillis();
+  return heartbeat;
+}
+
+void EmitHeartbeat(const Config &config, const orchestration::NodeHeartbeat &heartbeat) {
+  const std::string payload = orchestration::SerializeHeartbeat(heartbeat);
+  if (!config.orchestrator_ip.empty()) {
+    SendTcpMessage(config.orchestrator_ip, config.orchestrator_port, payload);
+    return;
+  }
+  std::cout << payload << std::flush;
+}
+
 void PrintUsage(const char *program) {
   std::cerr << "Usage: " << program << " node_id=<id> node_role=server|client "
             << "[server_ip=<ip>] [backend=cheetah|sci-he] "
             << "[control_port=<port>] [status_port=<port>] "
             << "[idle_power_w=<watts>] [power_path=<sysfs-path>] "
-            << "[allow_no_power_sensor=0|1]"
+            << "[allow_no_power_sensor=0|1] "
+            << "[orchestrator_ip=<ip> orchestrator_port=<port>] "
+            << "[interval_ms=<milliseconds>]"
             << std::endl;
 }
 
@@ -214,19 +288,13 @@ int main(int argc, char **argv) {
     Config config = ParseConfig(argc, argv);
     std::unique_ptr<orchestration::PowerSensor> power_sensor =
         orchestration::CreatePowerSensor(config.power_path, config.allow_no_power_sensor);
-    orchestration::NodeHeartbeat heartbeat = MakeBaseHeartbeat(config);
-    ReadPower(config, power_sensor.get(), &heartbeat);
 
-    if (config.node_role == orchestration::NodeRole::kServer) {
-      try {
-        PollServerStatus(config, &heartbeat);
-      } catch (const std::exception &e) {
-        heartbeat.healthy = false;
-        std::cerr << "[node-reporter] status poll failed: " << e.what() << std::endl;
-      }
+    while (true) {
+      const orchestration::NodeHeartbeat heartbeat = CollectHeartbeat(config, power_sensor.get());
+      EmitHeartbeat(config, heartbeat);
+      if (config.interval_ms == 0) break;
+      std::this_thread::sleep_for(std::chrono::milliseconds(config.interval_ms));
     }
-
-    std::cout << orchestration::SerializeHeartbeat(heartbeat);
   } catch (const std::exception &e) {
     std::cerr << "[node-reporter] " << e.what() << std::endl;
     PrintUsage(argv[0]);
