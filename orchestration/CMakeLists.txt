@@ -24,3 +24,15 @@ target_compile_definitions(node-reporter
 target_link_libraries(node-reporter
   PRIVATE
     orchestration-common)
+
+add_executable(orchestrator
+  orchestrator.cpp
+  node_registry.cpp)
+
+target_compile_definitions(orchestrator
+  PRIVATE
+    ASIO_STANDALONE)
+
+target_link_libraries(orchestrator
+  PRIVATE
+    orchestration-common)
