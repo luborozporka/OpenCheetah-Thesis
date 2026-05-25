@@ -1,5 +1,6 @@
 #include <asio.hpp>
 
+#include "orchestration/common/csv_log.h"
 #include "orchestration/common/protocol.h"
 #include "orchestration/common/protocol_internal.h"
 #include "orchestration/common/time_utils.h"
@@ -8,6 +9,8 @@
 #include <cstdint>
 #include <iostream>
 #include <map>
+#include <memory>
+#include <mutex>
 #include <stdexcept>
 #include <string>
 #include <thread>
@@ -19,6 +22,7 @@ namespace {
 struct Config {
   uint16_t heartbeat_port = 18080;
   int64_t heartbeat_timeout_ms = 10000;
+  std::string node_metrics_log_path;
 };
 
 std::map<std::string, std::string> ParseArgs(int argc, char **argv) {
@@ -74,6 +78,7 @@ Config ParseConfig(int argc, char **argv) {
   if (config.heartbeat_timeout_ms < 0) {
     throw std::runtime_error("heartbeat_timeout_ms must be non-negative");
   }
+  config.node_metrics_log_path = GetArg(args, "node_metrics_log");
 
   return config;
 }
@@ -100,8 +105,37 @@ std::string JoinNodeIds(const std::vector<orchestration::NodeHeartbeat> &nodes) 
   return result;
 }
 
+std::string BoolString(bool value) { return value ? "1" : "0"; }
+
+void WriteNodeMetrics(orchestration::CsvLog *log,
+                      std::mutex *mutex,
+                      const orchestration::NodeHeartbeat &heartbeat,
+                      int64_t received_at_ms) {
+  if (log == nullptr) return;
+
+  const int64_t timestamp_ms =
+      heartbeat.timestamp_ms != 0 ? heartbeat.timestamp_ms : received_at_ms;
+  std::lock_guard<std::mutex> lock(*mutex);
+  log->WriteRow({
+      std::to_string(timestamp_ms),
+      heartbeat.node_id,
+      orchestration::ToString(heartbeat.node_role),
+      orchestration::ToString(heartbeat.backend),
+      BoolString(heartbeat.power_available),
+      std::to_string(heartbeat.power_w),
+      std::to_string(heartbeat.idle_power_w),
+      std::to_string(heartbeat.dynamic_power_w),
+      std::to_string(heartbeat.active_sessions),
+      std::to_string(heartbeat.max_active_sessions),
+      std::to_string(heartbeat.mem_available_bytes),
+      BoolString(heartbeat.healthy),
+  });
+}
+
 void HandleHeartbeat(asio::ip::tcp::socket socket,
                      orchestration::NodeRegistry *registry,
+                     orchestration::CsvLog *node_metrics_log,
+                     std::mutex *node_metrics_log_mutex,
                      int64_t heartbeat_timeout_ms) {
   try {
     const std::string message = ReadTcpMessage(socket);
@@ -120,6 +154,7 @@ void HandleHeartbeat(asio::ip::tcp::socket socket,
     const int64_t now_ms = orchestration::NowMillis();
     const bool inserted = registry->RecordHeartbeat(heartbeat, now_ms);
     const auto snapshot = registry->Snapshot(now_ms, heartbeat_timeout_ms);
+    WriteNodeMetrics(node_metrics_log, node_metrics_log_mutex, heartbeat, now_ms);
 
     std::cout << "[orchestrator] " << (inserted ? "registered " : "updated ")
               << heartbeat.node_id << " role="
@@ -134,7 +169,9 @@ void HandleHeartbeat(asio::ip::tcp::socket socket,
 }
 
 void PrintUsage(const char *program) {
-  std::cerr << "Usage: " << program << " [p=<heartbeat_port>] [heartbeat_timeout_ms=<milliseconds>]" << std::endl;
+  std::cerr << "Usage: " << program
+            << " [p=<heartbeat_port>] [heartbeat_timeout_ms=<milliseconds>]"
+            << " [node_metrics_log=<path>]" << std::endl;
 }
 
 }  // namespace
@@ -143,6 +180,26 @@ int main(int argc, char **argv) {
   try {
     const Config config = ParseConfig(argc, argv);
     orchestration::NodeRegistry registry;
+    std::unique_ptr<orchestration::CsvLog> node_metrics_log;
+    std::mutex node_metrics_log_mutex;
+    if (!config.node_metrics_log_path.empty()) {
+      node_metrics_log = std::make_unique<orchestration::CsvLog>(
+          config.node_metrics_log_path,
+          std::vector<std::string>{
+              "timestamp_ms",
+              "node_id",
+              "node_role",
+              "backend",
+              "power_available",
+              "power_w",
+              "idle_power_w",
+              "dynamic_power_w",
+              "active_sessions",
+              "max_active_sessions",
+              "mem_available_bytes",
+              "healthy",
+          });
+    }
 
     asio::io_context io;
     asio::ip::tcp::acceptor acceptor(io, asio::ip::tcp::endpoint(asio::ip::tcp::v4(), config.heartbeat_port));
@@ -151,7 +208,10 @@ int main(int argc, char **argv) {
     while (true) {
       asio::ip::tcp::socket socket(io);
       acceptor.accept(socket);
-      std::thread(HandleHeartbeat, std::move(socket), &registry, config.heartbeat_timeout_ms).detach();
+      std::thread(HandleHeartbeat, std::move(socket), &registry,
+                  node_metrics_log.get(), &node_metrics_log_mutex,
+                  config.heartbeat_timeout_ms)
+          .detach();
     }
   } catch (const std::exception &e) {
     std::cerr << "[orchestrator] " << e.what() << std::endl;
