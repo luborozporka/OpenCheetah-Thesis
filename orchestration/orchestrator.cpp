@@ -107,6 +107,31 @@ std::string JoinNodeIds(const std::vector<orchestration::NodeHeartbeat> &nodes) 
 
 std::string BoolString(bool value) { return value ? "1" : "0"; }
 
+bool SupportsNetwork(const orchestration::NodeHeartbeat &node,
+                     orchestration::Network network) {
+  for (const orchestration::Network supported : node.supported_networks) {
+    if (supported == network) return true;
+  }
+  return false;
+}
+
+std::vector<orchestration::NodeHeartbeat> FilterRoutingCandidates(
+    const std::vector<orchestration::NodeHeartbeat> &nodes,
+    const orchestration::RoutingRequest &request) {
+  std::vector<orchestration::NodeHeartbeat> candidates;
+  for (const auto &node : nodes) {
+    if (node.node_role != orchestration::NodeRole::kServer) continue;
+    if (!node.healthy) continue;
+    if (node.backend != request.backend) continue;
+    if (!SupportsNetwork(node, request.network)) continue;
+    if (node.server_ip.empty() || node.control_port == 0) continue;
+    if (node.max_active_sessions <= 0) continue;
+    if (node.active_sessions >= node.max_active_sessions) continue;
+    candidates.push_back(node);
+  }
+  return candidates;
+}
+
 std::string MessageType(const std::string &message) {
   const orchestration::KeyValueMessage fields = orchestration::ParseKeyValueMessage(message);
   const auto it = fields.find("type");
@@ -172,7 +197,10 @@ void WriteRoutingResponse(asio::ip::tcp::socket &socket, const orchestration::Ro
   asio::write(socket, asio::buffer(payload.data(), payload.size()));
 }
 
-void HandleRoutingRequestMessage(asio::ip::tcp::socket &socket, const std::string &message) {
+void HandleRoutingRequestMessage(asio::ip::tcp::socket &socket,
+                                 const std::string &message,
+                                 orchestration::NodeRegistry *registry,
+                                 int64_t heartbeat_timeout_ms) {
   orchestration::RoutingRequest request;
   std::string error;
   if (!orchestration::ParseRoutingRequest(message, &request, &error)) {
@@ -187,18 +215,28 @@ void HandleRoutingRequestMessage(asio::ip::tcp::socket &socket, const std::strin
     return;
   }
 
+  const int64_t now_ms = orchestration::NowMillis();
+  const auto snapshot = registry->Snapshot(now_ms, heartbeat_timeout_ms);
+  const auto candidates = FilterRoutingCandidates(snapshot, request);
+
   orchestration::RoutingResponse response;
-  response.status = orchestration::RoutingStatus::kNoCapacity;
   response.request_id = request.request_id;
   response.backend = request.backend;
   response.network = request.network;
-  response.reason = "routing policies are not implemented yet";
+  if (candidates.empty()) {
+    response.status = orchestration::RoutingStatus::kNoCapacity;
+    response.reason = "no compatible healthy node below capacity";
+  } else {
+    response.status = orchestration::RoutingStatus::kServerError;
+    response.reason = "routing selection is not implemented yet";
+  }
   WriteRoutingResponse(socket, response);
 
   std::cout << "[orchestrator] routing request " << request.request_id
             << " policy=" << orchestration::ToString(request.policy)
             << " backend=" << orchestration::ToString(request.backend)
             << " network=" << orchestration::ToString(request.network)
+            << " candidates=" << candidates.size()
             << " status=" << orchestration::ToString(response.status)
             << std::endl;
 }
@@ -214,7 +252,7 @@ void HandleConnection(asio::ip::tcp::socket socket,
     if (type == "heartbeat") {
       HandleHeartbeatMessage(message, registry, node_metrics_log, node_metrics_log_mutex, heartbeat_timeout_ms);
     } else if (type == "routing_request") {
-      HandleRoutingRequestMessage(socket, message);
+      HandleRoutingRequestMessage(socket, message, registry, heartbeat_timeout_ms);
     } else {
       std::cerr << "[orchestrator] rejected message: unknown type" << std::endl;
     }
