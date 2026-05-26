@@ -107,6 +107,12 @@ std::string JoinNodeIds(const std::vector<orchestration::NodeHeartbeat> &nodes) 
 
 std::string BoolString(bool value) { return value ? "1" : "0"; }
 
+std::string MessageType(const std::string &message) {
+  const orchestration::KeyValueMessage fields = orchestration::ParseKeyValueMessage(message);
+  const auto it = fields.find("type");
+  return it == fields.end() ? "" : it->second;
+}
+
 void WriteNodeMetrics(orchestration::CsvLog *log,
                       std::mutex *mutex,
                       const orchestration::NodeHeartbeat &heartbeat,
@@ -132,39 +138,88 @@ void WriteNodeMetrics(orchestration::CsvLog *log,
   });
 }
 
-void HandleHeartbeat(asio::ip::tcp::socket socket,
-                     orchestration::NodeRegistry *registry,
-                     orchestration::CsvLog *node_metrics_log,
-                     std::mutex *node_metrics_log_mutex,
-                     int64_t heartbeat_timeout_ms) {
+void HandleHeartbeatMessage(const std::string &message,
+                            orchestration::NodeRegistry *registry,
+                            orchestration::CsvLog *node_metrics_log,
+                            std::mutex *node_metrics_log_mutex,
+                            int64_t heartbeat_timeout_ms) {
+  orchestration::NodeHeartbeat heartbeat;
+  std::string error;
+  if (!orchestration::ParseHeartbeat(message, &heartbeat, &error)) {
+    std::cerr << "[orchestrator] rejected heartbeat: " << error << std::endl;
+    return;
+  }
+  if (heartbeat.node_id.empty()) {
+    std::cerr << "[orchestrator] rejected heartbeat: empty node_id" << std::endl;
+    return;
+  }
+
+  const int64_t now_ms = orchestration::NowMillis();
+  const bool inserted = registry->RecordHeartbeat(heartbeat, now_ms);
+  const auto snapshot = registry->Snapshot(now_ms, heartbeat_timeout_ms);
+  WriteNodeMetrics(node_metrics_log, node_metrics_log_mutex, heartbeat, now_ms);
+
+  std::cout << "[orchestrator] "
+            << (inserted ? "registered " : "updated ") << heartbeat.node_id
+            << " role=" << orchestration::ToString(heartbeat.node_role)
+            << " healthy=" << (heartbeat.healthy ? 1 : 0)
+            << " active=" << heartbeat.active_sessions << '/' << heartbeat.max_active_sessions << " nodes=[" << JoinNodeIds(snapshot) << "]"
+            << std::endl;
+}
+
+void WriteRoutingResponse(asio::ip::tcp::socket &socket, const orchestration::RoutingResponse &response) {
+  const std::string payload = orchestration::SerializeRoutingResponse(response);
+  asio::write(socket, asio::buffer(payload.data(), payload.size()));
+}
+
+void HandleRoutingRequestMessage(asio::ip::tcp::socket &socket, const std::string &message) {
+  orchestration::RoutingRequest request;
+  std::string error;
+  if (!orchestration::ParseRoutingRequest(message, &request, &error)) {
+    const orchestration::KeyValueMessage fields = orchestration::ParseKeyValueMessage(message);
+    const auto request_id = fields.find("request_id");
+    orchestration::RoutingResponse response;
+    response.status = orchestration::RoutingStatus::kInvalidRequest;
+    response.request_id = request_id == fields.end() ? "" : request_id->second;
+    response.reason = error;
+    WriteRoutingResponse(socket, response);
+    std::cerr << "[orchestrator] rejected routing request: " << error << std::endl;
+    return;
+  }
+
+  orchestration::RoutingResponse response;
+  response.status = orchestration::RoutingStatus::kNoCapacity;
+  response.request_id = request.request_id;
+  response.backend = request.backend;
+  response.network = request.network;
+  response.reason = "routing policies are not implemented yet";
+  WriteRoutingResponse(socket, response);
+
+  std::cout << "[orchestrator] routing request " << request.request_id
+            << " policy=" << orchestration::ToString(request.policy)
+            << " backend=" << orchestration::ToString(request.backend)
+            << " network=" << orchestration::ToString(request.network)
+            << " status=" << orchestration::ToString(response.status)
+            << std::endl;
+}
+
+void HandleConnection(asio::ip::tcp::socket socket,
+                      orchestration::NodeRegistry *registry,
+                      orchestration::CsvLog *node_metrics_log,
+                      std::mutex *node_metrics_log_mutex,
+                      int64_t heartbeat_timeout_ms) {
   try {
     const std::string message = ReadTcpMessage(socket);
-
-    orchestration::NodeHeartbeat heartbeat;
-    std::string error;
-    if (!orchestration::ParseHeartbeat(message, &heartbeat, &error)) {
-      std::cerr << "[orchestrator] rejected heartbeat: " << error << std::endl;
-      return;
+    const std::string type = MessageType(message);
+    if (type == "heartbeat") {
+      HandleHeartbeatMessage(message, registry, node_metrics_log, node_metrics_log_mutex, heartbeat_timeout_ms);
+    } else if (type == "routing_request") {
+      HandleRoutingRequestMessage(socket, message);
+    } else {
+      std::cerr << "[orchestrator] rejected message: unknown type" << std::endl;
     }
-    if (heartbeat.node_id.empty()) {
-      std::cerr << "[orchestrator] rejected heartbeat: empty node_id" << std::endl;
-      return;
-    }
-
-    const int64_t now_ms = orchestration::NowMillis();
-    const bool inserted = registry->RecordHeartbeat(heartbeat, now_ms);
-    const auto snapshot = registry->Snapshot(now_ms, heartbeat_timeout_ms);
-    WriteNodeMetrics(node_metrics_log, node_metrics_log_mutex, heartbeat, now_ms);
-
-    std::cout << "[orchestrator] " << (inserted ? "registered " : "updated ")
-              << heartbeat.node_id << " role="
-              << orchestration::ToString(heartbeat.node_role)
-              << " healthy=" << (heartbeat.healthy ? 1 : 0)
-              << " active=" << heartbeat.active_sessions << '/'
-              << heartbeat.max_active_sessions << " nodes=["
-              << JoinNodeIds(snapshot) << "]" << std::endl;
   } catch (const std::exception &e) {
-    std::cerr << "[orchestrator] heartbeat error: " << e.what() << std::endl;
+    std::cerr << "[orchestrator] connection error: " << e.what() << std::endl;
   }
 }
 
@@ -203,12 +258,12 @@ int main(int argc, char **argv) {
 
     asio::io_context io;
     asio::ip::tcp::acceptor acceptor(io, asio::ip::tcp::endpoint(asio::ip::tcp::v4(), config.heartbeat_port));
-    std::cout << "[orchestrator] heartbeat listening on " << config.heartbeat_port << std::endl;
+    std::cout << "[orchestrator] listening on " << config.heartbeat_port << std::endl;
 
     while (true) {
       asio::ip::tcp::socket socket(io);
       acceptor.accept(socket);
-      std::thread(HandleHeartbeat, std::move(socket), &registry,
+      std::thread(HandleConnection, std::move(socket), &registry,
                   node_metrics_log.get(), &node_metrics_log_mutex,
                   config.heartbeat_timeout_ms)
           .detach();
