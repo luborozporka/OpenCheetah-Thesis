@@ -6,6 +6,7 @@
 #include "orchestration/common/time_utils.h"
 #include "orchestration/node_registry.h"
 
+#include <algorithm>
 #include <cstdint>
 #include <iostream>
 #include <map>
@@ -23,6 +24,11 @@ struct Config {
   uint16_t heartbeat_port = 18080;
   int64_t heartbeat_timeout_ms = 10000;
   std::string node_metrics_log_path;
+};
+
+struct RoutingState {
+  std::mutex mutex;
+  std::map<std::string, size_t> round_robin_next;
 };
 
 std::map<std::string, std::string> ParseArgs(int argc, char **argv) {
@@ -132,6 +138,26 @@ std::vector<orchestration::NodeHeartbeat> FilterRoutingCandidates(
   return candidates;
 }
 
+std::string RoutingKey(const orchestration::RoutingRequest &request) {
+  return orchestration::ToString(request.backend) + "|" + orchestration::ToString(request.network);
+}
+
+orchestration::NodeHeartbeat SelectRoundRobinCandidate(
+    std::vector<orchestration::NodeHeartbeat> candidates,
+    const orchestration::RoutingRequest &request,
+    RoutingState *routing_state) {
+  std::sort(candidates.begin(), candidates.end(),
+            [](const auto &lhs, const auto &rhs) {
+              return lhs.node_id < rhs.node_id;
+            });
+
+  std::lock_guard<std::mutex> lock(routing_state->mutex);
+  size_t &next = routing_state->round_robin_next[RoutingKey(request)];
+  const size_t selected_index = next % candidates.size();
+  next = (selected_index + 1) % candidates.size();
+  return candidates[selected_index];
+}
+
 std::string MessageType(const std::string &message) {
   const orchestration::KeyValueMessage fields = orchestration::ParseKeyValueMessage(message);
   const auto it = fields.find("type");
@@ -200,6 +226,7 @@ void WriteRoutingResponse(asio::ip::tcp::socket &socket, const orchestration::Ro
 void HandleRoutingRequestMessage(asio::ip::tcp::socket &socket,
                                  const std::string &message,
                                  orchestration::NodeRegistry *registry,
+                                 RoutingState *routing_state,
                                  int64_t heartbeat_timeout_ms) {
   orchestration::RoutingRequest request;
   std::string error;
@@ -227,7 +254,10 @@ void HandleRoutingRequestMessage(asio::ip::tcp::socket &socket,
     response.status = orchestration::RoutingStatus::kNoCapacity;
     response.reason = "no compatible healthy node below capacity";
   } else {
+    const orchestration::NodeHeartbeat selected = SelectRoundRobinCandidate(candidates, request, routing_state);
     response.status = orchestration::RoutingStatus::kServerError;
+    response.node_id = selected.node_id;
+    response.server_ip = selected.server_ip;
     response.reason = "routing selection is not implemented yet";
   }
   WriteRoutingResponse(socket, response);
@@ -237,12 +267,14 @@ void HandleRoutingRequestMessage(asio::ip::tcp::socket &socket,
             << " backend=" << orchestration::ToString(request.backend)
             << " network=" << orchestration::ToString(request.network)
             << " candidates=" << candidates.size()
+            << " selected=" << response.node_id
             << " status=" << orchestration::ToString(response.status)
             << std::endl;
 }
 
 void HandleConnection(asio::ip::tcp::socket socket,
                       orchestration::NodeRegistry *registry,
+                      RoutingState *routing_state,
                       orchestration::CsvLog *node_metrics_log,
                       std::mutex *node_metrics_log_mutex,
                       int64_t heartbeat_timeout_ms) {
@@ -252,7 +284,7 @@ void HandleConnection(asio::ip::tcp::socket socket,
     if (type == "heartbeat") {
       HandleHeartbeatMessage(message, registry, node_metrics_log, node_metrics_log_mutex, heartbeat_timeout_ms);
     } else if (type == "routing_request") {
-      HandleRoutingRequestMessage(socket, message, registry, heartbeat_timeout_ms);
+      HandleRoutingRequestMessage(socket, message, registry, routing_state, heartbeat_timeout_ms);
     } else {
       std::cerr << "[orchestrator] rejected message: unknown type" << std::endl;
     }
@@ -273,6 +305,7 @@ int main(int argc, char **argv) {
   try {
     const Config config = ParseConfig(argc, argv);
     orchestration::NodeRegistry registry;
+    RoutingState routing_state;
     std::unique_ptr<orchestration::CsvLog> node_metrics_log;
     std::mutex node_metrics_log_mutex;
     if (!config.node_metrics_log_path.empty()) {
@@ -301,9 +334,8 @@ int main(int argc, char **argv) {
     while (true) {
       asio::ip::tcp::socket socket(io);
       acceptor.accept(socket);
-      std::thread(HandleConnection, std::move(socket), &registry,
-                  node_metrics_log.get(), &node_metrics_log_mutex,
-                  config.heartbeat_timeout_ms)
+      std::thread(HandleConnection, std::move(socket), &registry, &routing_state,
+                  node_metrics_log.get(), &node_metrics_log_mutex, config.heartbeat_timeout_ms)
           .detach();
     }
   } catch (const std::exception &e) {
