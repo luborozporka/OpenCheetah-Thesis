@@ -27,7 +27,8 @@ target_link_libraries(node-reporter
 
 add_executable(orchestrator
   orchestrator.cpp
-  node_registry.cpp)
+  node_registry.cpp
+  snni_session_reserver.cpp)
 
 target_compile_definitions(orchestrator
   PRIVATE

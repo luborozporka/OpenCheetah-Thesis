@@ -5,6 +5,7 @@
 #include "orchestration/common/protocol_internal.h"
 #include "orchestration/common/time_utils.h"
 #include "orchestration/node_registry.h"
+#include "orchestration/snni_session_reserver.h"
 
 #include <algorithm>
 #include <cstdint>
@@ -255,10 +256,17 @@ void HandleRoutingRequestMessage(asio::ip::tcp::socket &socket,
     response.reason = "no compatible healthy node below capacity";
   } else {
     const orchestration::NodeHeartbeat selected = SelectRoundRobinCandidate(candidates, request, routing_state);
-    response.status = orchestration::RoutingStatus::kServerError;
     response.node_id = selected.node_id;
     response.server_ip = selected.server_ip;
-    response.reason = "routing selection is not implemented yet";
+    const orchestration::SnniSessionReservation reservation =
+        orchestration::ReserveSnniSession(selected.server_ip, selected.control_port, request);
+    if (reservation.ok) {
+      response.status = orchestration::RoutingStatus::kOk;
+      response.data_port = reservation.data_port;
+    } else {
+      response.status = orchestration::RoutingStatus::kServerError;
+      response.reason = reservation.error;
+    }
   }
   WriteRoutingResponse(socket, response);
 
