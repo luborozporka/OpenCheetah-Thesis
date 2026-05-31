@@ -5,9 +5,9 @@
 #include "orchestration/common/protocol_internal.h"
 #include "orchestration/common/time_utils.h"
 #include "orchestration/node_registry.h"
+#include "orchestration/routing_policy.h"
 #include "orchestration/snni_session_reserver.h"
 
-#include <algorithm>
 #include <cstdint>
 #include <iostream>
 #include <map>
@@ -25,11 +25,6 @@ struct Config {
   uint16_t heartbeat_port = 18080;
   int64_t heartbeat_timeout_ms = 10000;
   std::string node_metrics_log_path;
-};
-
-struct RoutingState {
-  std::mutex mutex;
-  std::map<std::string, size_t> round_robin_next;
 };
 
 std::map<std::string, std::string> ParseArgs(int argc, char **argv) {
@@ -114,51 +109,6 @@ std::string JoinNodeIds(const std::vector<orchestration::NodeHeartbeat> &nodes) 
 
 std::string BoolString(bool value) { return value ? "1" : "0"; }
 
-bool SupportsNetwork(const orchestration::NodeHeartbeat &node,
-                     orchestration::Network network) {
-  for (const orchestration::Network supported : node.supported_networks) {
-    if (supported == network) return true;
-  }
-  return false;
-}
-
-std::vector<orchestration::NodeHeartbeat> FilterRoutingCandidates(
-    const std::vector<orchestration::NodeHeartbeat> &nodes,
-    const orchestration::RoutingRequest &request) {
-  std::vector<orchestration::NodeHeartbeat> candidates;
-  for (const auto &node : nodes) {
-    if (node.node_role != orchestration::NodeRole::kServer) continue;
-    if (!node.healthy) continue;
-    if (node.backend != request.backend) continue;
-    if (!SupportsNetwork(node, request.network)) continue;
-    if (node.server_ip.empty() || node.control_port == 0) continue;
-    if (node.max_active_sessions <= 0) continue;
-    if (node.active_sessions >= node.max_active_sessions) continue;
-    candidates.push_back(node);
-  }
-  return candidates;
-}
-
-std::string RoutingKey(const orchestration::RoutingRequest &request) {
-  return orchestration::ToString(request.backend) + "|" + orchestration::ToString(request.network);
-}
-
-orchestration::NodeHeartbeat SelectRoundRobinCandidate(
-    std::vector<orchestration::NodeHeartbeat> candidates,
-    const orchestration::RoutingRequest &request,
-    RoutingState *routing_state) {
-  std::sort(candidates.begin(), candidates.end(),
-            [](const auto &lhs, const auto &rhs) {
-              return lhs.node_id < rhs.node_id;
-            });
-
-  std::lock_guard<std::mutex> lock(routing_state->mutex);
-  size_t &next = routing_state->round_robin_next[RoutingKey(request)];
-  const size_t selected_index = next % candidates.size();
-  next = (selected_index + 1) % candidates.size();
-  return candidates[selected_index];
-}
-
 std::string MessageType(const std::string &message) {
   const orchestration::KeyValueMessage fields = orchestration::ParseKeyValueMessage(message);
   const auto it = fields.find("type");
@@ -227,7 +177,7 @@ void WriteRoutingResponse(asio::ip::tcp::socket &socket, const orchestration::Ro
 void HandleRoutingRequestMessage(asio::ip::tcp::socket &socket,
                                  const std::string &message,
                                  orchestration::NodeRegistry *registry,
-                                 RoutingState *routing_state,
+                                 orchestration::RoutingPolicyState *routing_state,
                                  int64_t heartbeat_timeout_ms) {
   orchestration::RoutingRequest request;
   std::string error;
@@ -245,17 +195,20 @@ void HandleRoutingRequestMessage(asio::ip::tcp::socket &socket,
 
   const int64_t now_ms = orchestration::NowMillis();
   const auto snapshot = registry->Snapshot(now_ms, heartbeat_timeout_ms);
-  const auto candidates = FilterRoutingCandidates(snapshot, request);
+  const auto decision =
+      orchestration::SelectRoutingCandidate(snapshot, request, routing_state);
 
   orchestration::RoutingResponse response;
   response.request_id = request.request_id;
   response.backend = request.backend;
   response.network = request.network;
-  if (candidates.empty()) {
-    response.status = orchestration::RoutingStatus::kNoCapacity;
-    response.reason = "no compatible healthy node below capacity";
+  if (!decision.ok) {
+    response.status = decision.candidates.empty()
+      ? orchestration::RoutingStatus::kNoCapacity
+      : orchestration::RoutingStatus::kInvalidRequest;
+    response.reason = decision.reason;
   } else {
-    const orchestration::NodeHeartbeat selected = SelectRoundRobinCandidate(candidates, request, routing_state);
+    const orchestration::NodeHeartbeat selected = decision.selected;
     response.node_id = selected.node_id;
     response.server_ip = selected.server_ip;
     const orchestration::SnniSessionReservation reservation =
@@ -274,7 +227,7 @@ void HandleRoutingRequestMessage(asio::ip::tcp::socket &socket,
             << " policy=" << orchestration::ToString(request.policy)
             << " backend=" << orchestration::ToString(request.backend)
             << " network=" << orchestration::ToString(request.network)
-            << " candidates=" << candidates.size()
+            << " candidates=" << decision.candidates.size()
             << " selected=" << response.node_id
             << " status=" << orchestration::ToString(response.status)
             << std::endl;
@@ -282,7 +235,7 @@ void HandleRoutingRequestMessage(asio::ip::tcp::socket &socket,
 
 void HandleConnection(asio::ip::tcp::socket socket,
                       orchestration::NodeRegistry *registry,
-                      RoutingState *routing_state,
+                      orchestration::RoutingPolicyState *routing_state,
                       orchestration::CsvLog *node_metrics_log,
                       std::mutex *node_metrics_log_mutex,
                       int64_t heartbeat_timeout_ms) {
@@ -313,7 +266,7 @@ int main(int argc, char **argv) {
   try {
     const Config config = ParseConfig(argc, argv);
     orchestration::NodeRegistry registry;
-    RoutingState routing_state;
+    orchestration::RoutingPolicyState routing_state;
     std::unique_ptr<orchestration::CsvLog> node_metrics_log;
     std::mutex node_metrics_log_mutex;
     if (!config.node_metrics_log_path.empty()) {
