@@ -125,6 +125,7 @@ std::vector<NodeHeartbeat> FilterRoutingCandidates(
 RoutingDecision SelectRoutingCandidate(
     const std::vector<NodeHeartbeat> &nodes,
     const RoutingRequest &request,
+    Policy policy,
     RoutingPolicyState *state) {
   RoutingDecision decision;
   decision.candidates = FilterRoutingCandidates(nodes, request);
@@ -133,7 +134,7 @@ RoutingDecision SelectRoutingCandidate(
     return decision;
   }
 
-  switch (request.policy) {
+  switch (policy) {
     case Policy::kRoundRobin:
       decision.selected =
           SelectRoundRobinCandidate(decision.candidates, request, state);

@@ -65,7 +65,6 @@ struct NodeHeartbeat {
 
 struct RoutingRequest {
   std::string request_id;
-  Policy policy = Policy::kUnknown;
   Backend backend = Backend::kUnknown;
   Network network = Network::kUnknown;
   std::string input_shape;

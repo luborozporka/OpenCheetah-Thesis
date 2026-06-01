@@ -18,7 +18,6 @@ std::string SerializeRoutingRequest(const RoutingRequest &request) {
   KeyValueMessage fields;
   fields["type"] = "routing_request";
   fields["request_id"] = request.request_id;
-  fields["policy"] = ToString(request.policy);
   fields["backend"] = ToString(request.backend);
   fields["network"] = ToString(request.network);
   AddIfNotEmpty(&fields, "input_shape", request.input_shape);
@@ -39,7 +38,6 @@ bool ParseRoutingRequest(const std::string &message, RoutingRequest *request,
   const KeyValueMessage fields = ParseKeyValueMessage(message);
   if (!RequireField(fields, "type", error) ||
       !RequireField(fields, "request_id", error) ||
-      !RequireField(fields, "policy", error) ||
       !RequireField(fields, "backend", error) ||
       !RequireField(fields, "network", error)) {
     return false;
@@ -48,14 +46,14 @@ bool ParseRoutingRequest(const std::string &message, RoutingRequest *request,
     if (error != nullptr) *error = "unexpected message type";
     return false;
   }
+  if (HasField(fields, "policy")) {
+    if (error != nullptr) *error = "policy is configured by orchestrator";
+    return false;
+  }
 
   RoutingRequest parsed;
   parsed.request_id = GetField(fields, "request_id");
   parsed.input_shape = GetField(fields, "input_shape");
-  if (!ParsePolicy(GetField(fields, "policy"), &parsed.policy)) {
-    if (error != nullptr) *error = "invalid policy";
-    return false;
-  }
   if (!ParseBackend(GetField(fields, "backend"), &parsed.backend)) {
     if (error != nullptr) *error = "invalid backend";
     return false;

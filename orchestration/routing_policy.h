@@ -30,6 +30,7 @@ std::vector<NodeHeartbeat> FilterRoutingCandidates(
 RoutingDecision SelectRoutingCandidate(
   const std::vector<NodeHeartbeat> &nodes,
   const RoutingRequest &request,
+  Policy policy,
   RoutingPolicyState *state);
 
 }

@@ -24,6 +24,7 @@ namespace {
 struct Config {
   uint16_t heartbeat_port = 18080;
   int64_t heartbeat_timeout_ms = 10000;
+  orchestration::Policy policy = orchestration::Policy::kRoundRobin;
   std::string node_metrics_log_path;
 };
 
@@ -74,6 +75,11 @@ Config ParseConfig(int argc, char **argv) {
   Config config;
   const uint16_t port = ParsePort(GetArg(args, "p"), "p");
   if (port != 0) config.heartbeat_port = port;
+
+  const std::string policy = GetArg(args, "policy", "round_robin");
+  if (!orchestration::ParsePolicy(policy, &config.policy)) {
+    throw std::runtime_error("policy must be round_robin, least_connections, or energy_aware");
+  }
 
   const int64_t timeout = ParseInt64Arg(GetArg(args, "heartbeat_timeout_ms"), "heartbeat_timeout_ms");
   if (timeout != 0) config.heartbeat_timeout_ms = timeout;
@@ -178,6 +184,7 @@ void HandleRoutingRequestMessage(asio::ip::tcp::socket &socket,
                                  const std::string &message,
                                  orchestration::NodeRegistry *registry,
                                  orchestration::RoutingPolicyState *routing_state,
+                                 orchestration::Policy policy,
                                  int64_t heartbeat_timeout_ms) {
   orchestration::RoutingRequest request;
   std::string error;
@@ -195,8 +202,7 @@ void HandleRoutingRequestMessage(asio::ip::tcp::socket &socket,
 
   const int64_t now_ms = orchestration::NowMillis();
   const auto snapshot = registry->Snapshot(now_ms, heartbeat_timeout_ms);
-  const auto decision =
-      orchestration::SelectRoutingCandidate(snapshot, request, routing_state);
+  const auto decision = orchestration::SelectRoutingCandidate(snapshot, request, policy, routing_state);
 
   orchestration::RoutingResponse response;
   response.request_id = request.request_id;
@@ -224,7 +230,7 @@ void HandleRoutingRequestMessage(asio::ip::tcp::socket &socket,
   WriteRoutingResponse(socket, response);
 
   std::cout << "[orchestrator] routing request " << request.request_id
-            << " policy=" << orchestration::ToString(request.policy)
+            << " policy=" << orchestration::ToString(policy)
             << " backend=" << orchestration::ToString(request.backend)
             << " network=" << orchestration::ToString(request.network)
             << " candidates=" << decision.candidates.size()
@@ -236,6 +242,7 @@ void HandleRoutingRequestMessage(asio::ip::tcp::socket &socket,
 void HandleConnection(asio::ip::tcp::socket socket,
                       orchestration::NodeRegistry *registry,
                       orchestration::RoutingPolicyState *routing_state,
+                      orchestration::Policy policy,
                       orchestration::CsvLog *node_metrics_log,
                       std::mutex *node_metrics_log_mutex,
                       int64_t heartbeat_timeout_ms) {
@@ -245,7 +252,7 @@ void HandleConnection(asio::ip::tcp::socket socket,
     if (type == "heartbeat") {
       HandleHeartbeatMessage(message, registry, node_metrics_log, node_metrics_log_mutex, heartbeat_timeout_ms);
     } else if (type == "routing_request") {
-      HandleRoutingRequestMessage(socket, message, registry, routing_state, heartbeat_timeout_ms);
+      HandleRoutingRequestMessage(socket, message, registry, routing_state, policy, heartbeat_timeout_ms);
     } else {
       std::cerr << "[orchestrator] rejected message: unknown type" << std::endl;
     }
@@ -256,7 +263,9 @@ void HandleConnection(asio::ip::tcp::socket socket,
 
 void PrintUsage(const char *program) {
   std::cerr << "Usage: " << program
-            << " [p=<heartbeat_port>] [heartbeat_timeout_ms=<milliseconds>]"
+            << " [p=<heartbeat_port>]"
+            << " [heartbeat_timeout_ms=<milliseconds>]"
+            << " [policy=<round_robin|least_connections|energy_aware>]"
             << " [node_metrics_log=<path>]" << std::endl;
 }
 
@@ -290,13 +299,16 @@ int main(int argc, char **argv) {
 
     asio::io_context io;
     asio::ip::tcp::acceptor acceptor(io, asio::ip::tcp::endpoint(asio::ip::tcp::v4(), config.heartbeat_port));
-    std::cout << "[orchestrator] listening on " << config.heartbeat_port << std::endl;
+    std::cout << "[orchestrator] listening on " << config.heartbeat_port
+              << " policy=" << orchestration::ToString(config.policy)
+              << std::endl;
 
     while (true) {
       asio::ip::tcp::socket socket(io);
       acceptor.accept(socket);
       std::thread(HandleConnection, std::move(socket), &registry, &routing_state,
-                  node_metrics_log.get(), &node_metrics_log_mutex, config.heartbeat_timeout_ms)
+                  config.policy, node_metrics_log.get(), &node_metrics_log_mutex,
+                  config.heartbeat_timeout_ms)
           .detach();
     }
   } catch (const std::exception &e) {
