@@ -26,6 +26,7 @@ struct Config {
   int64_t heartbeat_timeout_ms = 10000;
   orchestration::Policy policy = orchestration::Policy::kRoundRobin;
   std::string node_metrics_log_path;
+  std::string routing_decisions_log_path;
 };
 
 std::map<std::string, std::string> ParseArgs(int argc, char **argv) {
@@ -87,6 +88,7 @@ Config ParseConfig(int argc, char **argv) {
     throw std::runtime_error("heartbeat_timeout_ms must be non-negative");
   }
   config.node_metrics_log_path = GetArg(args, "node_metrics_log");
+  config.routing_decisions_log_path = GetArg(args, "routing_decisions_log");
 
   return config;
 }
@@ -180,21 +182,76 @@ void WriteRoutingResponse(asio::ip::tcp::socket &socket, const orchestration::Ro
   asio::write(socket, asio::buffer(payload.data(), payload.size()));
 }
 
+void WriteRoutingDecision(orchestration::CsvLog *log,
+                          std::mutex *mutex,
+                          int64_t timestamp_ms,
+                          const std::string &request_id,
+                          orchestration::Policy policy,
+                          orchestration::Backend backend,
+                          orchestration::Network network,
+                          orchestration::RoutingStatus status,
+                          const std::string &selected_node,
+                          const std::vector<orchestration::NodeHeartbeat> &candidates,
+                          const std::string &reason) {
+  if (log == nullptr) return;
+
+  std::lock_guard<std::mutex> lock(*mutex);
+  log->WriteRow({
+      std::to_string(timestamp_ms),
+      request_id,
+      orchestration::ToString(policy),
+      orchestration::ToString(backend),
+      orchestration::ToString(network),
+      orchestration::ToString(status),
+      selected_node,
+      JoinNodeIds(candidates),
+      "",
+      reason,
+  });
+}
+
+void ParseRoutingRequestIdentity(const orchestration::KeyValueMessage &fields,
+                                 std::string *request_id,
+                                 orchestration::Backend *backend,
+                                 orchestration::Network *network) {
+  const auto request_id_field = fields.find("request_id");
+  if (request_id_field != fields.end()) *request_id = request_id_field->second;
+
+  const auto backend_field = fields.find("backend");
+  if (backend_field != fields.end()) {
+    orchestration::ParseBackend(backend_field->second, backend);
+  }
+
+  const auto network_field = fields.find("network");
+  if (network_field != fields.end()) {
+    orchestration::ParseNetwork(network_field->second, network);
+  }
+}
+
 void HandleRoutingRequestMessage(asio::ip::tcp::socket &socket,
                                  const std::string &message,
                                  orchestration::NodeRegistry *registry,
                                  orchestration::RoutingPolicyState *routing_state,
                                  orchestration::Policy policy,
+                                 orchestration::CsvLog *routing_decisions_log,
+                                 std::mutex *routing_decisions_log_mutex,
                                  int64_t heartbeat_timeout_ms) {
   orchestration::RoutingRequest request;
   std::string error;
   if (!orchestration::ParseRoutingRequest(message, &request, &error)) {
     const orchestration::KeyValueMessage fields = orchestration::ParseKeyValueMessage(message);
-    const auto request_id = fields.find("request_id");
+    std::string request_id;
+    orchestration::Backend backend = orchestration::Backend::kUnknown;
+    orchestration::Network network = orchestration::Network::kUnknown;
+    ParseRoutingRequestIdentity(fields, &request_id, &backend, &network);
+
     orchestration::RoutingResponse response;
     response.status = orchestration::RoutingStatus::kInvalidRequest;
-    response.request_id = request_id == fields.end() ? "" : request_id->second;
+    response.request_id = request_id;
     response.reason = error;
+    WriteRoutingDecision(routing_decisions_log, routing_decisions_log_mutex,
+                         orchestration::NowMillis(), response.request_id, policy,
+                         backend, network, response.status, "", {}, response.reason);
     WriteRoutingResponse(socket, response);
     std::cerr << "[orchestrator] rejected routing request: " << error << std::endl;
     return;
@@ -227,6 +284,10 @@ void HandleRoutingRequestMessage(asio::ip::tcp::socket &socket,
       response.reason = reservation.error;
     }
   }
+  WriteRoutingDecision(routing_decisions_log, routing_decisions_log_mutex, now_ms,
+                       request.request_id, policy, request.backend, request.network,
+                       response.status, response.node_id, decision.candidates,
+                       response.reason);
   WriteRoutingResponse(socket, response);
 
   std::cout << "[orchestrator] routing request " << request.request_id
@@ -245,6 +306,8 @@ void HandleConnection(asio::ip::tcp::socket socket,
                       orchestration::Policy policy,
                       orchestration::CsvLog *node_metrics_log,
                       std::mutex *node_metrics_log_mutex,
+                      orchestration::CsvLog *routing_decisions_log,
+                      std::mutex *routing_decisions_log_mutex,
                       int64_t heartbeat_timeout_ms) {
   try {
     const std::string message = ReadTcpMessage(socket);
@@ -252,7 +315,10 @@ void HandleConnection(asio::ip::tcp::socket socket,
     if (type == "heartbeat") {
       HandleHeartbeatMessage(message, registry, node_metrics_log, node_metrics_log_mutex, heartbeat_timeout_ms);
     } else if (type == "routing_request") {
-      HandleRoutingRequestMessage(socket, message, registry, routing_state, policy, heartbeat_timeout_ms);
+      HandleRoutingRequestMessage(socket, message, registry, routing_state, policy,
+                                  routing_decisions_log,
+                                  routing_decisions_log_mutex,
+                                  heartbeat_timeout_ms);
     } else {
       std::cerr << "[orchestrator] rejected message: unknown type" << std::endl;
     }
@@ -266,7 +332,9 @@ void PrintUsage(const char *program) {
             << " [p=<heartbeat_port>]"
             << " [heartbeat_timeout_ms=<milliseconds>]"
             << " [policy=<round_robin|least_connections|energy_aware>]"
-            << " [node_metrics_log=<path>]" << std::endl;
+            << " [node_metrics_log=<path>]"
+            << " [routing_decisions_log=<path>]"
+            << std::endl;
 }
 
 }  // namespace
@@ -278,6 +346,8 @@ int main(int argc, char **argv) {
     orchestration::RoutingPolicyState routing_state;
     std::unique_ptr<orchestration::CsvLog> node_metrics_log;
     std::mutex node_metrics_log_mutex;
+    std::unique_ptr<orchestration::CsvLog> routing_decisions_log;
+    std::mutex routing_decisions_log_mutex;
     if (!config.node_metrics_log_path.empty()) {
       node_metrics_log = std::make_unique<orchestration::CsvLog>(
           config.node_metrics_log_path,
@@ -296,6 +366,22 @@ int main(int argc, char **argv) {
               "healthy",
           });
     }
+    if (!config.routing_decisions_log_path.empty()) {
+      routing_decisions_log = std::make_unique<orchestration::CsvLog>(
+          config.routing_decisions_log_path,
+          std::vector<std::string>{
+              "timestamp_ms",
+              "request_id",
+              "policy",
+              "backend",
+              "network",
+              "status",
+              "selected_node",
+              "candidate_nodes",
+              "candidate_scores",
+              "reason",
+          });
+    }
 
     asio::io_context io;
     asio::ip::tcp::acceptor acceptor(io, asio::ip::tcp::endpoint(asio::ip::tcp::v4(), config.heartbeat_port));
@@ -308,6 +394,7 @@ int main(int argc, char **argv) {
       acceptor.accept(socket);
       std::thread(HandleConnection, std::move(socket), &registry, &routing_state,
                   config.policy, node_metrics_log.get(), &node_metrics_log_mutex,
+                  routing_decisions_log.get(), &routing_decisions_log_mutex,
                   config.heartbeat_timeout_ms)
           .detach();
     }
