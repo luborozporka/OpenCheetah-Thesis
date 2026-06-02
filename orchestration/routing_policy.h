@@ -4,6 +4,7 @@
 #include "orchestration/common/protocol.h"
 
 #include <cstddef>
+#include <cstdint>
 #include <map>
 #include <mutex>
 #include <string>
@@ -25,12 +26,14 @@ struct RoutingDecision {
 
 std::vector<NodeHeartbeat> FilterRoutingCandidates(
   const std::vector<NodeHeartbeat> &nodes,
-  const RoutingRequest &request);
+  const RoutingRequest &request,
+  uint64_t min_mem_available_bytes);
 
 RoutingDecision SelectRoutingCandidate(
   const std::vector<NodeHeartbeat> &nodes,
   const RoutingRequest &request,
   Policy policy,
+  uint64_t min_mem_available_bytes,
   RoutingPolicyState *state);
 
 }

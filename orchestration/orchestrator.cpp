@@ -25,6 +25,7 @@ struct Config {
   uint16_t heartbeat_port = 18080;
   int64_t heartbeat_timeout_ms = 10000;
   orchestration::Policy policy = orchestration::Policy::kRoundRobin;
+  uint64_t min_mem_available_bytes = 0;
   std::string node_metrics_log_path;
   std::string routing_decisions_log_path;
 };
@@ -70,6 +71,15 @@ int64_t ParseInt64Arg(const std::string &value, const std::string &field_name) {
   return result;
 }
 
+uint64_t ParseUint64Arg(const std::string &value, const std::string &field_name) {
+  if (value.empty()) return 0;
+  uint64_t result = 0;
+  if (!orchestration::protocol_internal::ParseUint64(value, &result)) {
+    throw std::runtime_error(field_name + " must be an unsigned integer");
+  }
+  return result;
+}
+
 Config ParseConfig(int argc, char **argv) {
   const auto args = ParseArgs(argc, argv);
 
@@ -89,6 +99,7 @@ Config ParseConfig(int argc, char **argv) {
   }
   config.node_metrics_log_path = GetArg(args, "node_metrics_log");
   config.routing_decisions_log_path = GetArg(args, "routing_decisions_log");
+  config.min_mem_available_bytes = ParseUint64Arg(GetArg(args, "min_mem_available_bytes"), "min_mem_available_bytes");
 
   return config;
 }
@@ -233,6 +244,7 @@ void HandleRoutingRequestMessage(asio::ip::tcp::socket &socket,
                                  orchestration::NodeRegistry *registry,
                                  orchestration::RoutingPolicyState *routing_state,
                                  orchestration::Policy policy,
+                                 uint64_t min_mem_available_bytes,
                                  orchestration::CsvLog *routing_decisions_log,
                                  std::mutex *routing_decisions_log_mutex,
                                  int64_t heartbeat_timeout_ms) {
@@ -259,7 +271,7 @@ void HandleRoutingRequestMessage(asio::ip::tcp::socket &socket,
 
   const int64_t now_ms = orchestration::NowMillis();
   const auto snapshot = registry->Snapshot(now_ms, heartbeat_timeout_ms);
-  const auto decision = orchestration::SelectRoutingCandidate(snapshot, request, policy, routing_state);
+  const auto decision = orchestration::SelectRoutingCandidate(snapshot, request, policy, min_mem_available_bytes, routing_state);
 
   orchestration::RoutingResponse response;
   response.request_id = request.request_id;
@@ -304,6 +316,7 @@ void HandleConnection(asio::ip::tcp::socket socket,
                       orchestration::NodeRegistry *registry,
                       orchestration::RoutingPolicyState *routing_state,
                       orchestration::Policy policy,
+                      uint64_t min_mem_available_bytes,
                       orchestration::CsvLog *node_metrics_log,
                       std::mutex *node_metrics_log_mutex,
                       orchestration::CsvLog *routing_decisions_log,
@@ -316,9 +329,8 @@ void HandleConnection(asio::ip::tcp::socket socket,
       HandleHeartbeatMessage(message, registry, node_metrics_log, node_metrics_log_mutex, heartbeat_timeout_ms);
     } else if (type == "routing_request") {
       HandleRoutingRequestMessage(socket, message, registry, routing_state, policy,
-                                  routing_decisions_log,
-                                  routing_decisions_log_mutex,
-                                  heartbeat_timeout_ms);
+                                  min_mem_available_bytes, routing_decisions_log,
+                                  routing_decisions_log_mutex, heartbeat_timeout_ms);
     } else {
       std::cerr << "[orchestrator] rejected message: unknown type" << std::endl;
     }
@@ -332,6 +344,7 @@ void PrintUsage(const char *program) {
             << " [p=<heartbeat_port>]"
             << " [heartbeat_timeout_ms=<milliseconds>]"
             << " [policy=<round_robin|least_connections|energy_aware>]"
+            << " [min_mem_available_bytes=<bytes>]"
             << " [node_metrics_log=<path>]"
             << " [routing_decisions_log=<path>]"
             << std::endl;
@@ -387,13 +400,15 @@ int main(int argc, char **argv) {
     asio::ip::tcp::acceptor acceptor(io, asio::ip::tcp::endpoint(asio::ip::tcp::v4(), config.heartbeat_port));
     std::cout << "[orchestrator] listening on " << config.heartbeat_port
               << " policy=" << orchestration::ToString(config.policy)
+              << " min_mem_available_bytes=" << config.min_mem_available_bytes
               << std::endl;
 
     while (true) {
       asio::ip::tcp::socket socket(io);
       acceptor.accept(socket);
       std::thread(HandleConnection, std::move(socket), &registry, &routing_state,
-                  config.policy, node_metrics_log.get(), &node_metrics_log_mutex,
+                  config.policy, config.min_mem_available_bytes,
+                  node_metrics_log.get(), &node_metrics_log_mutex,
                   routing_decisions_log.get(), &routing_decisions_log_mutex,
                   config.heartbeat_timeout_ms)
           .detach();

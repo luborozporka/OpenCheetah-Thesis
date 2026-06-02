@@ -107,7 +107,8 @@ NodeHeartbeat SelectEnergyAwareCandidate(
 
 std::vector<NodeHeartbeat> FilterRoutingCandidates(
     const std::vector<NodeHeartbeat> &nodes,
-    const RoutingRequest &request) {
+    const RoutingRequest &request,
+    uint64_t min_mem_available_bytes) {
   std::vector<NodeHeartbeat> candidates;
   for (const auto &node : nodes) {
     if (node.node_role != NodeRole::kServer) continue;
@@ -117,6 +118,9 @@ std::vector<NodeHeartbeat> FilterRoutingCandidates(
     if (node.server_ip.empty() || node.control_port == 0) continue;
     if (node.max_active_sessions <= 0) continue;
     if (node.active_sessions >= node.max_active_sessions) continue;
+    if (min_mem_available_bytes > 0 && node.mem_available_bytes < min_mem_available_bytes) {
+      continue;
+    }
     candidates.push_back(node);
   }
   return candidates;
@@ -126,11 +130,12 @@ RoutingDecision SelectRoutingCandidate(
     const std::vector<NodeHeartbeat> &nodes,
     const RoutingRequest &request,
     Policy policy,
+    uint64_t min_mem_available_bytes,
     RoutingPolicyState *state) {
   RoutingDecision decision;
-  decision.candidates = FilterRoutingCandidates(nodes, request);
+  decision.candidates = FilterRoutingCandidates(nodes, request, min_mem_available_bytes);
   if (decision.candidates.empty()) {
-    decision.reason = "no compatible healthy node below capacity";
+    decision.reason = "no compatible healthy node below capacity and memory threshold";
     return decision;
   }
 
