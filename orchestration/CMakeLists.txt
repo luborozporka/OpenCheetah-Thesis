@@ -27,6 +27,7 @@ target_link_libraries(node-reporter
 
 add_executable(orchestrator
   orchestrator.cpp
+  knowledge_base.cpp
   node_registry.cpp
   routing_policy.cpp
   snni_session_reserver.cpp)
