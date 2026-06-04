@@ -2,6 +2,7 @@
 #define ORCHESTRATION_ROUTING_POLICY_H_
 
 #include "orchestration/common/protocol.h"
+#include "orchestration/knowledge_base.h"
 
 #include <cstddef>
 #include <cstdint>
@@ -21,6 +22,7 @@ struct RoutingDecision {
   bool ok = false;
   NodeHeartbeat selected;
   std::vector<NodeHeartbeat> candidates;
+  std::string candidate_scores;
   std::string reason;
 };
 
@@ -34,6 +36,7 @@ RoutingDecision SelectRoutingCandidate(
   const RoutingRequest &request,
   Policy policy,
   uint64_t min_mem_available_bytes,
+  const KnowledgeBase *knowledge_base,
   RoutingPolicyState *state);
 
 }

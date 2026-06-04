@@ -4,6 +4,7 @@
 #include "orchestration/common/protocol.h"
 #include "orchestration/common/protocol_internal.h"
 #include "orchestration/common/time_utils.h"
+#include "orchestration/knowledge_base.h"
 #include "orchestration/node_registry.h"
 #include "orchestration/routing_policy.h"
 #include "orchestration/snni_session_reserver.h"
@@ -26,6 +27,7 @@ struct Config {
   int64_t heartbeat_timeout_ms = 10000;
   orchestration::Policy policy = orchestration::Policy::kRoundRobin;
   uint64_t min_mem_available_bytes = 0;
+  std::string knowledge_base_path;
   std::string node_metrics_log_path;
   std::string routing_decisions_log_path;
 };
@@ -99,6 +101,7 @@ Config ParseConfig(int argc, char **argv) {
   }
   config.node_metrics_log_path = GetArg(args, "node_metrics_log");
   config.routing_decisions_log_path = GetArg(args, "routing_decisions_log");
+  config.knowledge_base_path = GetArg(args, "knowledge_base");
   config.min_mem_available_bytes = ParseUint64Arg(GetArg(args, "min_mem_available_bytes"), "min_mem_available_bytes");
 
   return config;
@@ -203,6 +206,7 @@ void WriteRoutingDecision(orchestration::CsvLog *log,
                           orchestration::RoutingStatus status,
                           const std::string &selected_node,
                           const std::vector<orchestration::NodeHeartbeat> &candidates,
+                          const std::string &candidate_scores,
                           const std::string &reason) {
   if (log == nullptr) return;
 
@@ -216,7 +220,7 @@ void WriteRoutingDecision(orchestration::CsvLog *log,
       orchestration::ToString(status),
       selected_node,
       JoinNodeIds(candidates),
-      "",
+      candidate_scores,
       reason,
   });
 }
@@ -245,6 +249,7 @@ void HandleRoutingRequestMessage(asio::ip::tcp::socket &socket,
                                  orchestration::RoutingPolicyState *routing_state,
                                  orchestration::Policy policy,
                                  uint64_t min_mem_available_bytes,
+                                 const orchestration::KnowledgeBase *knowledge_base,
                                  orchestration::CsvLog *routing_decisions_log,
                                  std::mutex *routing_decisions_log_mutex,
                                  int64_t heartbeat_timeout_ms) {
@@ -263,7 +268,7 @@ void HandleRoutingRequestMessage(asio::ip::tcp::socket &socket,
     response.reason = error;
     WriteRoutingDecision(routing_decisions_log, routing_decisions_log_mutex,
                          orchestration::NowMillis(), response.request_id, policy,
-                         backend, network, response.status, "", {}, response.reason);
+                         backend, network, response.status, "", {}, "", response.reason);
     WriteRoutingResponse(socket, response);
     std::cerr << "[orchestrator] rejected routing request: " << error << std::endl;
     return;
@@ -271,7 +276,9 @@ void HandleRoutingRequestMessage(asio::ip::tcp::socket &socket,
 
   const int64_t now_ms = orchestration::NowMillis();
   const auto snapshot = registry->Snapshot(now_ms, heartbeat_timeout_ms);
-  const auto decision = orchestration::SelectRoutingCandidate(snapshot, request, policy, min_mem_available_bytes, routing_state);
+  const auto decision = orchestration::SelectRoutingCandidate(
+      snapshot, request, policy, min_mem_available_bytes, 
+      knowledge_base, routing_state);
 
   orchestration::RoutingResponse response;
   response.request_id = request.request_id;
@@ -299,7 +306,7 @@ void HandleRoutingRequestMessage(asio::ip::tcp::socket &socket,
   WriteRoutingDecision(routing_decisions_log, routing_decisions_log_mutex, now_ms,
                        request.request_id, policy, request.backend, request.network,
                        response.status, response.node_id, decision.candidates,
-                       response.reason);
+                       decision.candidate_scores, response.reason);
   WriteRoutingResponse(socket, response);
 
   std::cout << "[orchestrator] routing request " << request.request_id
@@ -317,6 +324,7 @@ void HandleConnection(asio::ip::tcp::socket socket,
                       orchestration::RoutingPolicyState *routing_state,
                       orchestration::Policy policy,
                       uint64_t min_mem_available_bytes,
+                      const orchestration::KnowledgeBase *knowledge_base,
                       orchestration::CsvLog *node_metrics_log,
                       std::mutex *node_metrics_log_mutex,
                       orchestration::CsvLog *routing_decisions_log,
@@ -329,7 +337,7 @@ void HandleConnection(asio::ip::tcp::socket socket,
       HandleHeartbeatMessage(message, registry, node_metrics_log, node_metrics_log_mutex, heartbeat_timeout_ms);
     } else if (type == "routing_request") {
       HandleRoutingRequestMessage(socket, message, registry, routing_state, policy,
-                                  min_mem_available_bytes, routing_decisions_log,
+                                  min_mem_available_bytes, knowledge_base, routing_decisions_log,
                                   routing_decisions_log_mutex, heartbeat_timeout_ms);
     } else {
       std::cerr << "[orchestrator] rejected message: unknown type" << std::endl;
@@ -345,6 +353,7 @@ void PrintUsage(const char *program) {
             << " [heartbeat_timeout_ms=<milliseconds>]"
             << " [policy=<round_robin|least_connections|energy_aware>]"
             << " [min_mem_available_bytes=<bytes>]"
+            << " [knowledge_base=<path>]"
             << " [node_metrics_log=<path>]"
             << " [routing_decisions_log=<path>]"
             << std::endl;
@@ -357,6 +366,18 @@ int main(int argc, char **argv) {
     const Config config = ParseConfig(argc, argv);
     orchestration::NodeRegistry registry;
     orchestration::RoutingPolicyState routing_state;
+    std::unique_ptr<orchestration::KnowledgeBase> knowledge_base;
+    if (!config.knowledge_base_path.empty()) {
+      knowledge_base = std::make_unique<orchestration::KnowledgeBase>();
+      std::string error;
+      if (!knowledge_base->LoadCsv(config.knowledge_base_path, &error)) {
+        throw std::runtime_error(error);
+      }
+      std::cout << "[orchestrator] loaded knowledge_base=" << config.knowledge_base_path
+                << " entries=" << knowledge_base->entries().size()
+                << std::endl;
+    }
+
     std::unique_ptr<orchestration::CsvLog> node_metrics_log;
     std::mutex node_metrics_log_mutex;
     std::unique_ptr<orchestration::CsvLog> routing_decisions_log;
@@ -408,6 +429,7 @@ int main(int argc, char **argv) {
       acceptor.accept(socket);
       std::thread(HandleConnection, std::move(socket), &registry, &routing_state,
                   config.policy, config.min_mem_available_bytes,
+                  knowledge_base.get(),
                   node_metrics_log.get(), &node_metrics_log_mutex,
                   routing_decisions_log.get(), &routing_decisions_log_mutex,
                   config.heartbeat_timeout_ms)

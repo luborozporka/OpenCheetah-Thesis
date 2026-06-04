@@ -3,6 +3,8 @@
 #include <algorithm>
 #include <cmath>
 #include <limits>
+#include <string>
+#include <vector>
 
 namespace orchestration {
 namespace {
@@ -10,6 +12,17 @@ namespace {
 constexpr double kDefaultPredictedLatencyS = 1.0;
 constexpr double kMinimumEffectivePowerW = 1.0;
 constexpr double kCapacityPenaltyWeight = 1.0;
+
+struct EnergyAwareScore {
+  NodeHeartbeat candidate;
+  double score = std::numeric_limits<double>::max();
+  std::string source;
+};
+
+struct EnergyAwareSelection {
+  NodeHeartbeat selected;
+  std::string candidate_scores;
+};
 
 bool SupportsNetwork(const NodeHeartbeat &node, Network network) {
   for (const Network supported : node.supported_networks) {
@@ -31,6 +44,98 @@ double CapacityRatio(const NodeHeartbeat &node) {
 double CapacityPenalty(const NodeHeartbeat &node) {
   const double ratio = CapacityRatio(node);
   return kCapacityPenaltyWeight * ratio * ratio;
+}
+
+double EffectivePowerW(const NodeHeartbeat &node) {
+  return std::max(node.dynamic_power_w, kMinimumEffectivePowerW);
+}
+
+KnowledgeBaseQuery BuildKnowledgeBaseQuery(
+    const NodeHeartbeat &node,
+    const RoutingRequest &request) {
+  KnowledgeBaseQuery query;
+  query.node_id = node.node_id;
+  query.backend = request.backend;
+  query.network = request.network;
+  query.input_shape = request.input_shape;
+  query.num_threads = request.num_threads;
+  query.concurrency_level = node.active_sessions + 1;
+  return query;
+}
+
+EnergyAwareScore ScoreEnergyAwareCandidate(
+    const NodeHeartbeat &node,
+    const RoutingRequest &request,
+    const KnowledgeBase *knowledge_base,
+    bool time_proxy_mode) {
+  EnergyAwareScore result;
+  result.candidate = node;
+  const double penalty = CapacityPenalty(node);
+
+  if (knowledge_base != nullptr) {
+    const KnowledgeBaseLookup lookup = knowledge_base->Lookup(BuildKnowledgeBaseQuery(node, request));
+    if (lookup.found) {
+      const std::string source = ToString(lookup.source);
+      if (lookup.entry.mean_energy_j > 0.0) {
+        result.score = lookup.entry.mean_energy_j + penalty;
+        result.source = source;
+        return result;
+      }
+      if (lookup.entry.mean_latency_ms > 0.0) {
+        const double latency_s = lookup.entry.mean_latency_ms / 1000.0;
+        if (node.power_available) {
+          result.score = latency_s * EffectivePowerW(node) + penalty;
+          result.source = source + "_latency_live_power";
+        } else {
+          result.score = latency_s + penalty;
+          result.source = source + "_time_proxy";
+        }
+        return result;
+      }
+    }
+  }
+
+  if (time_proxy_mode) {
+    result.score = kDefaultPredictedLatencyS + penalty;
+    result.source = knowledge_base == nullptr
+      ? "no_kb_time_proxy"
+      : "default_time_proxy";
+    return result;
+  }
+  if (!node.power_available) {
+    result.source = knowledge_base == nullptr
+      ? "no_kb_no_power"
+      : "default_no_power";
+    return result;
+  }
+
+  result.score = kDefaultPredictedLatencyS * EffectivePowerW(node) + penalty;
+  result.source = knowledge_base == nullptr
+    ? "no_kb_live_power"
+    : "default_live_power";
+  return result;
+}
+
+bool LowerEnergyScore(const EnergyAwareScore &lhs, const EnergyAwareScore &rhs) {
+  if (lhs.score != rhs.score) return lhs.score < rhs.score;
+  if (lhs.candidate.active_sessions != rhs.candidate.active_sessions) {
+    return lhs.candidate.active_sessions < rhs.candidate.active_sessions;
+  }
+  return lhs.candidate.node_id < rhs.candidate.node_id;
+}
+
+std::string ScoreValueString(double score) {
+  if (score == std::numeric_limits<double>::max()) return "inf";
+  return std::to_string(score);
+}
+
+std::string JoinCandidateScores(const std::vector<EnergyAwareScore> &scores) {
+  std::string result;
+  for (const auto &score : scores) {
+    if (!result.empty()) result += ';';
+    result += score.candidate.node_id + "=" + ScoreValueString(score.score) + ":" + score.source;
+  }
+  return result;
 }
 
 NodeHeartbeat SelectRoundRobinCandidate(
@@ -67,8 +172,10 @@ NodeHeartbeat SelectLeastConnectionsCandidate(
       });
 }
 
-NodeHeartbeat SelectEnergyAwareCandidate(
-    std::vector<NodeHeartbeat> candidates) {
+EnergyAwareSelection SelectEnergyAwareCandidate(
+    const std::vector<NodeHeartbeat> &candidates,
+    const RoutingRequest &request,
+    const KnowledgeBase *knowledge_base) {
   const bool time_proxy_mode = std::none_of(
       candidates.begin(),
       candidates.end(),
@@ -76,31 +183,18 @@ NodeHeartbeat SelectEnergyAwareCandidate(
         return candidate.power_available;
       });
 
-  return *std::min_element(
-      candidates.begin(),
-      candidates.end(),
-      [time_proxy_mode](const auto &lhs, const auto &rhs) {
-        const auto score = [time_proxy_mode](const auto &node) {
-          if (time_proxy_mode) {
-            return kDefaultPredictedLatencyS + CapacityPenalty(node);
-          }
-          if (!node.power_available) {
-            return std::numeric_limits<double>::max();
-          }
-          const double effective_power_w =
-              std::max(node.dynamic_power_w, kMinimumEffectivePowerW);
-          return kDefaultPredictedLatencyS * effective_power_w +
-                 CapacityPenalty(node);
-        };
+  std::vector<EnergyAwareScore> scores;
+  scores.reserve(candidates.size());
+  for (const auto &candidate : candidates) {
+    scores.push_back(ScoreEnergyAwareCandidate(candidate, request, knowledge_base, time_proxy_mode));
+  }
 
-        const double lhs_score = score(lhs);
-        const double rhs_score = score(rhs);
-        if (lhs_score != rhs_score) return lhs_score < rhs_score;
-        if (lhs.active_sessions != rhs.active_sessions) {
-          return lhs.active_sessions < rhs.active_sessions;
-        }
-        return lhs.node_id < rhs.node_id;
-      });
+  const auto selected = std::min_element(scores.begin(), scores.end(), LowerEnergyScore);
+
+  EnergyAwareSelection selection;
+  selection.selected = selected->candidate;
+  selection.candidate_scores = JoinCandidateScores(scores);
+  return selection;
 }
 
 }  // namespace
@@ -131,6 +225,7 @@ RoutingDecision SelectRoutingCandidate(
     const RoutingRequest &request,
     Policy policy,
     uint64_t min_mem_available_bytes,
+    const KnowledgeBase *knowledge_base,
     RoutingPolicyState *state) {
   RoutingDecision decision;
   decision.candidates = FilterRoutingCandidates(nodes, request, min_mem_available_bytes);
@@ -147,9 +242,12 @@ RoutingDecision SelectRoutingCandidate(
     case Policy::kLeastConnections:
       decision.selected = SelectLeastConnectionsCandidate(decision.candidates);
       break;
-    case Policy::kEnergyAware:
-      decision.selected = SelectEnergyAwareCandidate(decision.candidates);
+    case Policy::kEnergyAware: {
+      const EnergyAwareSelection selection = SelectEnergyAwareCandidate(decision.candidates, request, knowledge_base);
+      decision.selected = selection.selected;
+      decision.candidate_scores = selection.candidate_scores;
       break;
+    }
     case Policy::kUnknown:
       decision.reason = "unsupported routing policy";
       return decision;
