@@ -39,3 +39,14 @@ target_compile_definitions(orchestrator
 target_link_libraries(orchestrator
   PRIVATE
     orchestration-common)
+
+add_executable(client
+  client.cpp)
+
+target_compile_definitions(client
+  PRIVATE
+    ASIO_STANDALONE)
+
+target_link_libraries(client
+  PRIVATE
+    orchestration-common)
