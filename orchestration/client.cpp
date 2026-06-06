@@ -1,5 +1,6 @@
 #include <asio.hpp>
 
+#include "orchestration/common/csv_log.h"
 #include "orchestration/common/protocol.h"
 #include "orchestration/common/protocol_internal.h"
 #include "orchestration/common/time_utils.h"
@@ -23,6 +24,7 @@ struct Config {
   std::string client_binary;
   std::string binary_dir = "build/bin";
   std::string input_path;
+  std::string request_results_log_path;
   int64_t expected_label = -1;
   orchestration::RoutingRequest request;
 };
@@ -166,6 +168,7 @@ Config ParseConfig(int argc, char **argv) {
   config.expected_label = ParseInt64(GetArg(args, "expected_label"), "expected_label", -1);
   config.client_binary = GetArg(args, "client_binary");
   config.binary_dir = GetArg(args, "binary_dir", config.binary_dir);
+  config.request_results_log_path = GetArg(args, "request_results_log");
 
   return config;
 }
@@ -251,6 +254,66 @@ ClientRunResult RunStandaloneClient(
   return result;
 }
 
+std::string FailureReason(const orchestration::RoutingResponse &response,
+                          const ClientRunResult &result,
+                          bool expected_ok) {
+  if (response.status != orchestration::RoutingStatus::kOk) return response.reason;
+  if (result.exit_code != 0) return "client exited with non-zero status";
+  if (!result.label_found) return "predicted label not found";
+  if (!expected_ok) return "predicted label differs from expected label";
+  return "";
+}
+
+void WriteRequestResult(const Config &config,
+                        const orchestration::RoutingResponse &response,
+                        const ClientRunResult &result,
+                        int64_t start_ms,
+                        int64_t end_ms,
+                        bool success,
+                        const std::string &reason) {
+  if (config.request_results_log_path.empty()) return;
+
+  orchestration::CsvLog log(
+    config.request_results_log_path,
+    {
+      "request_id",
+      "node_id",
+      "server_ip",
+      "data_port",
+      "backend",
+      "network",
+      "num_threads",
+      "start_ms",
+      "end_ms",
+      "latency_ms",
+      "success",
+      "predicted_label",
+      "expected_label",
+      "client_exit_code",
+      "routing_status",
+      "reason",
+    });
+
+  log.WriteRow({
+    config.request.request_id,
+    response.node_id,
+    response.server_ip,
+    response.data_port == 0 ? "" : std::to_string(response.data_port),
+    orchestration::ToString(config.request.backend),
+    orchestration::ToString(config.request.network),
+    std::to_string(config.request.num_threads),
+    std::to_string(start_ms),
+    std::to_string(end_ms),
+    std::to_string(end_ms - start_ms),
+    success ? "1" : "0",
+    result.label_found ? std::to_string(result.predicted_label) : "",
+    config.expected_label < 0 ? "" : std::to_string(config.expected_label),
+    std::to_string(result.exit_code),
+    orchestration::ToString(response.status),
+    reason,
+  });
+}
+
 void PrintUsage(const char *program) {
   std::cerr
       << "Usage: " << program
@@ -260,6 +323,7 @@ void PrintUsage(const char *program) {
       << " [client_binary=<path>|binary_dir=<dir>]"
       << " [ell=<bitlength>] [k=<scale>] [nt=<threads>]"
       << " [max_latency_ms=<ms>] [min_accuracy=<value>]"
+      << " [request_results_log=<path>]"
       << std::endl;
 }
 
@@ -268,8 +332,13 @@ void PrintUsage(const char *program) {
 int main(int argc, char **argv) {
   try {
     const Config config = ParseConfig(argc, argv);
+    const int64_t start_ms = orchestration::NowMillis();
     const orchestration::RoutingResponse response = RequestRouting(config);
     if (response.status != orchestration::RoutingStatus::kOk) {
+      const int64_t end_ms = orchestration::NowMillis();
+      ClientRunResult result;
+      const std::string reason = FailureReason(response, result, false);
+      WriteRequestResult(config, response, result, start_ms, end_ms, false, reason);
       std::cerr << "[client] routing failed status=" << orchestration::ToString(response.status)
                 << " reason=" << response.reason
                 << std::endl;
@@ -277,10 +346,13 @@ int main(int argc, char **argv) {
     }
 
     const ClientRunResult result = RunStandaloneClient(config, response);
+    const int64_t end_ms = orchestration::NowMillis();
     std::cout << result.output;
 
     const bool expected_ok = config.expected_label < 0 || result.predicted_label == config.expected_label;
     const bool success = result.exit_code == 0 && result.label_found && expected_ok;
+    const std::string reason = FailureReason(response, result, expected_ok);
+    WriteRequestResult(config, response, result, start_ms, end_ms, success, reason);
     std::cout << "[client] request_id=" << config.request.request_id
               << " node_id=" << response.node_id
               << " server_ip=" << response.server_ip
