@@ -32,6 +32,11 @@ struct Config {
   std::string routing_decisions_log_path;
 };
 
+struct PendingNodeAssignments {
+  std::mutex mutex;
+  std::map<std::string, int> by_node;
+};
+
 std::map<std::string, std::string> ParseArgs(int argc, char **argv) {
   std::map<std::string, std::string> args;
   for (int i = 1; i < argc; ++i) {
@@ -131,6 +136,29 @@ std::string JoinNodeIds(const std::vector<orchestration::NodeHeartbeat> &nodes) 
 
 std::string BoolString(bool value) { return value ? "1" : "0"; }
 
+void ApplyPendingNodeAssignments(
+    PendingNodeAssignments *pending_node_assignments,
+    std::vector<orchestration::NodeHeartbeat> *nodes) {
+  for (auto &node : *nodes) {
+    const auto it = pending_node_assignments->by_node.find(node.node_id);
+    if (it != pending_node_assignments->by_node.end()) {
+      node.active_sessions += it->second;
+    }
+  }
+}
+
+void ReleasePendingNodeAssignment(
+    PendingNodeAssignments *pending_node_assignments,
+    const std::string &node_id) {
+  if (node_id.empty()) return;
+
+  std::lock_guard<std::mutex> lock(pending_node_assignments->mutex);
+  const auto it = pending_node_assignments->by_node.find(node_id);
+  if (it == pending_node_assignments->by_node.end()) return;
+  --it->second;
+  if (it->second <= 0) pending_node_assignments->by_node.erase(it);
+}
+
 std::string MessageType(const std::string &message) {
   const orchestration::KeyValueMessage fields = orchestration::ParseKeyValueMessage(message);
   const auto it = fields.find("type");
@@ -164,6 +192,7 @@ void WriteNodeMetrics(orchestration::CsvLog *log,
 
 void HandleHeartbeatMessage(const std::string &message,
                             orchestration::NodeRegistry *registry,
+                            PendingNodeAssignments *pending_node_assignments,
                             orchestration::CsvLog *node_metrics_log,
                             std::mutex *node_metrics_log_mutex,
                             int64_t heartbeat_timeout_ms) {
@@ -180,6 +209,10 @@ void HandleHeartbeatMessage(const std::string &message,
 
   const int64_t now_ms = orchestration::NowMillis();
   const bool inserted = registry->RecordHeartbeat(heartbeat, now_ms);
+  {
+    std::lock_guard<std::mutex> lock(pending_node_assignments->mutex);
+    pending_node_assignments->by_node.erase(heartbeat.node_id);
+  }
   const auto snapshot = registry->Snapshot(now_ms, heartbeat_timeout_ms);
   WriteNodeMetrics(node_metrics_log, node_metrics_log_mutex, heartbeat, now_ms);
 
@@ -247,6 +280,7 @@ void HandleRoutingRequestMessage(asio::ip::tcp::socket &socket,
                                  const std::string &message,
                                  orchestration::NodeRegistry *registry,
                                  orchestration::RoutingPolicyState *routing_state,
+                                 PendingNodeAssignments *pending_node_assignments,
                                  orchestration::Policy policy,
                                  uint64_t min_mem_available_bytes,
                                  const orchestration::KnowledgeBase *knowledge_base,
@@ -275,10 +309,18 @@ void HandleRoutingRequestMessage(asio::ip::tcp::socket &socket,
   }
 
   const int64_t now_ms = orchestration::NowMillis();
-  const auto snapshot = registry->Snapshot(now_ms, heartbeat_timeout_ms);
-  const auto decision = orchestration::SelectRoutingCandidate(
-      snapshot, request, policy, min_mem_available_bytes, 
-      knowledge_base, routing_state);
+  auto snapshot = registry->Snapshot(now_ms, heartbeat_timeout_ms);
+  orchestration::RoutingDecision decision;
+  {
+    std::lock_guard<std::mutex> lock(pending_node_assignments->mutex);
+    ApplyPendingNodeAssignments(pending_node_assignments, &snapshot);
+    decision = orchestration::SelectRoutingCandidate(
+        snapshot, request, policy, min_mem_available_bytes, knowledge_base,
+        routing_state);
+    if (decision.ok) {
+      ++pending_node_assignments->by_node[decision.selected.node_id];
+    }
+  }
 
   orchestration::RoutingResponse response;
   response.request_id = request.request_id;
@@ -301,6 +343,7 @@ void HandleRoutingRequestMessage(asio::ip::tcp::socket &socket,
     } else {
       response.status = orchestration::RoutingStatus::kServerError;
       response.reason = reservation.error;
+      ReleasePendingNodeAssignment(pending_node_assignments, selected.node_id);
     }
   }
   WriteRoutingDecision(routing_decisions_log, routing_decisions_log_mutex, now_ms,
@@ -322,6 +365,7 @@ void HandleRoutingRequestMessage(asio::ip::tcp::socket &socket,
 void HandleConnection(asio::ip::tcp::socket socket,
                       orchestration::NodeRegistry *registry,
                       orchestration::RoutingPolicyState *routing_state,
+                      PendingNodeAssignments *pending_node_assignments,
                       orchestration::Policy policy,
                       uint64_t min_mem_available_bytes,
                       const orchestration::KnowledgeBase *knowledge_base,
@@ -334,11 +378,16 @@ void HandleConnection(asio::ip::tcp::socket socket,
     const std::string message = ReadTcpMessage(socket);
     const std::string type = MessageType(message);
     if (type == "heartbeat") {
-      HandleHeartbeatMessage(message, registry, node_metrics_log, node_metrics_log_mutex, heartbeat_timeout_ms);
+      HandleHeartbeatMessage(message, registry, pending_node_assignments,
+                             node_metrics_log, node_metrics_log_mutex,
+                             heartbeat_timeout_ms);
     } else if (type == "routing_request") {
-      HandleRoutingRequestMessage(socket, message, registry, routing_state, policy,
-                                  min_mem_available_bytes, knowledge_base, routing_decisions_log,
-                                  routing_decisions_log_mutex, heartbeat_timeout_ms);
+      HandleRoutingRequestMessage(socket, message, registry, routing_state,
+                                  pending_node_assignments, policy,
+                                  min_mem_available_bytes, knowledge_base,
+                                  routing_decisions_log,
+                                  routing_decisions_log_mutex,
+                                  heartbeat_timeout_ms);
     } else {
       std::cerr << "[orchestrator] rejected message: unknown type" << std::endl;
     }
@@ -366,6 +415,7 @@ int main(int argc, char **argv) {
     const Config config = ParseConfig(argc, argv);
     orchestration::NodeRegistry registry;
     orchestration::RoutingPolicyState routing_state;
+    PendingNodeAssignments pending_node_assignments;
     std::unique_ptr<orchestration::KnowledgeBase> knowledge_base;
     if (!config.knowledge_base_path.empty()) {
       knowledge_base = std::make_unique<orchestration::KnowledgeBase>();
@@ -428,7 +478,8 @@ int main(int argc, char **argv) {
       asio::ip::tcp::socket socket(io);
       acceptor.accept(socket);
       std::thread(HandleConnection, std::move(socket), &registry, &routing_state,
-                  config.policy, config.min_mem_available_bytes,
+                  &pending_node_assignments, config.policy,
+                  config.min_mem_available_bytes,
                   knowledge_base.get(),
                   node_metrics_log.get(), &node_metrics_log_mutex,
                   routing_decisions_log.get(), &routing_decisions_log_mutex,
