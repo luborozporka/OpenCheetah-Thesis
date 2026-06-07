@@ -15,6 +15,29 @@ bash scripts/run-tests.sh
 The test binaries are produced as part of `bash scripts/build.sh`
 (`SCI_BUILD_TESTS=ON` is on by default).
 
+## Orchestration
+
+`run-orchestrator.sh` starts the orchestrator and writes node
+metrics and routing decisions under `results/orchestration/` by default.
+
+```bash
+bash scripts/run-orchestrator.sh [round_robin|least_connections|energy_aware]
+```
+
+`run-orchestration-server.sh` starts a multi-client SNNI server and a
+server-side `node-reporter` for that server.
+
+```bash
+ORCHESTRATOR_IP=<orchestrator-host> bash scripts/run-orchestration-server.sh [cheetah|SCI_HE] [server_ip]
+```
+
+`run-orchestration-client.sh` optionally starts a client-side reporter,
+then runs `build/bin/client` through the orchestrator. Set `RUN_CLIENT_REPORTER=0` to skip the client reporter.
+
+```bash
+bash scripts/run-orchestration-client.sh [cheetah|SCI_HE] [sqnet|resnet50|densenet121] [orchestrator_ip]
+```
+
 ## Multi-client server
 
 `run-server-multi.sh` starts the long-running multi-client server with Cheetah or SCI-HE backend.
