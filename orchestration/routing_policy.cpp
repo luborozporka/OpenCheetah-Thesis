@@ -41,9 +41,9 @@ double CapacityRatio(const NodeHeartbeat &node) {
          static_cast<double>(node.max_active_sessions);
 }
 
-double CapacityPenalty(const NodeHeartbeat &node) {
+double CapacityMultiplier(const NodeHeartbeat &node) {
   const double ratio = CapacityRatio(node);
-  return kCapacityPenaltyWeight * ratio * ratio;
+  return 1.0 + kCapacityPenaltyWeight * ratio * ratio;
 }
 
 double EffectivePowerW(const NodeHeartbeat &node) {
@@ -82,24 +82,24 @@ EnergyAwareScore ScoreEnergyAwareCandidate(
     bool time_proxy_mode) {
   EnergyAwareScore result;
   result.candidate = node;
-  const double penalty = CapacityPenalty(node);
+  const double capacity_multiplier = CapacityMultiplier(node);
 
   if (knowledge_base != nullptr) {
     const KnowledgeBaseLookup lookup = knowledge_base->Lookup(BuildKnowledgeBaseQuery(node, request));
     if (lookup.found) {
       const std::string source = ToString(lookup.source);
       if (lookup.entry.mean_energy_j > 0.0) {
-        result.score = lookup.entry.mean_energy_j + penalty;
+        result.score = lookup.entry.mean_energy_j * capacity_multiplier;
         result.source = source;
         return result;
       }
       if (lookup.entry.mean_latency_ms > 0.0) {
         const double latency_s = lookup.entry.mean_latency_ms / 1000.0;
         if (node.power_available) {
-          result.score = latency_s * EffectivePowerW(node) + penalty;
+          result.score = latency_s * EffectivePowerW(node) * capacity_multiplier;
           result.source = source + "_latency_live_power";
         } else {
-          result.score = latency_s + penalty;
+          result.score = latency_s * capacity_multiplier;
           result.source = source + "_time_proxy";
         }
         return result;
@@ -108,7 +108,7 @@ EnergyAwareScore ScoreEnergyAwareCandidate(
   }
 
   if (time_proxy_mode) {
-    result.score = kDefaultPredictedLatencyS + penalty;
+    result.score = kDefaultPredictedLatencyS * capacity_multiplier;
     result.source = knowledge_base == nullptr
       ? "no_kb_time_proxy"
       : "default_time_proxy";
@@ -121,7 +121,7 @@ EnergyAwareScore ScoreEnergyAwareCandidate(
     return result;
   }
 
-  result.score = kDefaultPredictedLatencyS * EffectivePowerW(node) + penalty;
+  result.score = kDefaultPredictedLatencyS * EffectivePowerW(node) * capacity_multiplier;
   result.source = knowledge_base == nullptr
     ? "no_kb_live_power"
     : "default_live_power";
@@ -250,8 +250,7 @@ RoutingDecision SelectRoutingCandidate(
 
   switch (policy) {
     case Policy::kRoundRobin:
-      decision.selected =
-          SelectRoundRobinCandidate(decision.candidates, request, state);
+      decision.selected = SelectRoundRobinCandidate(decision.candidates, request, state);
       break;
     case Policy::kLeastConnections:
       decision.selected = SelectLeastConnectionsCandidate(decision.candidates);
