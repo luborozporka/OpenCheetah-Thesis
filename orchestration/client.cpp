@@ -105,8 +105,12 @@ std::string DefaultRequestId() {
   return "req-" + std::to_string(orchestration::NowMillis());
 }
 
-int32_t DefaultBitlength(orchestration::Network network) {
-  return network == orchestration::Network::kSqnet ? 32 : 41;
+int32_t DefaultBitlength(orchestration::Network network,
+                         orchestration::Backend backend) {
+  if (network == orchestration::Network::kSqnet && backend == orchestration::Backend::kCheetah) {
+    return 37;
+  }
+  return 41;
 }
 
 std::string BackendExecutableSuffix(orchestration::Backend backend) {
@@ -155,7 +159,7 @@ Config ParseConfig(int argc, char **argv) {
 
   config.request.request_id = GetArg(args, "request_id", DefaultRequestId());
   config.request.input_shape = GetArg(args, "input_shape");
-  config.request.bitlength = ParseInt32(GetArg(args, "ell"), "ell", DefaultBitlength(config.request.network));
+  config.request.bitlength = ParseInt32(GetArg(args, "ell"), "ell", DefaultBitlength(config.request.network, config.request.backend));
   config.request.scale = ParseInt32(GetArg(args, "k"), "k", 12);
   config.request.num_threads = ParseInt32(GetArg(args, "nt"), "nt", 4);
   config.request.max_latency_ms = ParseInt64(GetArg(args, "max_latency_ms"), "max_latency_ms", -1);
