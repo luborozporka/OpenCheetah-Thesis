@@ -1,6 +1,14 @@
 #include "session.h"
 
+#include <atomic>
+#include <chrono>
+#include <cstdint>
+#include <cstdlib>
+#include <filesystem>
 #include <iostream>
+#include <string>
+#include <system_error>
+#include <unistd.h>
 #include <utility>
 
 #if defined(__GLIBC__)
@@ -18,6 +26,44 @@ double computeAveragePower(uint64_t totalPower, int layerCount, const std::strin
     return 0.0;
   }
 }
+
+#ifdef LOG_LAYERWISE
+std::string ResolvePowerUsagePath() {
+  const char *env = std::getenv("SNNI_POWER_PATH");
+  if (env != nullptr && env[0] != '\0') {
+    return std::string(env);
+  }
+  // Legacy default
+  return "/sys/class/hwmon/hwmon4/device/power1_average";
+}
+
+std::string ResolveProtocolOutputPath() {
+  std::string dir = "snni_measurements";
+  const char *env_dir = std::getenv("SNNI_OUTPUT_DIR");
+  if (env_dir != nullptr && env_dir[0] != '\0') {
+    dir = env_dir;
+  }
+  std::error_code ec;
+  std::filesystem::create_directories(dir, ec);
+
+  std::string node = "node";
+  const char *env_node = std::getenv("SNNI_NODE_ID");
+  if (env_node != nullptr && env_node[0] != '\0') {
+    node = env_node;
+  }
+
+  static std::atomic<uint64_t> counter{0};
+  const uint64_t seq = counter.fetch_add(1, std::memory_order_relaxed);
+  const long pid = static_cast<long>(::getpid());
+  const uint64_t now_ms =
+      std::chrono::duration_cast<std::chrono::milliseconds>(
+          std::chrono::system_clock::now().time_since_epoch())
+          .count();
+
+  return dir + "/protocol_" + node + "_pid" + std::to_string(pid) + "_s" +
+         std::to_string(seq) + "_" + std::to_string(now_ms) + ".csv";
+}
+#endif
 
 Session::Session(const Config &cfg_) : cfg(cfg_) {
   for (int i = 0; i < cfg.num_threads; i++) {

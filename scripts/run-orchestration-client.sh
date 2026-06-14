@@ -17,6 +17,10 @@ ALLOW_NO_POWER_SENSOR=${ALLOW_NO_POWER_SENSOR:-1}
 IDLE_POWER_W=${IDLE_POWER_W:-0}
 RUN_CLIENT_REPORTER=${RUN_CLIENT_REPORTER:-1}
 NODE_ID=${NODE_ID:-$(hostname)-client}
+POWER_PATH=${POWER_PATH:-}
+SNNI_POWER_PATH=${SNNI_POWER_PATH:-$POWER_PATH}
+SNNI_OUTPUT_DIR=${SNNI_OUTPUT_DIR:-results/measurements}
+SNNI_NODE_ID=${SNNI_NODE_ID:-$NODE_ID}
 
 case $backend in
   cheetah) routing_backend=cheetah ;;
@@ -62,6 +66,7 @@ if [ "$RUN_CLIENT_REPORTER" != "0" ]; then
     node_id="$NODE_ID" \
     node_role=client \
     idle_power_w=$IDLE_POWER_W \
+    power_path="$POWER_PATH" \
     allow_no_power_sensor=$ALLOW_NO_POWER_SENSOR \
     orchestrator_ip="$ORCHESTRATOR_IP" \
     orchestrator_port=$ORCHESTRATOR_PORT \
@@ -69,6 +74,10 @@ if [ "$RUN_CLIENT_REPORTER" != "0" ]; then
   reporter_pid=$!
   sleep 1
 fi
+
+mkdir -p "$SNNI_OUTPUT_DIR"
+export SNNI_OUTPUT_DIR SNNI_NODE_ID
+if [ -n "$SNNI_POWER_PATH" ]; then export SNNI_POWER_PATH; fi
 
 echo -e "Running ${GREEN}build/bin/client${NC} through orchestrator $ORCHESTRATOR_IP:$ORCHESTRATOR_PORT..."
 build/bin/client \

@@ -219,7 +219,15 @@ orchestration::NodeHeartbeat MakeBaseHeartbeat(const Config &config) {
 void ReadPower(const Config &config,
                orchestration::PowerSensor *sensor,
                orchestration::NodeHeartbeat *heartbeat) {
-  const orchestration::PowerReading reading = sensor->Read();
+  orchestration::PowerReading reading;
+  try {
+    reading = sensor->Read();
+  } catch (const std::exception &e) {
+    reading.available = false;
+    reading.power_w = 0.0;
+    std::cerr << "[node-reporter] power read failed: " << e.what()
+              << " (reporting power unavailable)" << std::endl;
+  }
   heartbeat->power_available = reading.available;
   heartbeat->power_w = reading.power_w;
   heartbeat->dynamic_power_w = reading.available
@@ -274,7 +282,7 @@ void PrintUsage(const char *program) {
   std::cerr << "Usage: " << program << " node_id=<id> node_role=server|client "
             << "[server_ip=<ip>] [backend=cheetah|sci-he] "
             << "[control_port=<port>] [status_port=<port>] "
-            << "[idle_power_w=<watts>] [power_path=<sysfs-path>] "
+            << "[idle_power_w=<watts>] [power_path=<file-path>] "
             << "[allow_no_power_sensor=0|1] "
             << "[orchestrator_ip=<ip> orchestrator_port=<port>] "
             << "[interval_ms=<milliseconds>]"

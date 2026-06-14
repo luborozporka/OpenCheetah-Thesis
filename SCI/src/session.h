@@ -98,6 +98,11 @@ struct LinearContext {
 #endif
 };
 
+#ifdef LOG_LAYERWISE
+std::string ResolvePowerUsagePath();
+std::string ResolveProtocolOutputPath();
+#endif
+
 struct Stats {
   std::chrono::time_point<std::chrono::high_resolution_clock> start_time;
   uint64_t comm_threads[MAX_THREADS] = {};
@@ -160,8 +165,7 @@ struct Stats {
   int AvgPool_layer_count = 0;
   int ArgMax_layer_count = 0;
 
-  // Path to the power usage
-  std::string power_usage_path = "/sys/class/hwmon/hwmon4/device/power1_average";
+  std::string power_usage_path = ResolvePowerUsagePath();
 
   /* for execution time/duration */
   uint64_t ProtocolStartTime = 0;
@@ -200,8 +204,7 @@ struct Stats {
   uint64_t ArgMaxEndTime = 0;
   double ArgMaxExecutionTime = 0.0;
 
-  std::string ProtocolOutputFile =
-      "/home/tanjina/OpenCheetah-Tanjina/Output/protocol_output.csv";
+  std::string ProtocolOutputFile = ResolveProtocolOutputPath();
   std::vector<std::string> ProtocolHeaders = {
       "index",
       "nn_name",

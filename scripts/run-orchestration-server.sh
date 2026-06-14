@@ -30,6 +30,10 @@ NODE_REPORTER_INTERVAL_MS=${NODE_REPORTER_INTERVAL_MS:-1000}
 ALLOW_NO_POWER_SENSOR=${ALLOW_NO_POWER_SENSOR:-1}
 IDLE_POWER_W=${IDLE_POWER_W:-0}
 NODE_ID=${NODE_ID:-$(hostname)-$backend}
+POWER_PATH=${POWER_PATH:-}
+SNNI_POWER_PATH=${SNNI_POWER_PATH:-$POWER_PATH}
+SNNI_OUTPUT_DIR=${SNNI_OUTPUT_DIR:-results/measurements}
+SNNI_NODE_ID=${SNNI_NODE_ID:-$NODE_ID}
 
 cleanup() {
   if [ -n "$server_pid" ]; then
@@ -37,6 +41,10 @@ cleanup() {
   fi
 }
 trap cleanup EXIT INT TERM
+
+mkdir -p "$SNNI_OUTPUT_DIR"
+export SNNI_OUTPUT_DIR SNNI_NODE_ID
+if [ -n "$SNNI_POWER_PATH" ]; then export SNNI_POWER_PATH; fi
 
 echo -e "Starting ${GREEN}build/bin/server-$backend${NC} on control port $SERVER_PORT..."
 build/bin/server-$backend \
@@ -59,6 +67,7 @@ build/bin/node-reporter \
   control_port=$SERVER_PORT \
   status_port=$STATUS_PORT \
   idle_power_w=$IDLE_POWER_W \
+  power_path="$POWER_PATH" \
   allow_no_power_sensor=$ALLOW_NO_POWER_SENSOR \
   orchestrator_ip="$ORCHESTRATOR_IP" \
   orchestrator_port=$ORCHESTRATOR_PORT \

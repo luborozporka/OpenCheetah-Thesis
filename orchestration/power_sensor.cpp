@@ -10,9 +10,9 @@
 namespace orchestration {
 namespace {
 
-class HwmonPowerSensor final : public PowerSensor {
+class FilePowerSensor final : public PowerSensor {
  public:
-  explicit HwmonPowerSensor(std::string path) : path_(std::move(path)) {}
+  explicit FilePowerSensor(std::string path) : path_(std::move(path)) {}
 
   PowerReading Read() override {
     std::ifstream input(path_);
@@ -45,14 +45,13 @@ class NoPowerSensor final : public PowerSensor {
 std::unique_ptr<PowerSensor> CreatePowerSensor(const std::string &power_path,
                                                bool allow_no_power_sensor) {
   if (!power_path.empty()) {
-    return std::make_unique<HwmonPowerSensor>(power_path);
+    return std::make_unique<FilePowerSensor>(power_path);
   }
   if (allow_no_power_sensor) {
     return std::make_unique<NoPowerSensor>();
   }
 
-  throw std::runtime_error(
-      "hwmon power_path is required unless allow_no_power_sensor=1");
+  throw std::runtime_error("power_path is required unless allow_no_power_sensor=1");
 }
 
 }  // namespace orchestration
