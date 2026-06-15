@@ -15,7 +15,6 @@ class CsvLog {
   CsvLog &operator=(const CsvLog &) = delete;
 
   void WriteRow(const std::vector<std::string> &values);
-  bool good() const;
 
  private:
   static std::string Escape(const std::string &value);

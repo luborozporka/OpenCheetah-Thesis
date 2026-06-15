@@ -136,9 +136,8 @@ std::string JoinNodeIds(const std::vector<orchestration::NodeHeartbeat> &nodes) 
 
 std::string BoolString(bool value) { return value ? "1" : "0"; }
 
-void ApplyPendingNodeAssignments(
-    PendingNodeAssignments *pending_node_assignments,
-    std::vector<orchestration::NodeHeartbeat> *nodes) {
+void ApplyPendingNodeAssignments(PendingNodeAssignments *pending_node_assignments,
+                                 std::vector<orchestration::NodeHeartbeat> *nodes) {
   for (auto &node : *nodes) {
     const auto it = pending_node_assignments->by_node.find(node.node_id);
     if (it != pending_node_assignments->by_node.end()) {
@@ -147,9 +146,8 @@ void ApplyPendingNodeAssignments(
   }
 }
 
-void ReleasePendingNodeAssignment(
-    PendingNodeAssignments *pending_node_assignments,
-    const std::string &node_id) {
+void ReleasePendingNodeAssignment(PendingNodeAssignments *pending_node_assignments,
+                                  const std::string &node_id) {
   if (node_id.empty()) return;
 
   std::lock_guard<std::mutex> lock(pending_node_assignments->mutex);

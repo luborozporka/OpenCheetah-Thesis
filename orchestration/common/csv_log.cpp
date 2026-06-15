@@ -21,8 +21,6 @@ void CsvLog::WriteRow(const std::vector<std::string> &values) {
   WriteValues(values);
 }
 
-bool CsvLog::good() const { return out_.good(); }
-
 std::string CsvLog::Escape(const std::string &value) {
   bool needs_quotes = false;
   for (char ch : value) {

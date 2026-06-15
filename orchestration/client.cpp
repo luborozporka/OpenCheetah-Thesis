@@ -232,9 +232,8 @@ int DecodeExitCode(int status) {
   return status;
 }
 
-ClientRunResult RunStandaloneClient(
-    const Config &config,
-    const orchestration::RoutingResponse &response) {
+ClientRunResult RunStandaloneClient(const Config &config,
+                                    const orchestration::RoutingResponse &response) {
   ClientRunResult result;
   const std::string command = BuildStandaloneCommand(config, response);
   FILE *pipe = popen(command.c_str(), "r");

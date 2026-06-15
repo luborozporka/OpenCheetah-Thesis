@@ -26,9 +26,4 @@ std::vector<NodeHeartbeat> NodeRegistry::Snapshot(int64_t now_ms, int64_t heartb
   return snapshot;
 }
 
-size_t NodeRegistry::size() const {
-  std::shared_lock<std::shared_mutex> lock(mutex_);
-  return nodes_.size();
-}
-
 }

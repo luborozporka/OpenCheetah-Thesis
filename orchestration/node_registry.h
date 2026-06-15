@@ -3,7 +3,6 @@
 
 #include "orchestration/common/protocol.h"
 
-#include <cstddef>
 #include <cstdint>
 #include <map>
 #include <shared_mutex>
@@ -16,7 +15,6 @@ class NodeRegistry {
  public:
   bool RecordHeartbeat(const NodeHeartbeat &heartbeat, int64_t received_at_ms);
   std::vector<NodeHeartbeat> Snapshot(int64_t now_ms, int64_t heartbeat_timeout_ms) const;
-  size_t size() const;
 
  private:
   struct Entry {

@@ -50,9 +50,8 @@ double EffectivePowerW(const NodeHeartbeat &node) {
   return std::max(node.dynamic_power_w, kMinimumEffectivePowerW);
 }
 
-KnowledgeBaseQuery BuildKnowledgeBaseQuery(
-    const NodeHeartbeat &node,
-    const RoutingRequest &request) {
+KnowledgeBaseQuery BuildKnowledgeBaseQuery(const NodeHeartbeat &node,
+                                           const RoutingRequest &request) {
   KnowledgeBaseQuery query;
   query.node_id = node.node_id;
   query.backend = request.backend;
@@ -63,10 +62,9 @@ KnowledgeBaseQuery BuildKnowledgeBaseQuery(
   return query;
 }
 
-bool PassesLatencyConstraint(
-    const NodeHeartbeat &node,
-    const RoutingRequest &request,
-    const KnowledgeBase *knowledge_base) {
+bool PassesLatencyConstraint(const NodeHeartbeat &node,
+                             const RoutingRequest &request,
+                             const KnowledgeBase *knowledge_base) {
   if (request.max_latency_ms < 0 || knowledge_base == nullptr) return true;
 
   const KnowledgeBaseLookup lookup = knowledge_base->Lookup(BuildKnowledgeBaseQuery(node, request));
@@ -75,11 +73,10 @@ bool PassesLatencyConstraint(
   return lookup.entry.mean_latency_ms <= static_cast<double>(request.max_latency_ms);
 }
 
-EnergyAwareScore ScoreEnergyAwareCandidate(
-    const NodeHeartbeat &node,
-    const RoutingRequest &request,
-    const KnowledgeBase *knowledge_base,
-    bool time_proxy_mode) {
+EnergyAwareScore ScoreEnergyAwareCandidate(const NodeHeartbeat &node,
+                                           const RoutingRequest &request,
+                                           const KnowledgeBase *knowledge_base,
+                                           bool time_proxy_mode) {
   EnergyAwareScore result;
   result.candidate = node;
   const double capacity_multiplier = CapacityMultiplier(node);
@@ -150,10 +147,9 @@ std::string JoinCandidateScores(const std::vector<EnergyAwareScore> &scores) {
   return result;
 }
 
-NodeHeartbeat SelectRoundRobinCandidate(
-    std::vector<NodeHeartbeat> candidates,
-    const RoutingRequest &request,
-    RoutingPolicyState *state) {
+NodeHeartbeat SelectRoundRobinCandidate(std::vector<NodeHeartbeat> candidates,
+                                        const RoutingRequest &request,
+                                        RoutingPolicyState *state) {
   std::sort(
       candidates.begin(),
       candidates.end(),
@@ -168,8 +164,7 @@ NodeHeartbeat SelectRoundRobinCandidate(
   return candidates[selected_index];
 }
 
-NodeHeartbeat SelectLeastConnectionsCandidate(
-    std::vector<NodeHeartbeat> candidates) {
+NodeHeartbeat SelectLeastConnectionsCandidate(std::vector<NodeHeartbeat> candidates) {
   return *std::min_element(
       candidates.begin(),
       candidates.end(),
@@ -184,10 +179,9 @@ NodeHeartbeat SelectLeastConnectionsCandidate(
       });
 }
 
-EnergyAwareSelection SelectEnergyAwareCandidate(
-    const std::vector<NodeHeartbeat> &candidates,
-    const RoutingRequest &request,
-    const KnowledgeBase *knowledge_base) {
+EnergyAwareSelection SelectEnergyAwareCandidate(const std::vector<NodeHeartbeat> &candidates,
+                                                const RoutingRequest &request,
+                                                const KnowledgeBase *knowledge_base) {
   const bool time_proxy_mode = std::none_of(
       candidates.begin(),
       candidates.end(),
@@ -211,11 +205,10 @@ EnergyAwareSelection SelectEnergyAwareCandidate(
 
 }  // namespace
 
-std::vector<NodeHeartbeat> FilterRoutingCandidates(
-    const std::vector<NodeHeartbeat> &nodes,
-    const RoutingRequest &request,
-    uint64_t min_mem_available_bytes,
-    const KnowledgeBase *knowledge_base) {
+std::vector<NodeHeartbeat> FilterRoutingCandidates(const std::vector<NodeHeartbeat> &nodes,
+                                                   const RoutingRequest &request,
+                                                   uint64_t min_mem_available_bytes,
+                                                   const KnowledgeBase *knowledge_base) {
   std::vector<NodeHeartbeat> candidates;
   for (const auto &node : nodes) {
     if (node.node_role != NodeRole::kServer) continue;
@@ -234,13 +227,12 @@ std::vector<NodeHeartbeat> FilterRoutingCandidates(
   return candidates;
 }
 
-RoutingDecision SelectRoutingCandidate(
-    const std::vector<NodeHeartbeat> &nodes,
-    const RoutingRequest &request,
-    Policy policy,
-    uint64_t min_mem_available_bytes,
-    const KnowledgeBase *knowledge_base,
-    RoutingPolicyState *state) {
+RoutingDecision SelectRoutingCandidate(const std::vector<NodeHeartbeat> &nodes,
+                                       const RoutingRequest &request,
+                                       Policy policy,
+                                       uint64_t min_mem_available_bytes,
+                                       const KnowledgeBase *knowledge_base,
+                                       RoutingPolicyState *state) {
   RoutingDecision decision;
   decision.candidates = FilterRoutingCandidates(nodes, request, min_mem_available_bytes, knowledge_base);
   if (decision.candidates.empty()) {

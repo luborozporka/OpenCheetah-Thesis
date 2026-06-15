@@ -7,8 +7,6 @@
 namespace orchestration {
 
 int64_t NowMillis();
-std::string TimestampForPath();
-std::string MakeRequestId();
 
 }
 
