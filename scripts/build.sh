@@ -33,3 +33,8 @@ for net in relu1_28_28_1 relu784 relu12_23_34_45 relu422280 relu1 mp1 mp2 mp3 mp
 do
      make ${net}-cheetah -j4 
 done
+
+for target in server-cheetah server-SCI_HE orchestrator client node-reporter
+do
+     make ${target} -j4
+done
