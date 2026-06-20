@@ -1,0 +1,7 @@
+node_id,power_log,idle_power_w
+dtn-01,results/power/dtn-01.csv,182.26
+dtn-03,results/power/dtn-03.csv,229.55
+mc-a2,results/power/mc-a2.csv,58.51
+panzer,results/power/panzer.csv,181.90
+xd1,results/power/xd1.csv,118.45
+xd2,results/power/xd2.csv,144.42
